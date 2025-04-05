@@ -8,6 +8,15 @@ const citySeeds = [
   {
     name: 'Bucaramanga',
   },
+  {
+    name: 'Floridablanca',
+  },
+  {
+    name: 'Piedecuesta',
+  },
+  {
+    name: 'Girón',
+  },
 ];
 
 const communeSeeds = [

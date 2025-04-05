@@ -11,11 +11,13 @@ import { SeedingService } from './core/application/services/seeding-service';
 import { authEntitiesProviders } from './infrastructure/providers/auth.providers';
 import { DatabaseModule } from './infrastructure/modules/database.module';
 import { AppCommandModule } from './infrastructure/modules/command.module';
+import { LocationModule } from './infrastructure/modules/location.module';
 
 @Module({
   imports: [
     DatabaseModule, // Esto te da acceso al proveedor 'DATA_SOURCE'
     AuthModule,
+    LocationModule,
     AppCommandModule,
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la aplicación

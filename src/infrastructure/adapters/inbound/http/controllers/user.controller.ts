@@ -10,6 +10,6 @@ export class UserController {
 
   @Get()
   getUsers(): string {
-    return 'users';
+    return 'pepito';
   }
 }
