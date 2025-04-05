@@ -1,10 +1,10 @@
-import { NeighborhoodEntity } from './neighborhood.entity';
-import { PermissionEntity } from './permission.entity';
-import { MenuItemEntity } from './menu-item.entity';
-import { ModuleEntity } from './module.entity';
-import { UserEntity } from './user.entity';
-import { RoleEntity } from './role.entity';
 import { DataSource } from 'typeorm';
+import { UserEntity } from '../persistence/user.entity';
+import { RoleEntity } from '../persistence/role.entity';
+import { PermissionEntity } from '../persistence/permission.entity';
+import { ModuleEntity } from '../persistence/module.entity';
+import { MenuItemEntity } from '../persistence/menu-item.entity';
+import { NeighborhoodEntity } from '../persistence/neighborhood.entity';
 
 export const authEntitiesProviders = [
   {

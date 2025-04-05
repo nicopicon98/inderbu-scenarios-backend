@@ -1,9 +1,13 @@
 import { Command } from 'nestjs-command';
 import { DataSource } from 'typeorm';
-import { seedCities } from './seeds/cities.seed';
+import { seedCities } from './infrastructure/seeds/cities.seed';
+import { Inject } from '@nestjs/common';
 
 export class AppCommandService {
-  constructor(private readonly databaseDatasource: DataSource) {}
+  constructor(
+    @Inject('DATA_SOURCE')
+    private readonly databaseDatasource: DataSource
+  ) {}
 
   @Command({
     command: 'start:seeds',

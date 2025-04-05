@@ -1,12 +1,12 @@
-import { NeighborhoodEntity } from './neighborhood.entity';
-import { PermissionEntity } from './permission.entity';
-import { MenuItemEntity } from './menu-item.entity';
-import { ModuleEntity } from './module.entity';
-import { UserEntity } from './user.entity';
-import { RoleEntity } from './role.entity';
+import { NeighborhoodEntity } from '../persistence/neighborhood.entity';
+import { PermissionEntity } from '../persistence/permission.entity';
+import { ModuleEntity } from '../persistence/module.entity';
+import { UserEntity } from '../persistence/user.entity';
 import { DataSource } from 'typeorm';
-import { CommuneEntity } from './commune.entity';
-import { CityEntity } from './city.entity';
+import { CityEntity } from '../persistence/city.entity';
+import { MenuItemEntity } from '../persistence/menu-item.entity';
+import { CommuneEntity } from '../persistence/commune.entity';
+import { RoleEntity } from '../persistence/role.entity';
 
 
 export const databaseProviders = [

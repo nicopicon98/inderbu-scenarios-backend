@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { RoleEntity } from './role.entity';
 import { MenuItemEntity } from './menu-item.entity';
 import { ModuleEntity } from './module.entity';
+import { RoleEntity } from './role.entity';
 
 @Entity('permissions')
 export class PermissionEntity {

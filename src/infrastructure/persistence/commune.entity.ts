@@ -20,5 +20,5 @@ export class CommuneEntity {
   // Many to one relations
   @ManyToOne(() => CityEntity)
   @JoinColumn({ name: 'fk_id_city' })
-  neighborhood: CityEntity;
+  city: CityEntity;
 }

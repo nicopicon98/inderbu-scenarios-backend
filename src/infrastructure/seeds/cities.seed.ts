@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import path from 'path';
 import * as fs from 'fs';
-import { CityEntity } from 'src/city.entity';
+import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 import { DataSource, Repository } from 'typeorm';
 
 interface ICitySeed {
