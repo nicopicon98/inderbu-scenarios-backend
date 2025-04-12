@@ -1,40 +1,58 @@
+import { JwtService } from '@nestjs/jwt';
 import { DataSource } from 'typeorm';
+
+import { UserRepositoryAdapter } from '../adapters/outbound/repositories/user-repository.adapter';
+import { AuthenticationService } from 'src/core/application/services/auth.service';
+import { JwtStrategy } from '../adapters/inbound/http/strategies/jwt.strategy';
+import { NeighborhoodEntity } from '../persistence/neighborhood.entity';
+import { PermissionEntity } from '../persistence/permission.entity';
+import { MenuItemEntity } from '../persistence/menu-item.entity';
+import { ModuleEntity } from '../persistence/module.entity';
 import { UserEntity } from '../persistence/user.entity';
 import { RoleEntity } from '../persistence/role.entity';
-import { PermissionEntity } from '../persistence/permission.entity';
-import { ModuleEntity } from '../persistence/module.entity';
-import { MenuItemEntity } from '../persistence/menu-item.entity';
-import { NeighborhoodEntity } from '../persistence/neighborhood.entity';
 
 export const authEntitiesProviders = [
+  AuthenticationService,
+  {
+    provide: 'IUserRepositoryPort',
+    useClass: UserRepositoryAdapter,
+  },
+  JwtStrategy,
+  JwtService,
   {
     provide: 'USER_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(UserEntity),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(UserEntity),
     inject: ['DATA_SOURCE'],
   },
   {
     provide: 'ROLE_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(RoleEntity),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(RoleEntity),
     inject: ['DATA_SOURCE'],
   },
   {
     provide: 'PERMISSION_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(PermissionEntity),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(PermissionEntity),
     inject: ['DATA_SOURCE'],
   },
   {
     provide: 'MODULE_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(ModuleEntity),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ModuleEntity),
     inject: ['DATA_SOURCE'],
   },
   {
     provide: 'MENU_ITEM_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(MenuItemEntity),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(MenuItemEntity),
     inject: ['DATA_SOURCE'],
   },
   {
     provide: 'NEIGHBORHOOD_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(NeighborhoodEntity),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(NeighborhoodEntity),
     inject: ['DATA_SOURCE'],
   },
 ];

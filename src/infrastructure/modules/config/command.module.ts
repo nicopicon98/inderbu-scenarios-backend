@@ -1,7 +1,7 @@
 import { CommandModule } from 'nestjs-command';
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database.module';
-import { AppCommandService } from 'src/app.command';
+import { DatabaseModule } from '../database.module';
+import { AppCommandService } from 'src/core/application/services/app-command.service';
 
 @Module({
   imports: [

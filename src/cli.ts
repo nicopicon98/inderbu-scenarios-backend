@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './infrastructure/modules/config/app.module';
 import { CommandModule, CommandService } from 'nestjs-command';
 import { INestApplicationContext } from '@nestjs/common';
 

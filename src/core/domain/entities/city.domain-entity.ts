@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class CityDomain {
+export class CityDomainEntity {
   @Expose()
   public readonly id: number | null;
 
@@ -31,7 +31,7 @@ class CityDomainBuilder {
     return this;
   }
 
-  build(): CityDomain {
-    return new CityDomain(this);
+  build(): CityDomainEntity {
+    return new CityDomainEntity(this);
   }
 }

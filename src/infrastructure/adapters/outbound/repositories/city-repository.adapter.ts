@@ -3,12 +3,12 @@ import { Repository } from 'typeorm';
 
 import { BaseRepositoryAdapter } from './common/base-repository.adapter';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
-import { CityDomain } from 'src/core/domain/entities/cedi.entity';
 import { ICityRepositoryPort } from 'src/core/domain/ports/outbound/city-repository.port';
+import { CityDomainEntity } from 'src/core/domain/entities/city.domain-entity';
 
 @Injectable()
 export class CityRepositoryAdapter
-  extends BaseRepositoryAdapter<CityEntity, CityDomain>
+  extends BaseRepositoryAdapter<CityEntity, CityDomainEntity>
   implements ICityRepositoryPort
 {
   constructor(
@@ -18,15 +18,15 @@ export class CityRepositoryAdapter
     super(repository);
   }
 
-  protected toEntity(cityDomain: CityDomain): CityEntity {
+  protected toEntity(cityDomain: CityDomainEntity): CityEntity {
     const a: CityEntity = this.repository.create({
       name: cityDomain['name'],
     });
     return a;
   }
 
-  protected toDomain(cityEntity: CityEntity): CityDomain {
-    return CityDomain.builder()
+  protected toDomain(cityEntity: CityEntity): CityDomainEntity {
+    return CityDomainEntity.builder()
       .withId(cityEntity.id)
       .withName(cityEntity.name)
       .build();

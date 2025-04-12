@@ -1,5 +1,5 @@
-import { CityDomain } from "../../entities/cedi.entity";
+import { CityDomainEntity } from "../../entities/city.domain-entity";
 
 export interface ICityRepositoryPort{
-    findById(id: number): Promise<CityDomain | null>;
+    findById(id: number): Promise<CityDomainEntity | null>;
 }

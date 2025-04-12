@@ -1,22 +1,21 @@
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
-
-import { AuthModule } from './infrastructure/modules/auth.module';
-
-import { Injectable, Inject } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { CityEntity } from './infrastructure/persistence/city.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppCommandService } from './app.command';
-import { SeedingService } from './core/application/services/seeding-service';
-import { authEntitiesProviders } from './infrastructure/providers/auth.providers';
-import { DatabaseModule } from './infrastructure/modules/database.module';
-import { AppCommandModule } from './infrastructure/modules/command.module';
-import { LocationModule } from './infrastructure/modules/location.module';
+
+
+import { AppCommandService } from 'src/core/application/services/app-command.service';
+import { SeedingService } from '../../../core/application/services/seeding.service';
+import { authEntitiesProviders } from '../../providers/auth.providers';
+import { LocationModule } from '../location/location.module';
+import { DatabaseModule } from '../database.module';
+import { AppCommandModule } from './command.module';
+import { AuthModule } from '../auth.module';
+import { UserModule } from '../user.module';
 
 @Module({
   imports: [
     DatabaseModule, // Esto te da acceso al proveedor 'DATA_SOURCE'
     AuthModule,
+    UserModule,
     LocationModule,
     AppCommandModule,
     ConfigModule.forRoot({
@@ -25,7 +24,7 @@ import { LocationModule } from './infrastructure/modules/location.module';
   ],
   providers: [
     SeedingService,
-    ...authEntitiesProviders,
+    ...authEntitiesProviders, // Esto da acceso a los proveedores de entidades de autenticación
   ]
 })
 export class AppModule implements OnApplicationBootstrap {

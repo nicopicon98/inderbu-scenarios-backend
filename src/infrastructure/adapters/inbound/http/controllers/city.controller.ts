@@ -1,5 +1,5 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common';
-import { ICityApplicationPort } from 'src/core/application/ports/city-application.port';
+import { ICityApplicationPort } from 'src/core/application/ports/inbound/city-application.port';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 import { DataSource } from 'typeorm';
 

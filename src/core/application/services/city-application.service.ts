@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 import { DataSource, Repository } from 'typeorm';
-import { ICityApplicationPort } from '../ports/city-application.port';
+import { ICityApplicationPort } from '../ports/inbound/city-application.port';
 import { ICityRepositoryPort } from 'src/core/domain/ports/outbound/city-repository.port';
 
 @Injectable()

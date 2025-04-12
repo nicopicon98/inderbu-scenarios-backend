@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IUserApplicationPort } from '../ports/user-application.port';
+import { IUserApplicationPort } from '../ports/inbound/user-application.port';
 
 @Injectable()
 export class UserApplicationService implements IUserApplicationPort {

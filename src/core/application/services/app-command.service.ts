@@ -1,7 +1,8 @@
 import { Command } from 'nestjs-command';
 import { DataSource } from 'typeorm';
-import { seedCities } from './infrastructure/seeds/cities.seed';
 import { Inject } from '@nestjs/common';
+
+import { seedCities } from 'src/infrastructure/seeds/cities.seed';
 
 export class AppCommandService {
   constructor(
