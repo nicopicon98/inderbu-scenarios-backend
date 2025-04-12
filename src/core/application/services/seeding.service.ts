@@ -40,7 +40,7 @@ const neighborhoodSeeds = [
 @Injectable()
 export class SeedingService {
   constructor(
-    @Inject('DATA_SOURCE')
+    @Inject('MYSQL_DATA_SOURCE')
     private dataSource: DataSource,
   ) {}
 

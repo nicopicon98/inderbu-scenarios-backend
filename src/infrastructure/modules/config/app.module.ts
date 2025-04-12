@@ -13,7 +13,7 @@ import { UserModule } from '../user.module';
 
 @Module({
   imports: [
-    DatabaseModule, // Esto te da acceso al proveedor 'DATA_SOURCE'
+    DatabaseModule, // Esto te da acceso al proveedor 'MYSQL_DATA_SOURCE'
     AuthModule,
     UserModule,
     LocationModule,

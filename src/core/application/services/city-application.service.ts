@@ -7,7 +7,7 @@ import { ICityRepositoryPort } from 'src/core/domain/ports/outbound/city-reposit
 @Injectable()
 export class CityApplicationService implements ICityApplicationPort {
   constructor(
-    @Inject('DATA_SOURCE')
+    @Inject('MYSQL_DATA_SOURCE')
     private readonly databaseSource: DataSource,
     @Inject('ICityRepositoryPort')
     private readonly cityRepositoryAdapter: ICityRepositoryPort,

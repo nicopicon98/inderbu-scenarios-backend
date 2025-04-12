@@ -6,7 +6,7 @@ import { seedCities } from 'src/infrastructure/seeds/cities.seed';
 
 export class AppCommandService {
   constructor(
-    @Inject('DATA_SOURCE')
+    @Inject('MYSQL_DATA_SOURCE')
     private readonly databaseDatasource: DataSource
   ) {}
 

@@ -15,6 +15,6 @@ export const CityProviders = [
   {
     provide: 'CITY_REPOSITORY',
     useFactory: (dataSource: DataSource) => dataSource.getRepository(CityEntity),
-    inject: ['DATA_SOURCE'],
+    inject: ['MYSQL_DATA_SOURCE'],
   },
 ];

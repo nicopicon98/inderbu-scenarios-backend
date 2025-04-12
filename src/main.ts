@@ -3,6 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './infrastructure/modules/config/app.module';
 import * as dotenv from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ResponseInterceptor } from './infrastructure/common/incerceptors/response.intecerptor';
+import { HttpExceptionFilter } from './infrastructure/common/filters/http-exception.filter';
 
 function loadEnv() {
   dotenv.config();
@@ -10,6 +12,11 @@ function loadEnv() {
 async function bootstrap() {
   loadEnv();
   const app = await NestFactory.create(AppModule);
+  // Registro de interceptores globales
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  // Registro de filters globales
+  app.useGlobalFilters(new HttpExceptionFilter());
+  // Registro de swagger
   const swaggerConfigDocument = new DocumentBuilder()
     .setTitle('inderbu API')
     .setDescription('API para inderbu')
