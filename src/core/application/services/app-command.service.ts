@@ -2,8 +2,6 @@ import { Command } from 'nestjs-command';
 import { DataSource } from 'typeorm';
 import { Inject } from '@nestjs/common';
 
-import { seedCities } from 'src/infrastructure/seeds/cities.seed';
-
 export class AppCommandService {
   constructor(
     @Inject('MYSQL_DATA_SOURCE')
@@ -32,7 +30,7 @@ export class AppCommandService {
 
   private async runSeeders(datasource: DataSource): Promise<void> {
     console.log('Ejecutando seeders...');
-    await seedCities(datasource);
+    // await seedCities(datasource);
     console.log('Seeders ejecutados correctamente.');
   }
 }

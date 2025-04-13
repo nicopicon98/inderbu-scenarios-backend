@@ -3,17 +3,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 
 import { AppCommandService } from 'src/core/application/services/app-command.service';
-import { SeedingService } from '../../../core/application/services/seeding.service';
+import { SeedingService } from '../../../core/application/services/seeding/seeding.service';
 import { authEntitiesProviders } from '../../providers/auth.providers';
 import { LocationModule } from '../location/location.module';
 import { DatabaseModule } from '../database.module';
 import { AppCommandModule } from './command.module';
 import { AuthModule } from '../auth.module';
 import { UserModule } from '../user.module';
+import { SeedingModule } from './seeding.module';
+import { seedProviders } from 'src/infrastructure/providers/seed.providers';
 
 @Module({
   imports: [
-    DatabaseModule, // Esto te da acceso al proveedor 'MYSQL_DATA_SOURCE'
+    DatabaseModule, // Esto da acceso al proveedor 'MYSQL_DATA_SOURCE'
     AuthModule,
     UserModule,
     LocationModule,
@@ -21,16 +23,15 @@ import { UserModule } from '../user.module';
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la aplicación
     }),
+    SeedingModule
   ],
   providers: [
-    SeedingService,
     ...authEntitiesProviders, // Esto da acceso a los proveedores de entidades de autenticación
   ]
 })
 export class AppModule implements OnApplicationBootstrap {
   constructor(
     private readonly seedingService: SeedingService,
-    private readonly appCommandService: AppCommandService,
     private readonly configService: ConfigService
   ) {}
 
@@ -40,7 +41,6 @@ export class AppModule implements OnApplicationBootstrap {
     
     if (isDevEnvironment || shouldSeedDb) {
       await this.seedingService.seed();
-      // await this.appCommandService.create();
     }
   }
 }

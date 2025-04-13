@@ -1,0 +1,82 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcryptjs';
+
+import { AbstractSeeder } from './abstract.seeder';
+import { ISeeder } from '../interfaces/seeder.interface';
+import { IDataLoader } from '../interfaces/data-loader.interface';
+import { IUserSeed } from '../interfaces/user-seed.interface';
+
+import { UserEntity } from 'src/infrastructure/persistence/user.entity';
+import { RoleEntity } from 'src/infrastructure/persistence/role.entity';
+import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.entity';
+
+@Injectable()
+export class UserSeeder
+  extends AbstractSeeder<UserEntity, IUserSeed>
+  implements ISeeder
+{
+  constructor(
+    @Inject('USER_REPOSITORY')
+    repository: Repository<UserEntity>,
+    @Inject('ROLE_REPOSITORY')
+    private readonly roleRepository: Repository<RoleEntity>,
+    @Inject('NEIGHBORHOOD_REPOSITORY')
+    private readonly neighborhoodRepository: Repository<NeighborhoodEntity>,
+    @Inject('IDataLoader')
+    protected readonly jsonLoader: IDataLoader,
+    private readonly configService: ConfigService,
+  ) {
+    super(repository);
+  }
+
+  protected async alreadySeeded(): Promise<boolean> {
+    return (await this.repository.count()) > 0;
+  }
+
+  protected async getSeeds(): Promise<IUserSeed[]> {
+    return this.jsonLoader.load<IUserSeed>('user-seeds.json');
+  }
+
+  protected async transform(seeds: IUserSeed[]): Promise<UserEntity[]> {
+    const password = await this.getHashedPassword();
+
+    return Promise.all(
+      seeds.map(async (seed) => {
+        const role = await this.resolveRole(seed.role.name);
+        const neighborhood = await this.resolveNeighborhood(seed.neighborhood.name);
+
+        return this.repository.create({
+          dni: seed.dni,
+          first_name: seed.first_name,
+          last_name: seed.last_name,
+          email: seed.email,
+          phone: seed.phone,
+          password,
+          role,
+          address: seed.address,
+          neighborhood,
+        });
+      }),
+    );
+  }
+
+  private async getHashedPassword(): Promise<string> {
+    const plainPassword =
+      this.configService.get<string>('SEED_USER_PASSWORD') ?? 'defaultPass123!';
+    return bcrypt.hash(plainPassword, 10);
+  }
+
+  private async resolveRole(name: string): Promise<RoleEntity> {
+    const role = await this.roleRepository.findOneBy({ name });
+    if (!role) throw new Error(`Role not found: ${name}`);
+    return role;
+  }
+
+  private async resolveNeighborhood(name: string): Promise<NeighborhoodEntity> {
+    const neighborhood = await this.neighborhoodRepository.findOneBy({ name });
+    if (!neighborhood) throw new Error(`Neighborhood not found: ${name}`);
+    return neighborhood;
+  }
+}
