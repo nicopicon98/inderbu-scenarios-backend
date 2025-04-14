@@ -25,9 +25,7 @@ import { seedProviders } from 'src/infrastructure/providers/seed.providers';
     }),
     SeedingModule
   ],
-  providers: [
-    ...authEntitiesProviders, // Esto da acceso a los proveedores de entidades de autenticación
-  ]
+  providers: []
 })
 export class AppModule implements OnApplicationBootstrap {
   constructor(

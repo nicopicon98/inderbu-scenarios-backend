@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { IUserApplicationPort } from '../ports/inbound/user-application.port';
+import * as bcrypt from 'bcryptjs';
+import { CreateUserDto } from 'src/infrastructure/adapters/inbound/http/dtos/user/create-user-request.dto';
+import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
+import { IUserRepositoryPort } from 'src/core/domain/ports/outbound/user-repository.port';
 
 @Injectable()
 export class UserApplicationService implements IUserApplicationPort {
-  constructor() {}
+  constructor(
+    @Inject('IUserRepositoryPort')
+    private readonly userRepository: IUserRepositoryPort,
+  ) {}
 
-  getUsers(): {
-    id: number;
-    name: string;
-    email: string;
-  }[] {
-    return [
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'jhondoe@email.com',
-      },
-      {
-        id: 2,
-        name: 'Jane Doe',
-        email: 'janedoe@email.com',
-      },
-    ];
+  async createUser(createUserDto: CreateUserDto): Promise<UserDomainEntity> {
+    // Se verifica que el correo no esté registrado
+    const existingUser = await this.userRepository.findByEmail(
+      createUserDto.email,
+    );
+    if (existingUser) {
+      throw new ConflictException('El correo electrónico ya está registrado');
+    }
+
+    // Se hashea la contraseña
+    const passwordHash = await bcrypt.hash(createUserDto.password, 10);
+    const userDomain = UserDomainEntity.builder()
+      .withDni(createUserDto.dni)
+      .withFirstName(createUserDto.firstName)
+      .withLastName(createUserDto.lastName)
+      .withEmail(createUserDto.email)
+      .withPhone(createUserDto.phone)
+      .withPasswordHash(passwordHash)
+      .withRoleId(createUserDto.roleId)
+      .withAddress(createUserDto.address)
+      .withNeighborhoodId(createUserDto.neighborhoodId)
+      .build();
+    try {
+      return await this.userRepository.save(userDomain);
+    } catch (error) {
+      console.log({error});
+      throw new ConflictException('Error al guardar el usuario', error);
+    }
+  }
+
+  async findByEmail(email: string): Promise<UserDomainEntity | null> {
+    return this.userRepository.findByEmail(email);
   }
 }

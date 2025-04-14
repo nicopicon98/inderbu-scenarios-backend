@@ -10,6 +10,7 @@ import { MenuItemEntity } from '../persistence/menu-item.entity';
 import { ModuleEntity } from '../persistence/module.entity';
 import { UserEntity } from '../persistence/user.entity';
 import { RoleEntity } from '../persistence/role.entity';
+import { UserApplicationService } from 'src/core/application/services/user-application.service';
 
 export const authEntitiesProviders = [
   AuthenticationService,
@@ -17,8 +18,11 @@ export const authEntitiesProviders = [
     provide: 'IUserRepositoryPort',
     useClass: UserRepositoryAdapter,
   },
+  {
+    provide: 'IUserApplicationPort',
+    useClass: UserApplicationService,
+  },
   JwtStrategy,
-  JwtService,
   {
     provide: 'USER_REPOSITORY',
     useFactory: (dataSource: DataSource) =>

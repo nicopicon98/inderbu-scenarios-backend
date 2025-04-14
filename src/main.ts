@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ResponseInterceptor } from './infrastructure/common/incerceptors/response.intecerptor';
 import { HttpExceptionFilter } from './infrastructure/common/filters/http-exception.filter';
+import { ValidationPipe } from '@nestjs/common';
 
 function loadEnv() {
   dotenv.config();
@@ -16,6 +17,15 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseInterceptor());
   // Registro de filters globales
   app.useGlobalFilters(new HttpExceptionFilter());
+  // Registro de pipes globales
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // Transforma los payloads según los DTOs
+      whitelist: true, // Elimina propiedades no definidas en el DTO
+      forbidNonWhitelisted: true, // Lanza error si se envían propiedades adicionales
+      forbidUnknownValues: true, // Opcional, para asegurarse de que sólo se validen los valores conocidos
+    }),
+  );
   // Registro de swagger
   const swaggerConfigDocument = new DocumentBuilder()
     .setTitle('inderbu API')

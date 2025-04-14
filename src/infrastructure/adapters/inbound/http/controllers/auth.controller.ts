@@ -11,7 +11,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthenticationService } from 'src/core/application/services/auth.service';
-import { LoginDto } from '../dtos/login.dto';
+import { LoginDto } from '../dtos/auth/login.dto';
 
 @Controller('auth')
 export class AuthController {

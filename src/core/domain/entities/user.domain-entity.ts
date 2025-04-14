@@ -25,7 +25,7 @@ export class UserDomainEntity {
   private readonly passwordHash: string;
   
   @Expose()
-  public readonly role: string; // Aquí usamos el nombre o identificador del rol como string
+  public readonly roleId: number;
   
   @Expose()
   public readonly address: string;
@@ -42,7 +42,7 @@ export class UserDomainEntity {
     this.email = builder.email;
     this.phone = builder.phone;
     this.passwordHash = builder.passwordHash;
-    this.role = builder.role;
+    this.roleId = builder.roleId;
     this.address = builder.address;
     this.neighborhoodId = builder.neighborhoodId;
   }
@@ -74,7 +74,7 @@ export class UserDomainBuilder {
   email: string = '';
   phone: string = '';
   passwordHash: string = '';
-  role: string = '';
+  roleId: number = 0;
   address: string = '';
   neighborhoodId: number = 0;
 
@@ -113,8 +113,8 @@ export class UserDomainBuilder {
     return this;
   }
   
-  withRole(role: string): UserDomainBuilder {
-    this.role = role;
+  withRoleId(roleId: number): UserDomainBuilder {
+    this.roleId = roleId;
     return this;
   }
   

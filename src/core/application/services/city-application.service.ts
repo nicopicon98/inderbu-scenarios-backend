@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 import { DataSource, Repository } from 'typeorm';
-import { ICityApplicationPort } from '../ports/inbound/city-application.port';
+
 import { ICityRepositoryPort } from 'src/core/domain/ports/outbound/city-repository.port';
+import { ICityApplicationPort } from '../ports/inbound/city-application.port';
+import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 
 @Injectable()
 export class CityApplicationService implements ICityApplicationPort {
@@ -16,11 +17,7 @@ export class CityApplicationService implements ICityApplicationPort {
   async getAll() {
     const cityRepository: Repository<CityEntity> =
       this.databaseSource.getRepository(CityEntity);
-    const allCities = await cityRepository.find();
-    return {
-      status: 200,
-      data: allCities,
-    };
+    return await cityRepository.find();
   }
 
   async findById(id: number): Promise<any> {
