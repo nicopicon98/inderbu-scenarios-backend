@@ -35,45 +35,84 @@ export class SubScenarioRepositoryAdapter
     return entities.map((entity) => this.toDomain(entity));
   }
 
+  /** Lista paginada + búsqueda ponderada */
   async findPaged(opts: PageOptionsDto) {
     const { page = 1, limit = 20, search, scenarioId, activityAreaId } = opts;
 
-    const qb = this.repository
+    const qb: SelectQueryBuilder<SubScenarioEntity> = this.repository
       .createQueryBuilder('s')
       .leftJoinAndSelect('s.scenario', 'sc')
       .leftJoinAndSelect('s.activityArea', 'aa')
       .leftJoinAndSelect('s.fieldSurfaceType', 'fs');
 
-    /* filtros */
+    /* ───── filtros ───── */
     if (scenarioId) qb.andWhere('sc.id = :scenarioId', { scenarioId });
     if (activityAreaId)
       qb.andWhere('aa.id = :activityAreaId', { activityAreaId });
 
-    /* búsqueda */
+    /* ───── búsqueda ───── */
     if (search?.trim()) {
-      qb.addSelect(
-        `
-        (
-          (MATCH(s.name) AGAINST (:q IN NATURAL LANGUAGE MODE))*1     +
-          (MATCH(sc.name) AGAINST (:q IN NATURAL LANGUAGE MODE))*0.75 +
-          (MATCH(aa.name) AGAINST (:q IN NATURAL LANGUAGE MODE))*0.50 +
-          (MATCH(fs.name) AGAINST (:q IN NATURAL LANGUAGE MODE))*0.25
-        )`,
-        'score',
-      )
-        .andWhere(
+      const term = search.trim();
+      const isTiny = term.length < 4;
+
+      if (isTiny) {
+        /* LIKE prefijo + contiene */
+        const likeAny = `%${term}%`;
+        const likePref = `${term}%`;
+
+        qb.addSelect(
           `
-          MATCH(s.name)  AGAINST (:q IN NATURAL LANGUAGE MODE)
-          OR MATCH(sc.name)  AGAINST (:q IN NATURAL LANGUAGE MODE)
-          OR MATCH(aa.name)  AGAINST (:q IN NATURAL LANGUAGE MODE)
-          OR MATCH(fs.name)  AGAINST (:q IN NATURAL LANGUAGE MODE)
-        `,
-          { q: search },
+        (
+          (s.name  LIKE :pref)*1     + (s.name  LIKE :any)*0.5 +
+          (sc.name LIKE :pref)*0.75 + (sc.name LIKE :any)*0.375 +
+          (aa.name LIKE :pref)*0.50 + (aa.name LIKE :any)*0.25 +
+          (fs.name LIKE :pref)*0.25 + (fs.name LIKE :any)*0.125
+        )`,
+          'score',
+        ).andWhere(
+          `
+          s.name  LIKE :any OR sc.name LIKE :any
+       OR aa.name LIKE :any OR fs.name LIKE :any
+      `,
+          { pref: likePref, any: likeAny },
+        );
+
+        /* posición de la coincidencia en s.name */
+        qb.addSelect('LOCATE(:loc, s.name)', 'pos')
+          .setParameter('loc', term)
+          .orderBy('score', 'DESC')
+          .addOrderBy('pos', 'ASC');
+      } else {
+        /* FULLTEXT BOOLEAN MODE con wildcard * */
+        const boolean = term
+          .split(/\s+/)
+          .map((w) => `+${w}*`)
+          .join(' ');
+
+        qb.addSelect(
+          `
+        (
+          (MATCH(s.name)  AGAINST (:q IN BOOLEAN MODE))*1     +
+          (MATCH(sc.name) AGAINST (:q IN BOOLEAN MODE))*0.75 +
+          (MATCH(aa.name) AGAINST (:q IN BOOLEAN MODE))*0.50 +
+          (MATCH(fs.name) AGAINST (:q IN BOOLEAN MODE))*0.25
+        )`,
+          'score',
         )
-        .orderBy('score', 'DESC');
+          .andWhere(
+            `
+          MATCH(s.name)  AGAINST (:q IN BOOLEAN MODE) OR
+          MATCH(sc.name) AGAINST (:q IN BOOLEAN MODE) OR
+          MATCH(aa.name) AGAINST (:q IN BOOLEAN MODE) OR
+          MATCH(fs.name) AGAINST (:q IN BOOLEAN MODE)
+      `,
+            { q: boolean },
+          )
+          .orderBy('score', 'DESC');
+      }
     }
 
-    /* orden secundario + paginación */
+    /* ───── orden secundario + paginación ───── */
     qb.addOrderBy('s.name', 'ASC')
       .skip((page - 1) * limit)
       .take(limit);
