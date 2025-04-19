@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 
 import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
 import { IUserApplicationPort } from '../ports/inbound/user-application.port';
+import { APPLICATION_PORTS } from '../tokens/ports';
 
 @Injectable()
-export class AuthenticationService {
+export class AuthApplicationService {
   constructor(
-    @Inject('IUserApplicationPort')
+    @Inject(APPLICATION_PORTS.USER)
     private readonly userApplicationService: IUserApplicationPort,
     private jwtService: JwtService,
   ) {}
@@ -18,11 +19,7 @@ export class AuthenticationService {
     password: string,
   ): Promise<UserDomainEntity | null> {
     const user = await this.userApplicationService.findByEmail(email);
-    console.log(user);
-    if (
-      user &&
-      (await bcrypt.compare(password, (user as any)['passwordHash']))
-    ) {
+    if ( user && (await bcrypt.compare(password, (user as any)['passwordHash']))) {
       return user;
     }
     return null;
@@ -30,9 +27,6 @@ export class AuthenticationService {
 
   async login(user: UserDomainEntity): Promise<{ access_token: string }> {
     const payload = { email: user.email, sub: user.id, role: user.roleId };
-    console.log(payload);
-    // Si el objeto jwtService expone la configuración, podría verse algo así:
-    console.log('JwtService options:', (this.jwtService as any).options);
     return {
       access_token: this.jwtService.sign(payload),
     };

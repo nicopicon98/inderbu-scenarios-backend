@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { seedProviders } from 'src/infrastructure/providers/seed.providers';
+import { seedProviders } from 'src/infrastructure/providers/seed/seed.providers';
 import { DatabaseModule } from '../database/database.module';
 import { DiscoveryModule } from '@nestjs/core';
 

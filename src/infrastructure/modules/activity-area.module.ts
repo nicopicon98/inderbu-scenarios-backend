@@ -4,7 +4,7 @@ import { ActivityAreaRepositoryAdapter } from '../adapters/outbound/repositories
 import { ActivityAreaApplicationService } from 'src/core/application/services/activity-area-application.service';
 import { ActivityAreaController } from '../adapters/inbound/http/controllers/activity-area.controller';
 import { DatabaseModule } from './database/database.module';
-import { activityAreaProviders } from '../providers/activity-area.providers';
+import { activityAreaProviders } from '../providers/activity-area/activity-area.providers';
 
 @Module({
   imports: [

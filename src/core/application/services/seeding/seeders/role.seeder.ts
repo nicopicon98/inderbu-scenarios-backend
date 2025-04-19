@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { AbstractSeeder } from './abstract.seeder';
-import { ISeeder } from '../interfaces/seeder.interface';
-import { IRoleSeed } from '../interfaces/role-seed.interface';
-import { IDataLoader } from '../interfaces/data-loader.interface';
-import { RoleEntity } from 'src/infrastructure/persistence/role.entity';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
+import { RoleEntity } from 'src/infrastructure/persistence/role.entity';
+import { DATA_LOADER } from 'src/infrastructure/tokens/data-loader';
+import { IDataLoader } from '../interfaces/data-loader.interface';
+import { IRoleSeed } from '../interfaces/role-seed.interface';
+import { ISeeder } from '../interfaces/seeder.interface';
+import { AbstractSeeder } from './abstract.seeder';
 
 @Injectable()
 export class RoleSeeder
@@ -16,7 +17,7 @@ export class RoleSeeder
   constructor(
     @Inject(MYSQL_REPOSITORY.ROLE)
     repository: Repository<RoleEntity>,
-    @Inject('IDataLoader')
+    @Inject(DATA_LOADER.JSON)
     protected readonly jsonLoader: IDataLoader,
   ) {
     super(repository);

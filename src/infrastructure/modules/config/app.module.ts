@@ -1,19 +1,16 @@
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-
-import { AppCommandService } from 'src/core/application/services/app-command.service';
 import { SeedingService } from '../../../core/application/services/seeding/seeding.service';
-import { authEntitiesProviders } from '../../providers/auth.providers';
+import { ENV_CONFIG } from 'src/infrastructure/config/env.constants';
 import { LocationModule } from '../location/location.module';
 import { DatabaseModule } from '../database/database.module';
+import { ActivityAreaModule } from '../activity-area.module';
+import { SubScenarioModule } from '../sub-scenario.module';
 import { AppCommandModule } from './command.module';
+import { SeedingModule } from './seeding.module';
 import { AuthModule } from '../auth.module';
 import { UserModule } from '../user.module';
-import { SeedingModule } from './seeding.module';
-import { seedProviders } from 'src/infrastructure/providers/seed.providers';
-import { SubScenarioModule } from '../sub-scenario.module';
-import { ActivityAreaModule } from '../activity-area.module';
 
 @Module({
   imports: [
@@ -38,8 +35,8 @@ export class AppModule implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
-    const isDevEnvironment = this.configService.get('NODE_ENV') === 'development';
-    const shouldSeedDb = this.configService.get('SEED_DB') === 'true';
+    const isDevEnvironment = this.configService.get(ENV_CONFIG.APP.NODE_ENV) === 'development';
+    const shouldSeedDb = this.configService.get(ENV_CONFIG.APP.SEED_DB) === 'true';
     
     if (isDevEnvironment || shouldSeedDb) {
       await this.seedingService.seed();

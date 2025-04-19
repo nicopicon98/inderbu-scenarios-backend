@@ -1,29 +1,15 @@
 import { DataSource } from 'typeorm';
 
-import { UserRepositoryAdapter } from '../adapters/outbound/repositories/user-repository.adapter';
-import { UserApplicationService } from 'src/core/application/services/user-application.service';
-import { AuthenticationService } from 'src/core/application/services/auth.service';
-import { JwtStrategy } from '../adapters/inbound/http/strategies/jwt.strategy';
-import { NeighborhoodEntity } from '../persistence/neighborhood.entity';
-import { PermissionEntity } from '../persistence/permission.entity';
+import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.entity';
+import { PermissionEntity } from 'src/infrastructure/persistence/permission.entity';
+import { MenuItemEntity } from 'src/infrastructure/persistence/menu-item.entity';
+import { ModuleEntity } from 'src/infrastructure/persistence/module.entity';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
-import { MenuItemEntity } from '../persistence/menu-item.entity';
-import { ModuleEntity } from '../persistence/module.entity';
-import { UserEntity } from '../persistence/user.entity';
-import { RoleEntity } from '../persistence/role.entity';
-import { DATA_SOURCE } from '../tokens/data_sources';
+import { UserEntity } from 'src/infrastructure/persistence/user.entity';
+import { RoleEntity } from 'src/infrastructure/persistence/role.entity';
+import { DATA_SOURCE } from 'src/infrastructure/tokens/data_sources';
 
-export const authEntitiesProviders = [
-  AuthenticationService,
-  {
-    provide: 'IUserRepositoryPort',
-    useClass: UserRepositoryAdapter,
-  },
-  {
-    provide: 'IUserApplicationPort',
-    useClass: UserApplicationService,
-  },
-  JwtStrategy,
+export const repositoryEntityProviders = [
   {
     provide: MYSQL_REPOSITORY.USER,
     useFactory: (dataSource: DataSource) =>

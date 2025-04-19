@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
 import { AuthController } from '../adapters/inbound/http/controllers/auth.controller';
-import { AuthenticationService } from 'src/core/application/services/auth.service';
-import { authEntitiesProviders } from '../providers/auth.providers';
+import { AuthApplicationService } from 'src/core/application/services/auth.service';
+import { authEntitiesProviders } from '../providers/auth/auth.providers';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -20,7 +20,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     DatabaseModule,
   ],
   providers: [...authEntitiesProviders],
-  exports: [AuthenticationService],
+  exports: [AuthApplicationService],
   controllers: [AuthController],
 })
 export class AuthModule {}

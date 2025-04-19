@@ -4,4 +4,6 @@ export const REPOSITORY_PORTS = {
   ACTIVITY_AREA: 'IActivityAreaRepositoryPort',
   FIELD_SURFACE: 'IFieldSurfaceTypeRepositoryPort',
   NEIGHBORHOOD: 'INeighborhoodRepositoryPort',
+  USER: 'IUserRepositoryPort',
+  CITY: 'ICityRepositoryPort',
 } as const;

@@ -7,6 +7,7 @@ import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.e
 import { ScenarioEntity } from 'src/infrastructure/persistence/scenario.entity';
 import { ISubScenarioSeed } from '../interfaces/sub-scenario-seed.interface';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
+import { DATA_LOADER } from 'src/infrastructure/tokens/data-loader';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { AbstractSeeder } from './abstract.seeder';
@@ -25,7 +26,7 @@ export class SubScenarioSeeder
     private activityAreaRepository: Repository<ActivityAreaEntity>,
     @Inject(MYSQL_REPOSITORY.FIELD_SURFACE_TYPE)
     private fieldSurfaceTypeRepository: Repository<FieldSurfaceTypeEntity>,
-    @Inject('IDataLoader')
+    @Inject(DATA_LOADER.JSON)
     protected jsonLoader: IDataLoader,
   ) {
     super(repository);

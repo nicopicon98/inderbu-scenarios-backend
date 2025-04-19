@@ -5,13 +5,14 @@ import { ICityRepositoryPort } from 'src/core/domain/ports/outbound/city-reposit
 import { ICityApplicationPort } from '../ports/inbound/city-application.port';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 import { DATA_SOURCE } from 'src/infrastructure/tokens/data_sources';
+import { REPOSITORY_PORTS } from 'src/infrastructure/tokens/ports';
 
 @Injectable()
 export class CityApplicationService implements ICityApplicationPort {
   constructor(
     @Inject(DATA_SOURCE.MYSQL)
     private readonly databaseSource: DataSource,
-    @Inject('ICityRepositoryPort')
+    @Inject(REPOSITORY_PORTS.CITY)
     private readonly cityRepositoryAdapter: ICityRepositoryPort,
   ) {}
 

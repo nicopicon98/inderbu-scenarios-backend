@@ -1,16 +1,16 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { plainToInstance } from 'class-transformer';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 
 import { IUserApplicationPort } from 'src/core/application/ports/inbound/user-application.port';
-import { UserResponseDto } from '../dtos/user/create-user-response.dto';
-import { CreateUserDto } from '../dtos/user/create-user-request.dto';
 import { UserResponseMapper } from 'src/infrastructure/mappers/user/user-response.mapper';
+import { UserResponseDto } from '../dtos/user/create-user-response.dto';
+import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
+import { CreateUserDto } from '../dtos/user/create-user-request.dto';
 
 @Controller('users')
 export class UserController {
   constructor(
-    @Inject('IUserApplicationPort')
+    @Inject(APPLICATION_PORTS.USER)
     private readonly userApplicationService: IUserApplicationPort,
   ) {}
   @Post()

@@ -1,14 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IActivityAreaApplicationPort } from '../ports/inbound/activity-area-application.port';
+
 import { IActivityAreaRepositoryPort } from 'src/core/domain/ports/outbound/activity-area-repository.port';
 import { ActivityAreaDomainEntity } from 'src/core/domain/entities/activity-area.domain-entity';
+import { IActivityAreaApplicationPort } from '../ports/inbound/activity-area-application.port';
+import { REPOSITORY_PORTS } from 'src/infrastructure/tokens/ports';
 
 @Injectable()
 export class ActivityAreaApplicationService
   implements IActivityAreaApplicationPort
 {
   constructor(
-    @Inject('IActivityAreaRepositoryPort')
+    @Inject(REPOSITORY_PORTS.ACTIVITY_AREA)
     private readonly repo: IActivityAreaRepositoryPort,
   ) {}
 

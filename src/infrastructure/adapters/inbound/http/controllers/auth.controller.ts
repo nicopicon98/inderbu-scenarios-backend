@@ -1,5 +1,3 @@
-// infrastructure/adapters/inbound/http/controllers/auth.controller.ts
-
 import {
   Controller,
   Post,
@@ -10,13 +8,14 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthenticationService } from 'src/core/application/services/auth.service';
-import { LoginDto } from '../dtos/auth/login.dto';
+
+import { AuthApplicationService } from 'src/core/application/services/auth.service';
 import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
+import { LoginDto } from '../dtos/auth/login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthenticationService) {}
+  constructor(private readonly authService: AuthApplicationService) {}
 
   @Post('login')
   @ApiOperation({ summary: 'Inicia sesión con correo electrónico y contraseña' })

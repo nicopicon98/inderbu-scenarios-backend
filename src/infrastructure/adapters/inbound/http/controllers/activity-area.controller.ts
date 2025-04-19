@@ -1,13 +1,15 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+
+import { ActivityAreaResponseMapper } from 'src/infrastructure/mappers/activity-area/activity-area-response.mapper';
 import { IActivityAreaApplicationPort } from 'src/core/application/ports/inbound/activity-area-application.port';
 import { ActivityAreaResponseDto } from '../dtos/activity-area/activity-area-response.dto';
-import { ActivityAreaResponseMapper } from 'src/infrastructure/mappers/activity-area/activity-area-response.mapper';
+import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
 
 @Controller('activity-areas')
 export class ActivityAreaController {
   constructor(
-    @Inject('IActivityAreaApplicationPort')
+    @Inject(APPLICATION_PORTS.ACTIVITY_AREA)
     private readonly service: IActivityAreaApplicationPort,
   ) {}
 

@@ -1,12 +1,11 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common';
-import { ICityApplicationPort } from 'src/core/application/ports/inbound/city-application.port';
-import { CityEntity } from 'src/infrastructure/persistence/city.entity';
-import { DataSource } from 'typeorm';
 
+import { ICityApplicationPort } from 'src/core/application/ports/inbound/city-application.port';
+import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
 @Controller('cities')
 export class CityController {
   constructor(
-    @Inject('ICityApplicationPort')
+    @Inject(APPLICATION_PORTS.CITY)
     private readonly cityApplicationService: ICityApplicationPort
   ) {}
 

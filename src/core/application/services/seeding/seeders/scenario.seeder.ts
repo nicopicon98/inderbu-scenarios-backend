@@ -5,6 +5,7 @@ import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.
 import { ScenarioEntity } from 'src/infrastructure/persistence/scenario.entity';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { IScenarioSeed } from '../interfaces/scenario-seeds.interface';
+import { DATA_LOADER } from 'src/infrastructure/tokens/data-loader';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { AbstractSeeder } from './abstract.seeder';
@@ -16,7 +17,7 @@ export class ScenarioSeeder extends AbstractSeeder<ScenarioEntity, IScenarioSeed
     repository: Repository<ScenarioEntity>,
     @Inject(MYSQL_REPOSITORY.NEIGHBORHOOD)
     private neighborhoodRepository: Repository<NeighborhoodEntity>,
-    @Inject('IDataLoader')
+    @Inject(DATA_LOADER.JSON)
     protected jsonLoader: IDataLoader,
   ) {
     super(repository);

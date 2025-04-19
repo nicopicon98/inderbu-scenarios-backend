@@ -3,10 +3,12 @@ import { Repository } from 'typeorm';
 
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
+import { DATA_LOADER } from 'src/infrastructure/tokens/data-loader';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { ICitySeed } from '../interfaces/city-seed.interface';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { AbstractSeeder } from './abstract.seeder';
+
 
 @Injectable()
 export class CitySeeder
@@ -16,7 +18,7 @@ export class CitySeeder
   constructor(
     @Inject(MYSQL_REPOSITORY.CITY)
     repository: Repository<CityEntity>,
-    @Inject('IDataLoader')
+    @Inject(DATA_LOADER.JSON)
     protected jsonLoader: IDataLoader,
   ) {
     super(repository);

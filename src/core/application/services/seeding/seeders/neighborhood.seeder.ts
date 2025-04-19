@@ -5,6 +5,7 @@ import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.
 import { CommuneEntity } from 'src/infrastructure/persistence/commune.entity';
 import { INeighborhoodSeed } from '../interfaces/neighborhood-seed.interface';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
+import { DATA_LOADER } from 'src/infrastructure/tokens/data-loader';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { AbstractSeeder } from './abstract.seeder';
@@ -19,7 +20,7 @@ export class NeighborhoodSeeder
     repository: Repository<NeighborhoodEntity>,
     @Inject(MYSQL_REPOSITORY.COMMUNE)
     private communeRepository: Repository<CommuneEntity>,
-    @Inject('IDataLoader')
+    @Inject(DATA_LOADER.JSON)
     protected jsonLoader: IDataLoader,
   ) {
     super(repository);

@@ -5,6 +5,7 @@ import { SubScenarioPriceEntity } from 'src/infrastructure/persistence/sub-scena
 import { ISubScenarioPriceSeed } from '../interfaces/sub-scenario-price-seed.interface';
 import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.entity';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
+import { DATA_LOADER } from 'src/infrastructure/tokens/data-loader';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { AbstractSeeder } from './abstract.seeder';
@@ -16,7 +17,7 @@ export class SubScenarioPriceSeeder extends AbstractSeeder<SubScenarioPriceEntit
     repository: Repository<SubScenarioPriceEntity>,
     @Inject(MYSQL_REPOSITORY.SUB_SCENARIO)
     private subScenarioRepository: Repository<SubScenarioEntity>,
-    @Inject('IDataLoader')
+    @Inject(DATA_LOADER.JSON)
     protected jsonLoader: IDataLoader,
   ) {
     super(repository);
