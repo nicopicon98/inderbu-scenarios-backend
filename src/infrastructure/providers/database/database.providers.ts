@@ -1,12 +1,12 @@
 import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 
+import { DATA_SOURCE } from 'src/infrastructure/tokens/data_sources';
 import { persistenceEntities } from './entities';
 
-export const MYSQL_DATA_SOURCE = 'MYSQL_DATA_SOURCE';
 export const databaseProviders = [
   {
-    provide: MYSQL_DATA_SOURCE,
+    provide: DATA_SOURCE.MYSQL,
     useFactory: async (configService: ConfigService) => { // ConfigService inyectado
       const dataSource = new DataSource({
         type: 'mysql',
@@ -20,6 +20,6 @@ export const databaseProviders = [
       });
       return dataSource.initialize();
     },
-    inject: [ConfigService], // ¡Esto es crucial!
+    inject: [ConfigService],
   },
 ];

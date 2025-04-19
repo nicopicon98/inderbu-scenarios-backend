@@ -1,24 +1,24 @@
-import { JwtService } from '@nestjs/jwt';
 import { DataSource } from 'typeorm';
 
+import { FieldSurfaceTypeSeeder } from '../../core/application/services/seeding/seeders/field-surface-type.seeder';
+import { SubScenarioPriceSeeder } from '../../core/application/services/seeding/seeders/sub-scenario-price.seeder';
 import { JsonLoaderStrategy } from 'src/core/application/services/seeding/strategies/json-loader.strategy';
+import { ActivityAreaSeeder } from '../../core/application/services/seeding/seeders/activity-area.seeder';
 import { NeighborhoodSeeder } from 'src/core/application/services/seeding/seeders/neighborhood.seeder';
+import { SubScenarioSeeder } from 'src/core/application/services/seeding/seeders/sub-scenario.seeder';
+import { ScenarioSeeder } from 'src/core/application/services/seeding/seeders/scenario.seeder';
 import { CommuneSeeder } from 'src/core/application/services/seeding/seeders/commune.seeder';
 import { SeedingService } from 'src/core/application/services/seeding/seeding.service';
 import { CitySeeder } from 'src/core/application/services/seeding/seeders/city.seeder';
+import { RoleSeeder } from 'src/core/application/services/seeding/seeders/role.seeder';
+import { UserSeeder } from 'src/core/application/services/seeding/seeders/user.seeder';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { NeighborhoodEntity } from '../persistence/neighborhood.entity';
 import { CommuneEntity } from '../persistence/commune.entity';
 import { RoleEntity } from '../persistence/role.entity';
 import { CityEntity } from '../persistence/city.entity';
 import { UserEntity } from '../persistence/user.entity';
-import { RoleSeeder } from 'src/core/application/services/seeding/seeders/role.seeder';
-import { UserSeeder } from 'src/core/application/services/seeding/seeders/user.seeder';
-import { FieldSurfaceTypeSeeder } from '../../core/application/services/seeding/seeders/field-surface-type.seeder';
-import { ActivityAreaSeeder } from '../../core/application/services/seeding/seeders/activity-area.seeder';
-import { ScenarioSeeder } from 'src/core/application/services/seeding/seeders/scenario.seeder';
-import { SubScenarioSeeder } from 'src/core/application/services/seeding/seeders/sub-scenario.seeder';
-import { SubScenarioPriceSeeder } from '../../core/application/services/seeding/seeders/sub-scenario-price.seeder';
-import { MYSQL_DATA_SOURCE } from './database/database.providers';
+import { DATA_SOURCE } from '../tokens/data_sources';
 
 /**
  * Important: Import seeders in the order of dependencies. Cardinality is important.
@@ -51,63 +51,63 @@ export const seedProviders = [
     inject: ['JSON_LOADER_STRATEGY'],
   },
   {
-    provide: 'CITY_REPOSITORY',
+    provide: MYSQL_REPOSITORY.CITY,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(CityEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'ROLE_REPOSITORY',
+    provide: MYSQL_REPOSITORY.ROLE,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(RoleEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'COMMUNE_REPOSITORY',
+    provide: MYSQL_REPOSITORY.COMMUNE,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(CommuneEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'NEIGHBORHOOD_REPOSITORY',
+    provide: MYSQL_REPOSITORY.NEIGHBORHOOD,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(NeighborhoodEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'USER_REPOSITORY',
+    provide: MYSQL_REPOSITORY.USER,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(UserEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'FIELD_SURFACE_TYPE_REPOSITORY',
+    provide: MYSQL_REPOSITORY.FIELD_SURFACE_TYPE,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository('FieldSurfaceTypeEntity'),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'ACTIVITY_AREA_REPOSITORY',
+    provide: MYSQL_REPOSITORY.ACTIVITY_AREA,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository('ActivityAreaEntity'),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'SCENARIO_REPOSITORY',
+    provide: MYSQL_REPOSITORY.SCENARIO,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository('ScenarioEntity'),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'SUB_SCENARIO_REPOSITORY',
+    provide: MYSQL_REPOSITORY.SUB_SCENARIO,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository('SubScenarioEntity'),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'SUB_SCENARIO_PRICE_REPOSITORY',
+    provide: MYSQL_REPOSITORY.SUB_SCENARIO_PRICE,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository('SubScenarioPriceEntity'),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
 ];

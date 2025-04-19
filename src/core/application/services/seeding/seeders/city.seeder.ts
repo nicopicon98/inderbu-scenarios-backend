@@ -1,11 +1,12 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { ICitySeed } from '../interfaces/city-seed.interface';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { AbstractSeeder } from './abstract.seeder';
-
-import { Repository } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CitySeeder
@@ -13,7 +14,7 @@ export class CitySeeder
   implements ISeeder
 {
   constructor(
-    @Inject('CITY_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.CITY)
     repository: Repository<CityEntity>,
     @Inject('IDataLoader')
     protected jsonLoader: IDataLoader,

@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../../../persistence/user.entity';
-import { BaseRepositoryAdapter } from './common/base-repository.adapter';
-import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
+
 import { IUserRepositoryPort } from 'src/core/domain/ports/outbound/user-repository.port';
 import { UserEntityMapper } from 'src/infrastructure/mappers/user/user-entity.mapper';
+import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
+import { BaseRepositoryAdapter } from './common/base-repository.adapter';
+import { UserEntity } from '../../../persistence/user.entity';
 
 @Injectable()
 export class UserRepositoryAdapter
@@ -12,14 +14,12 @@ export class UserRepositoryAdapter
   implements IUserRepositoryPort
 {
   constructor(
-    @Inject('USER_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.USER)
     repository: Repository<UserEntity>,
   ) {
-    // Indicamos que al cargar un usuario se incluyan las relaciones necesarias.
     super(repository, ['role', 'neighborhood']);
   }
 
-  // Mapea el modelo de dominio a la entidad de persistencia
   protected toEntity(domain: UserDomainEntity): UserEntity {
     return UserEntityMapper.toEntity(domain);
   }
@@ -33,7 +33,6 @@ export class UserRepositoryAdapter
       where: { email },
       relations: ['role', 'neighborhood'],
     });
-    console.log({ userEntity });
     if (!userEntity) return null;
     return this.toDomain(userEntity);
   }

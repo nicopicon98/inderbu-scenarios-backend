@@ -17,7 +17,7 @@ import { ActivityAreaModule } from '../activity-area.module';
 
 @Module({
   imports: [
-    DatabaseModule, // Esto da acceso al proveedor 'MYSQL_DATA_SOURCE'
+    DatabaseModule, // Esto da acceso al proveedor 'DATA_SOURCE.MYSQL'
     AuthModule,
     UserModule,
     LocationModule,

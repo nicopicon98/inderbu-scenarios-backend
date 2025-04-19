@@ -2,4 +2,5 @@ import { NeighborhoodDomainEntity } from '../../entities/neighborhood.domain-ent
 
 export interface INeighborhoodRepositoryPort {
   findAll(): Promise<NeighborhoodDomainEntity[]>;
+  findByIds(ids: number[]): Promise<NeighborhoodDomainEntity[]>;
 }

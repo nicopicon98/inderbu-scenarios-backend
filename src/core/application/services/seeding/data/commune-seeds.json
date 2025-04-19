@@ -1,6 +1,70 @@
 [
     {
+        "name": "NORTE 1",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "NORORIENTAL 2",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "SAN FRANCISCO 3",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "OCCIDENTAL 4",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "GARCÍA ROVIRA 5",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "LA CONCORDIA 6",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "LA CIUDADELA 7",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "SUR OCCIDENTE 8",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "LA PEDREGOSA 9",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "PROVENZA 10",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "SUR 11",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "CABECERA DEL LLANO 12",
+        "cityName": "Bucaramanga"
+    },
+    {
         "name": "ORIENTAL 13",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "MORRORICO 14",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "CENTRO 15",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "LAGOS DEL CACIQUE 16",
+        "cityName": "Bucaramanga"
+    },
+    {
+        "name": "MUTIS 17",
         "cityName": "Bucaramanga"
     }
 ]

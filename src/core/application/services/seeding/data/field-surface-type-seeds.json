@@ -1,6 +1,23 @@
 [
-    { "name": "Concreto" },
-    { "name": "Sintético" },
-    { "name": "Césped" }
-  ]
-  
+  {
+    "name": "Concreto"
+  },
+  {
+    "name": "Sintético"
+  },
+  {
+    "name": "Césped"
+  },
+  {
+    "name": "Cemento"
+  },
+  {
+    "name": "Césped sintético"
+  },
+  {
+    "name": "Césped natural"
+  },
+  {
+    "name": "Tierra"
+  }
+]

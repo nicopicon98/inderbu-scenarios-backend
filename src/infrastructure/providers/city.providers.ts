@@ -1,8 +1,10 @@
-import { CityApplicationService } from 'src/core/application/services/city-application.service';
-import { CityRepositoryAdapter } from '../adapters/outbound/repositories/city-repository.adapter';
 import { DataSource } from 'typeorm';
+
+import { CityRepositoryAdapter } from '../adapters/outbound/repositories/city-repository.adapter';
+import { CityApplicationService } from 'src/core/application/services/city-application.service';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { CityEntity } from '../persistence/city.entity';
-import { MYSQL_DATA_SOURCE } from './database/database.providers';
+import { DATA_SOURCE } from '../tokens/data_sources';
 
 export const CityProviders = [
   {
@@ -14,8 +16,8 @@ export const CityProviders = [
     useClass: CityRepositoryAdapter
   },
   {
-    provide: 'CITY_REPOSITORY',
+    provide: MYSQL_REPOSITORY.CITY,
     useFactory: (dataSource: DataSource) => dataSource.getRepository(CityEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
 ];

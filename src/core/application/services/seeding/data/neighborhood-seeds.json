@@ -1,6 +1,798 @@
 [
     {
+        "name": "El Rosal",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Colorados",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Café Madrid",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Las Hamacas",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Altos del Kennedy",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Kennedy",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Balcones del Kennedy",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Las Olas",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Villa Rosa",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Omagá",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Minuto de Dios",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Tejar Norte",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Miramar",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Miradores del Kennedy",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "El Pablón",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Barrio Nuevo",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Divino Niño",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "13 de Junio",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Altos del Progreso",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "María Paz",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Colseguros Norte",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Rosa Alta",
+        "communeName": "NORTE 1"
+    },
+    {
+        "name": "Los Angeles",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Villa Helena I y II",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "José María Córdoba",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Esperanza I, II y III",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Lizcano I y II",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Regadero Norte",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "San Cristóbal",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "La Juventud",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Transición I, II, III, IV y V",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "La Independencia",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Villa Mercedes",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Bosque Norte",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Mesetas del Santuario",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Villa María",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Mirador",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Primaveral",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Olitas",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Olas II",
+        "communeName": "NORORIENTAL 2"
+    },
+    {
+        "name": "Norte Bajo",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "San Rafael",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "El Cinal",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "Chapinero",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "Comuneros",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "La Universidad",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "Mutualidad",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "Modelo",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "San Francisco",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "Alarcón",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "Puerto Rico",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "UIS",
+        "communeName": "SAN FRANCISCO 3"
+    },
+    {
+        "name": "Gaitán",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Granadas",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Nariño",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Girardot",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "La Feria",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Nápoles",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Pío Xll",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "23 de Junio",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Santander",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Don Bosco",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "12 de Octubre",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "La Gloria",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Camilo Torres",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Zarabanda",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Granjas de Palonegro Norte",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Granjas de Palonegro Sur",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Navas",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Zona Industrial",
+        "communeName": "OCCIDENTAL 4"
+    },
+    {
+        "name": "Quinta Estrella",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "Alfonso López",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "La Joya",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "Chorreras de Don Juan",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "Campohermoso",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "La Estrella",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "Primero de Mayo",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "Carlos Pizarro",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "Rincón de la Paz",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "5 de Enero",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "José Antonio Galán",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "Pantano I, II, III",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "La Palma",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "La Esmeralda",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "Villa Romero",
+        "communeName": "GARCÍA ROVIRA 5"
+    },
+    {
+        "name": "La Concordia",
+        "communeName": "LA CONCORDIA 6"
+    },
+    {
+        "name": "San Miguel",
+        "communeName": "LA CONCORDIA 6"
+    },
+    {
+        "name": "Candiles",
+        "communeName": "LA CONCORDIA 6"
+    },
+    {
+        "name": "Aeropuerto Gómez Niño",
+        "communeName": "LA CONCORDIA 6"
+    },
+    {
+        "name": "Ricaurte",
+        "communeName": "LA CONCORDIA 6"
+    },
+    {
+        "name": "La Ceiba",
+        "communeName": "LA CONCORDIA 6"
+    },
+    {
+        "name": "La Salle",
+        "communeName": "LA CONCORDIA 6"
+    },
+    {
+        "name": "La Victoria",
+        "communeName": "LA CONCORDIA 6"
+    },
+    {
+        "name": "Ciudadela Real de Minas",
+        "communeName": "LA CIUDADELA 7"
+    },
+    {
+        "name": "Macaregua",
+        "communeName": "LA CIUDADELA 7"
+    },
+    {
+        "name": "Ciudad Bolívar",
+        "communeName": "LA CIUDADELA 7"
+    },
+    {
+        "name": "Los Almendros",
+        "communeName": "LA CIUDADELA 7"
+    },
+    {
+        "name": "Plazuela Real",
+        "communeName": "LA CIUDADELA 7"
+    },
+    {
+        "name": "Los Naranjos",
+        "communeName": "LA CIUDADELA 7"
+    },
+    {
+        "name": "Plaza Mayor",
+        "communeName": "LA CIUDADELA 7"
+    },
+    {
+        "name": "San Gerardo",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Antiguo Colombia",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Los Canelos",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Bucaramanga",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Cordoncillo I y II",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Pablo VI",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "20 de Julio",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Africa",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Juan XXIII",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Los Laureles",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "El Fonce",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Manzana 10 del barrio Bucaramanga",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "La Hoyada",
+        "communeName": "SUR OCCIDENTE 8"
+    },
+    {
+        "name": "Quebrada la Iglesia",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Antonia Santos Sur",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "San Pedro Claver",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "San Martín",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Nueva Granada",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "La Pedregosa",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "La Libertad",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Diamante I",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Villa Inés",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Asturias",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Las Casitas",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Los Guayacanes",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Torres de Alejandría",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Urbanización el Sol I y II",
+        "communeName": "LA PEDREGOSA 9"
+    },
+    {
+        "name": "Diamante II",
+        "communeName": "PROVENZA 10"
+    },
+    {
+        "name": "San Luis",
+        "communeName": "PROVENZA 10"
+    },
+    {
+        "name": "Provenza",
+        "communeName": "PROVENZA 10"
+    },
+    {
+        "name": "El Cristal",
+        "communeName": "PROVENZA 10"
+    },
+    {
+        "name": "Fontana",
+        "communeName": "PROVENZA 10"
+    },
+    {
+        "name": "Granjas de Provenza",
+        "communeName": "PROVENZA 10"
+    },
+    {
+        "name": "Neptuno",
+        "communeName": "PROVENZA 10"
+    },
+    {
+        "name": "Ciudad Venecia",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Villa Alicia",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "El Rocío",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Toledo Plata",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Dangond",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Manuela Beltrán I y II",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Igzabelar",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Santa María",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Los Robles",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Granjas de Julio Rincón",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Jardines de Coaviconsa",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "El Candado",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Malpaso",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "El Porvenir",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Las Delicias",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Condado de Gibraltar",
+        "communeName": "SUR 11"
+    },
+    {
+        "name": "Cabecera del Llano",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Sotomayor",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Antiguo Campestre",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Bolarquí",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Mercedes",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Puerta del Sol",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Conucos",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "El Jardín",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Pan de Azúcar",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Los Cedros",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Terrazas",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "La Floresta",
+        "communeName": "CABECERA DEL LLANO 12"
+    },
+    {
+        "name": "Los Pinos",
+        "communeName": "ORIENTAL 13"
+    },
+    {
         "name": "San Alonso",
         "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Galán",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "La Aurora",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Las Américas",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "El Prado",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Mejoras Públicas",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Antonia Santos",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Bolívar",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Alvarez",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Estadio",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Batallón",
+        "communeName": "ORIENTAL 13"
+    },
+    {
+        "name": "Vegas de Morrorico",
+        "communeName": "MORRORICO 14"
+    },
+    {
+        "name": "El Diviso",
+        "communeName": "MORRORICO 14"
+    },
+    {
+        "name": "Morrorico",
+        "communeName": "MORRORICO 14"
+    },
+    {
+        "name": "Albania",
+        "communeName": "MORRORICO 14"
+    },
+    {
+        "name": "Miraflores",
+        "communeName": "MORRORICO 14"
+    },
+    {
+        "name": "Buenos Aires",
+        "communeName": "MORRORICO 14"
+    },
+    {
+        "name": "Limoncito",
+        "communeName": "MORRORICO 14"
+    },
+    {
+        "name": "Los Sauces",
+        "communeName": "MORRORICO 14"
+    },
+    {
+        "name": "Centro",
+        "communeName": "CENTRO 15"
+    },
+    {
+        "name": "García Rovira",
+        "communeName": "CENTRO 15"
+    },
+    {
+        "name": "Lagos del Cacique",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "El Tejar",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "San Expedito",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "Santa Barbara",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "Quinta del Cacique",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "Palmeras del Cacique",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "Altos del Cacique",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "Altos del Lago",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "UDES",
+        "communeName": "LAGOS DEL CACIQUE 16"
+    },
+    {
+        "name": "Mutis",
+        "communeName": "MUTIS 17"
+    },
+    {
+        "name": "Balconcitos",
+        "communeName": "MUTIS 17"
+    },
+    {
+        "name": "Monterredondo",
+        "communeName": "MUTIS 17"
+    },
+    {
+        "name": "Héroes",
+        "communeName": "MUTIS 17"
+    },
+    {
+        "name": "Estoraques I y II",
+        "communeName": "MUTIS 17"
+    },
+    {
+        "name": "Prados del Mutis",
+        "communeName": "MUTIS 17"
     }
 ]

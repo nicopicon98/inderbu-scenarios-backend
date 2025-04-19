@@ -11,6 +11,7 @@ import { IUserSeed } from '../interfaces/user-seed.interface';
 import { UserEntity } from 'src/infrastructure/persistence/user.entity';
 import { RoleEntity } from 'src/infrastructure/persistence/role.entity';
 import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.entity';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 
 @Injectable()
 export class UserSeeder
@@ -18,11 +19,11 @@ export class UserSeeder
   implements ISeeder
 {
   constructor(
-    @Inject('USER_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.USER)
     repository: Repository<UserEntity>,
-    @Inject('ROLE_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.ROLE)
     private readonly roleRepository: Repository<RoleEntity>,
-    @Inject('NEIGHBORHOOD_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.NEIGHBORHOOD)
     private readonly neighborhoodRepository: Repository<NeighborhoodEntity>,
     @Inject('IDataLoader')
     protected readonly jsonLoader: IDataLoader,

@@ -6,11 +6,12 @@ import { AuthenticationService } from 'src/core/application/services/auth.servic
 import { JwtStrategy } from '../adapters/inbound/http/strategies/jwt.strategy';
 import { NeighborhoodEntity } from '../persistence/neighborhood.entity';
 import { PermissionEntity } from '../persistence/permission.entity';
-import { MYSQL_DATA_SOURCE } from './database/database.providers';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { MenuItemEntity } from '../persistence/menu-item.entity';
 import { ModuleEntity } from '../persistence/module.entity';
 import { UserEntity } from '../persistence/user.entity';
 import { RoleEntity } from '../persistence/role.entity';
+import { DATA_SOURCE } from '../tokens/data_sources';
 
 export const authEntitiesProviders = [
   AuthenticationService,
@@ -24,39 +25,39 @@ export const authEntitiesProviders = [
   },
   JwtStrategy,
   {
-    provide: 'USER_REPOSITORY',
+    provide: MYSQL_REPOSITORY.USER,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(UserEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'ROLE_REPOSITORY',
+    provide: MYSQL_REPOSITORY.ROLE,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(RoleEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'PERMISSION_REPOSITORY',
+    provide: MYSQL_REPOSITORY.PERMISSION,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(PermissionEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'MODULE_REPOSITORY',
+    provide: MYSQL_REPOSITORY.MODULE,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(ModuleEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'MENU_ITEM_REPOSITORY',
+    provide: MYSQL_REPOSITORY.MENU_ITEM,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(MenuItemEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: 'NEIGHBORHOOD_REPOSITORY',
+    provide: MYSQL_REPOSITORY.NEIGHBORHOOD,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(NeighborhoodEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
 ];

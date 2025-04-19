@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { SubScenarioPriceEntity } from 'src/infrastructure/persistence/sub-scenario-price.entity';
 import { ISubScenarioPriceSeed } from '../interfaces/sub-scenario-price-seed.interface';
 import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.entity';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { AbstractSeeder } from './abstract.seeder';
@@ -11,9 +12,9 @@ import { AbstractSeeder } from './abstract.seeder';
 @Injectable()
 export class SubScenarioPriceSeeder extends AbstractSeeder<SubScenarioPriceEntity, ISubScenarioPriceSeed> implements ISeeder {
   constructor(
-    @Inject('SUB_SCENARIO_PRICE_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.SUB_SCENARIO_PRICE)
     repository: Repository<SubScenarioPriceEntity>,
-    @Inject('SUB_SCENARIO_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.SUB_SCENARIO)
     private subScenarioRepository: Repository<SubScenarioEntity>,
     @Inject('IDataLoader')
     protected jsonLoader: IDataLoader,

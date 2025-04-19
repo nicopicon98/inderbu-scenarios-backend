@@ -1,13 +1,13 @@
 import { Command } from 'nestjs-command';
 import { DataSource } from 'typeorm';
 import { Inject } from '@nestjs/common';
+import { DATA_SOURCE } from 'src/infrastructure/tokens/data_sources';
 
-import { MYSQL_DATA_SOURCE } from 'src/infrastructure/providers/database/database.providers';
 
 export class AppCommandService {
   constructor(
-    @Inject(MYSQL_DATA_SOURCE)
-    private readonly databaseDatasource: DataSource
+    @Inject(DATA_SOURCE.MYSQL)
+    private readonly datasource: DataSource
   ) {}
 
   @Command({
@@ -16,12 +16,12 @@ export class AppCommandService {
       'Inicia todos los seeds',
   })
   async create() {
-    const queryRunner = this.databaseDatasource.createQueryRunner();
+    const queryRunner = this.datasource.createQueryRunner();
 
     try {
       await queryRunner.connect();
       console.log('Ejecutando seeders...');
-      await this.runSeeders(this.databaseDatasource);
+      await this.runSeeders(this.datasource);
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         console.log('Revirtiendo la transacción...');

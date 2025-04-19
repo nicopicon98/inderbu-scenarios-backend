@@ -1,10 +1,12 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository, In } from 'typeorm';
-import { BaseRepositoryAdapter } from './common/base-repository.adapter';
+
 import { IScenarioRepositoryPort } from 'src/core/domain/ports/outbound/scenario-repository.port';
 import { ScenarioEntityMapper } from 'src/infrastructure/mappers/scenario/scenario-entity.mapper';
-import { ScenarioEntity } from 'src/infrastructure/persistence/scenario.entity';
 import { ScenarioDomainEntity } from 'src/core/domain/entities/scenario.domain-entity';
+import { ScenarioEntity } from 'src/infrastructure/persistence/scenario.entity';
+import { BaseRepositoryAdapter } from './common/base-repository.adapter';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 
 @Injectable()
 export class ScenarioRepositoryAdapter
@@ -12,7 +14,7 @@ export class ScenarioRepositoryAdapter
   implements IScenarioRepositoryPort
 {
   constructor(
-    @Inject('SCENARIO_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.SCENARIO)
     repo: Repository<ScenarioEntity>,
   ) {
     super(repo);
@@ -25,9 +27,11 @@ export class ScenarioRepositoryAdapter
     return ScenarioEntityMapper.toEntity(d);
   }
 
-  async findByIds(ids: number[]) {
-    if (!ids.length) return [];
-    const list = await this.repository.find({ where: { id: In(ids) } });
-    return list.map(this.toDomain);
+  async findByIds(ids: number[]): Promise<ScenarioDomainEntity[]> {
+    const entities = await this.repository.find({
+      where: { id: In(ids) },
+      relations: ['neighborhood'],
+    });
+    return entities.map(e => this.toDomain(e));
   }
 }

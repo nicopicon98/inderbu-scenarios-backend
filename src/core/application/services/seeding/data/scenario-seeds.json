@@ -8,5 +8,10 @@
         "name": "El Mutis",
         "address": "Dirección de El Mutis",
         "neighborhoodName": "San Alonso"
+    },
+    {
+        "name": "Cancha Multiple - Microfutbol Basquetbol",
+        "neighborhoodName": "Bucaramanga",
+        "address": "Calle 68 Con Cra 10"
     }
 ]

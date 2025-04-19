@@ -10,9 +10,14 @@ export class NamedRefWithAddressDto extends NamedRefDto {
   @ApiProperty() address!: string;
 }
 
-export class SubScenarioWithRelationsDto extends SubScenarioResponseDto {
+export class NamedRefWithNeighborhoodDto extends NamedRefWithAddressDto {
   @ApiProperty({ type: () => NamedRefDto })
-  scenario?: NamedRefWithAddressDto;
+  neighborhood!: NamedRefDto;
+}
+
+export class SubScenarioWithRelationsDto extends SubScenarioResponseDto {
+  @ApiProperty({ type: () => NamedRefWithNeighborhoodDto })
+  scenario!:   NamedRefWithNeighborhoodDto;
 
   @ApiProperty({ required: false, type: () => NamedRefDto })
   activityArea?: NamedRefDto;

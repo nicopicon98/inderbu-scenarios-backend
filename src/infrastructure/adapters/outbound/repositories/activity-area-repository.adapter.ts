@@ -1,17 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 
-import { IActivityAreaRepositoryPort } from 'src/core/domain/ports/outbound/activity-area-repository.port';
-import { ActivityAreaEntity } from 'src/infrastructure/persistence/activity-area.entity';
 import { ActivityAreaEntityMapper } from 'src/infrastructure/mappers/activity-area/activity-area-entity.mapper';
+import { IActivityAreaRepositoryPort } from 'src/core/domain/ports/outbound/activity-area-repository.port';
 import { ActivityAreaDomainEntity } from 'src/core/domain/entities/activity-area.domain-entity';
+import { ActivityAreaEntity } from 'src/infrastructure/persistence/activity-area.entity';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 
 @Injectable()
 export class ActivityAreaRepositoryAdapter
   implements IActivityAreaRepositoryPort
 {
   constructor(
-    @Inject('ACTIVITY_AREA_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.ACTIVITY_AREA)
     private readonly repository: Repository<ActivityAreaEntity>,
   ) {}
 

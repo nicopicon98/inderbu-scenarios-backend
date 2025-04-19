@@ -3,13 +3,21 @@ import { ScenarioEntity } from 'src/infrastructure/persistence/scenario.entity';
 
 export class ScenarioEntityMapper {
   static toDomain(e: ScenarioEntity): ScenarioDomainEntity {
-    return new ScenarioDomainEntity(e.id, e.name, e.address);
+    return ScenarioDomainEntity.builder()
+      .withId(e.id)
+      .withName(e.name)
+      .withAddress(e.address)
+      .withNeighborhoodId(e.neighborhood?.id ?? 0) // <–– mapea aquí
+      .build();
   }
-  static toEntity(d: ScenarioDomainEntity): ScenarioEntity {
-    return Object.assign(new ScenarioEntity(), {
-      id: d.id ?? undefined,
-      name: d.name,
-      address: d.address,
-    });
+  static toEntity(domain: ScenarioDomainEntity): ScenarioEntity {
+    const e = new ScenarioEntity();
+    if (domain.id != null) e.id = domain.id;
+    e.name = domain.name;
+    e.address = domain.address;
+    if (domain.neighborhoodId != null) {
+      e.neighborhood = { id: domain.neighborhoodId } as any;
+    }
+    return e;
   }
 }

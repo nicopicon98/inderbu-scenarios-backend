@@ -1,13 +1,23 @@
-import { FieldSurfaceTypeDomainEntity } from "src/core/domain/entities/field-surface-type.domain-entity";
-import { FieldSurfaceTypeEntity } from "src/infrastructure/persistence/field-surface-type.entity";
+// src/infrastructure/mappers/field-surface-type/field-surface-type-entity.mapper.ts
+import { FieldSurfaceTypeEntity } from 'src/infrastructure/persistence/field-surface-type.entity';
+import {
+  FieldSurfaceTypeDomainEntity,
+  FieldSurfaceTypeDomainBuilder,
+} from 'src/core/domain/entities/field-surface-type.domain-entity';
 
 export class FieldSurfaceTypeEntityMapper {
   static toDomain(e: FieldSurfaceTypeEntity): FieldSurfaceTypeDomainEntity {
-    return new FieldSurfaceTypeDomainEntity(e.id, e.name);
+    return FieldSurfaceTypeDomainEntity.builder()
+      .withId(e.id)
+      .withName(e.name)
+      .build();
   }
+
   static toEntity(d: FieldSurfaceTypeDomainEntity): FieldSurfaceTypeEntity {
     const e = new FieldSurfaceTypeEntity();
-    if (d.id) e.id = d.id;
+    if (d.id != null) {
+      e.id = d.id;
+    }
     e.name = d.name;
     return e;
   }

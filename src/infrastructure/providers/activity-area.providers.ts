@@ -3,14 +3,15 @@ import { DataSource } from 'typeorm';
 import { ActivityAreaApplicationService } from 'src/core/application/services/activity-area-application.service';
 import { ActivityAreaRepositoryAdapter } from '../adapters/outbound/repositories/activity-area-repository.adapter';
 import { ActivityAreaEntity } from '../persistence/activity-area.entity';
-import { MYSQL_DATA_SOURCE } from './database/database.providers';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
+import { DATA_SOURCE } from '../tokens/data_sources';
 
 export const activityAreaProviders = [
   {
-    provide: 'ACTIVITY_AREA_REPOSITORY',
+    provide: MYSQL_REPOSITORY.ACTIVITY_AREA,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(ActivityAreaEntity),
-    inject: [MYSQL_DATA_SOURCE],
+    inject: [DATA_SOURCE.MYSQL],
   },
   {
     provide: 'IActivityAreaRepositoryPort',

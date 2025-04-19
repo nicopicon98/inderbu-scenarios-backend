@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 
 import { FieldSurfaceTypeEntity } from 'src/infrastructure/persistence/field-surface-type.entity';
 import { IFieldSurfaceTypeSeed } from '../interfaces/field-surface-type-seed.interface';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { ISeeder } from '../interfaces/seeder.interface';
 import { AbstractSeeder } from './abstract.seeder';
@@ -13,7 +14,7 @@ export class FieldSurfaceTypeSeeder
   implements ISeeder
 {
   constructor(
-    @Inject('FIELD_SURFACE_TYPE_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.FIELD_SURFACE_TYPE)
     repository: Repository<FieldSurfaceTypeEntity>,
     @Inject('IDataLoader')
     protected jsonLoader: IDataLoader,

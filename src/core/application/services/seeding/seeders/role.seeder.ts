@@ -6,6 +6,7 @@ import { ISeeder } from '../interfaces/seeder.interface';
 import { IRoleSeed } from '../interfaces/role-seed.interface';
 import { IDataLoader } from '../interfaces/data-loader.interface';
 import { RoleEntity } from 'src/infrastructure/persistence/role.entity';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 
 @Injectable()
 export class RoleSeeder
@@ -13,7 +14,7 @@ export class RoleSeeder
   implements ISeeder
 {
   constructor(
-    @Inject('ROLE_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.ROLE)
     repository: Repository<RoleEntity>,
     @Inject('IDataLoader')
     protected readonly jsonLoader: IDataLoader,

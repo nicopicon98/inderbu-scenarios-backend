@@ -1,12 +1,14 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+
+
 import { CommuneEntity } from 'src/infrastructure/persistence/commune.entity';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 import { ICommuneSeed } from '../interfaces/commune-seed.interface';
 import { IDataLoader } from '../interfaces/data-loader.interface';
-import { AbstractSeeder } from './abstract.seeder';
-
-import { Repository } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
 import { ISeeder } from '../interfaces/seeder.interface';
+import { AbstractSeeder } from './abstract.seeder';
 
 @Injectable()
 export class CommuneSeeder
@@ -14,9 +16,9 @@ export class CommuneSeeder
   implements ISeeder
 {
   constructor(
-    @Inject('COMMUNE_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.COMMUNE)
     repository: Repository<CommuneEntity>,
-    @Inject('CITY_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.CITY)
     private cityRepository: Repository<CityEntity>,
     @Inject('IDataLoader')
     protected jsonLoader: IDataLoader,

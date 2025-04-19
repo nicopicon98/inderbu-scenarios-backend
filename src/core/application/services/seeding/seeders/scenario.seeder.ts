@@ -1,18 +1,20 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { ScenarioEntity } from 'src/infrastructure/persistence/scenario.entity';
+
 import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.entity';
-import { IDataLoader } from '../interfaces/data-loader.interface';
-import { AbstractSeeder } from './abstract.seeder';
-import { ISeeder } from '../interfaces/seeder.interface';
+import { ScenarioEntity } from 'src/infrastructure/persistence/scenario.entity';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { IScenarioSeed } from '../interfaces/scenario-seeds.interface';
+import { IDataLoader } from '../interfaces/data-loader.interface';
+import { ISeeder } from '../interfaces/seeder.interface';
+import { AbstractSeeder } from './abstract.seeder';
 
 @Injectable()
 export class ScenarioSeeder extends AbstractSeeder<ScenarioEntity, IScenarioSeed> implements ISeeder {
   constructor(
-    @Inject('SCENARIO_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.SCENARIO)
     repository: Repository<ScenarioEntity>,
-    @Inject('NEIGHBORHOOD_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.NEIGHBORHOOD)
     private neighborhoodRepository: Repository<NeighborhoodEntity>,
     @Inject('IDataLoader')
     protected jsonLoader: IDataLoader,

@@ -5,8 +5,9 @@ import { SubScenarioEntityMapper } from 'src/infrastructure/mappers/sub-scenario
 import { ISubScenarioRepositoryPort } from 'src/core/domain/ports/outbound/sub-scenario-repository.port';
 import { SubScenarioDomainEntity } from 'src/core/domain/entities/sub-scenario.domain-entity';
 import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.entity';
-import { BaseRepositoryAdapter } from './common/base-repository.adapter';
 import { PageOptionsDto } from '../../inbound/http/dtos/common/page-options.dto';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
+import { BaseRepositoryAdapter } from './common/base-repository.adapter';
 
 @Injectable()
 export class SubScenarioRepositoryAdapter
@@ -14,7 +15,7 @@ export class SubScenarioRepositoryAdapter
   implements ISubScenarioRepositoryPort
 {
   constructor(
-    @Inject('SUB_SCENARIO_REPOSITORY')
+    @Inject(MYSQL_REPOSITORY.SUB_SCENARIO)
     repository: Repository<SubScenarioEntity>,
   ) {
     super(repository, ['scenario', 'activityArea', 'fieldSurfaceType']);
@@ -37,18 +38,26 @@ export class SubScenarioRepositoryAdapter
 
   /** Lista paginada + búsqueda ponderada */
   async findPaged(opts: PageOptionsDto) {
-    const { page = 1, limit = 20, search, scenarioId, activityAreaId } = opts;
+    const {
+      page = 1,
+      limit = 20,
+      search,
+      scenarioId,
+      activityAreaId,
+      neighborhoodId,
+    } = opts;
 
     const qb: SelectQueryBuilder<SubScenarioEntity> = this.repository
       .createQueryBuilder('s')
       .leftJoinAndSelect('s.scenario', 'sc')
+      .leftJoinAndSelect('sc.neighborhood', 'n')
       .leftJoinAndSelect('s.activityArea', 'aa')
       .leftJoinAndSelect('s.fieldSurfaceType', 'fs');
 
     /* ───── filtros ───── */
     if (scenarioId) qb.andWhere('sc.id = :scenarioId', { scenarioId });
-    if (activityAreaId)
-      qb.andWhere('aa.id = :activityAreaId', { activityAreaId });
+    if (activityAreaId) qb.andWhere('aa.id = :activityAreaId', { activityAreaId });
+    if (neighborhoodId) qb.andWhere('n.id  = :neighborhoodId', { neighborhoodId });
 
     /* ───── búsqueda ───── */
     if (search?.trim()) {

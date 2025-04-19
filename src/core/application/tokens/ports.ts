@@ -1,6 +1,3 @@
-export const PORTS = {
-  SubScenarioRepo: 'ISubScenarioRepositoryPort',
-  ScenarioRepo: 'IScenarioRepositoryPort',
-  ActivityAreaRepo: 'IActivityAreaRepositoryPort',
-  FieldSurfaceRepo: 'IFieldSurfaceTypeRepositoryPort',
+export const APPLICATION_PORTS = {
+  SUB_SCENARIO: 'ISubScenarioApplicationPort',
 } as const;
