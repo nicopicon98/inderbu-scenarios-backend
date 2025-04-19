@@ -18,6 +18,7 @@ export class AuthenticationService {
     password: string,
   ): Promise<UserDomainEntity | null> {
     const user = await this.userApplicationService.findByEmail(email);
+    console.log(user);
     if (
       user &&
       (await bcrypt.compare(password, (user as any)['passwordHash']))
@@ -28,7 +29,7 @@ export class AuthenticationService {
   }
 
   async login(user: UserDomainEntity): Promise<{ access_token: string }> {
-    const payload = { email: user.email, sub: user.id };
+    const payload = { email: user.email, sub: user.id, role: user.roleId };
     console.log(payload);
     // Si el objeto jwtService expone la configuración, podría verse algo así:
     console.log('JwtService options:', (this.jwtService as any).options);

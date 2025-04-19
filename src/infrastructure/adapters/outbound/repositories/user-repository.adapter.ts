@@ -29,7 +29,11 @@ export class UserRepositoryAdapter
   }
 
   async findByEmail(email: string): Promise<UserDomainEntity | null> {
-    const userEntity = await this.repository.findOne({ where: { email } });
+    const userEntity: UserEntity | null = await this.repository.findOne({
+      where: { email },
+      relations: ['role', 'neighborhood'],
+    });
+    console.log({ userEntity });
     if (!userEntity) return null;
     return this.toDomain(userEntity);
   }

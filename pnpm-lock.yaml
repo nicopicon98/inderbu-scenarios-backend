@@ -46,7 +46,10 @@ importers:
         version: 16.4.7
       inderbu-scenarios-backend:
         specifier: 'file:'
-        version: file:(class-validator@0.14.1)(passport@0.7.0)(ts-node@10.9.2(@swc/core@1.11.11)(@types/node@22.13.11)(typescript@5.8.2))
+        version: file:(passport@0.7.0)(ts-node@10.9.2(@swc/core@1.11.11)(@types/node@22.13.11)(typescript@5.8.2))
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       mysql2:
         specifier: ^3.14.0
         version: 3.14.0
@@ -6272,7 +6275,7 @@ snapshots:
 
   imurmurhash@0.1.4: {}
 
-  inderbu-scenarios-backend@file:(class-validator@0.14.1)(passport@0.7.0)(ts-node@10.9.2(@swc/core@1.11.11)(@types/node@22.13.11)(typescript@5.8.2)):
+  inderbu-scenarios-backend@file:(passport@0.7.0)(ts-node@10.9.2(@swc/core@1.11.11)(@types/node@22.13.11)(typescript@5.8.2)):
     dependencies:
       '@nestjs/common': 11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/config': 4.0.2(@nestjs/common@11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
@@ -6284,6 +6287,7 @@ snapshots:
       bcrypt: 5.1.1
       bcryptjs: 3.0.2
       class-transformer: 0.5.1
+      class-validator: 0.14.1
       dotenv: 16.4.7
       mysql2: 3.14.0
       passport-jwt: 4.0.1
@@ -6297,7 +6301,6 @@ snapshots:
       - '@nestjs/websockets'
       - '@sap/hana-client'
       - better-sqlite3
-      - class-validator
       - encoding
       - hdb-pool
       - ioredis

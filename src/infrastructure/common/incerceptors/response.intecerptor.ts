@@ -21,15 +21,26 @@ export class ResponseInterceptor<T>
     context: ExecutionContext,
     next: CallHandler<T>,
   ): Observable<ApiResponse<T>> {
-    const ctx = context.switchToHttp();
-    const response = ctx.getResponse();
+    const statusCode = context.switchToHttp().getResponse().statusCode;
 
     return next.handle().pipe(
-      map((data: T) => ({
-        statusCode: response.statusCode,
-        message: 'Success',
-        data: data,
-      })),
+      map((payload: any) => {
+        // Si el payload ya trae { data, meta } lo dejamos plano
+        if (payload && payload.data !== undefined && payload.meta !== undefined) {
+          return {
+            statusCode,
+            message: 'Success',
+            ...payload         // ⬅️  expande data y meta al mismo nivel
+          };
+        }
+
+        // Caso normal: payload es un DTO simple o un array
+        return {
+          statusCode,
+          message: 'Success',
+          data: payload,
+        };
+      }),
     );
   }
 }

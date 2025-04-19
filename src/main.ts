@@ -26,6 +26,12 @@ async function bootstrap() {
       forbidUnknownValues: true, // Opcional, para asegurarse de que sólo se validen los valores conocidos
     }),
   );
+  // Configuración de CORS
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
   // Registro de swagger
   const swaggerConfigDocument = new DocumentBuilder()
     .setTitle('inderbu API')
@@ -35,7 +41,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfigDocument);
   SwaggerModule.setup('api-docs', app, document);
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3001);
 }
 
 bootstrap();

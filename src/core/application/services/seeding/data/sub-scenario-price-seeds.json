@@ -1,0 +1,22 @@
+[
+    {
+        "subScenarioName": "AMERICAS-CANCHA SINTETICA PARQUE RECREO DEPORTIVO",
+        "price": 100000.00
+    },
+    {
+        "subScenarioName": "AMERICAS-CANCHA MULTIPLE # 3 - PARQUE RECREO DEPORTIVO",
+        "price": 150000.00
+    },
+    {
+        "subScenarioName": "AMERICAS-CANCHA MULTIPLE # 2 - PARQUE RECREO DEPORTIVO",
+        "price": 150000.00
+    },
+    {
+        "subScenarioName": "AMERICAS-CANCHA MULTIPLE # 1 - PARQUE RECREO DEPORTIVO",
+        "price": 150000.00
+    },
+    {
+        "subScenarioName": "AMERICAS-CANCHA FUTBOL - PARQUE RECREO DEPORTIVO",
+        "price": 200000.00
+    }
+]

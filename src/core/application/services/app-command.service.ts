@@ -2,9 +2,11 @@ import { Command } from 'nestjs-command';
 import { DataSource } from 'typeorm';
 import { Inject } from '@nestjs/common';
 
+import { MYSQL_DATA_SOURCE } from 'src/infrastructure/providers/database/database.providers';
+
 export class AppCommandService {
   constructor(
-    @Inject('MYSQL_DATA_SOURCE')
+    @Inject(MYSQL_DATA_SOURCE)
     private readonly databaseDatasource: DataSource
   ) {}
 

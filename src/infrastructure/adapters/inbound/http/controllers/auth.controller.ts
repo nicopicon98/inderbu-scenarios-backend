@@ -12,6 +12,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthenticationService } from 'src/core/application/services/auth.service';
 import { LoginDto } from '../dtos/auth/login.dto';
+import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
 
 @Controller('auth')
 export class AuthController {
@@ -33,7 +34,7 @@ export class AuthController {
     type: LoginDto,
   })
   async login(@Body() body: LoginDto) {
-    const user = await this.authService.validateUser(body.email, body.password);
+    const user: UserDomainEntity | null = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
     }

@@ -6,12 +6,13 @@ import { AppCommandService } from 'src/core/application/services/app-command.ser
 import { SeedingService } from '../../../core/application/services/seeding/seeding.service';
 import { authEntitiesProviders } from '../../providers/auth.providers';
 import { LocationModule } from '../location/location.module';
-import { DatabaseModule } from '../database.module';
+import { DatabaseModule } from '../database/database.module';
 import { AppCommandModule } from './command.module';
 import { AuthModule } from '../auth.module';
 import { UserModule } from '../user.module';
 import { SeedingModule } from './seeding.module';
 import { seedProviders } from 'src/infrastructure/providers/seed.providers';
+import { SubScenarioModule } from '../sub-scenario.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { seedProviders } from 'src/infrastructure/providers/seed.providers';
     AuthModule,
     UserModule,
     LocationModule,
+    SubScenarioModule,
     AppCommandModule,
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la aplicación

@@ -4,7 +4,8 @@ import { UserApplicationService } from 'src/core/application/services/user-appli
 import { UserRepositoryAdapter } from '../adapters/outbound/repositories/user-repository.adapter';
 import { UserEntity } from '../persistence/user.entity';
 import { DataSource } from 'typeorm';
-import { DatabaseModule } from './database.module';
+import { DatabaseModule } from './database/database.module';
+import { MYSQL_DATA_SOURCE } from '../providers/database/database.providers';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { DatabaseModule } from './database.module';
       provide: 'USER_REPOSITORY',
       useFactory: (dataSource: DataSource) =>
         dataSource.getRepository(UserEntity),
-      inject: ['MYSQL_DATA_SOURCE'],
+      inject: [MYSQL_DATA_SOURCE],
     },
   ],
 })
