@@ -13,6 +13,7 @@ import { UserModule } from '../user.module';
 import { SeedingModule } from './seeding.module';
 import { seedProviders } from 'src/infrastructure/providers/seed.providers';
 import { SubScenarioModule } from '../sub-scenario.module';
+import { ActivityAreaModule } from '../activity-area.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SubScenarioModule } from '../sub-scenario.module';
     UserModule,
     LocationModule,
     SubScenarioModule,
+    ActivityAreaModule,
     AppCommandModule,
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la aplicación
