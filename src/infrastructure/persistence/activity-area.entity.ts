@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  Index,
+} from 'typeorm';
+
 import { SubScenarioEntity } from './sub-scenario.entity';
 
 @Entity('activity_areas')
@@ -10,7 +17,6 @@ export class ActivityAreaEntity {
   @Column({ length: 100 })
   name: string;
 
-  // Un área de actividad puede tener varios sub-escenarios
   @OneToMany(() => SubScenarioEntity, (subScenario) => subScenario.activityArea)
   subScenarios: SubScenarioEntity[];
 }

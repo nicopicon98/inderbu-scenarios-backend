@@ -41,11 +41,13 @@ export class SubScenarioApplicationService
   async listWithRelations(
     opts: PageOptionsDto,
   ): Promise<PageDto<SubScenarioWithRelationsDto>> {
-    const { data: subs, total } = await this.subScenarioRepository.findPaged(opts); // 1. dominio
+    const { data: subs, total } =
+      await this.subScenarioRepository.findPaged(opts); // 1. dominio
     const [scen, area, surf, neigh] = await this.loadReferenceMaps(subs); // 2. catálogos
     const dto = subs.map((s) =>
       SubScenarioMapper.toDto(s, scen, area, surf, neigh),
     );
+    console.log('DTO', dto);
     return new PageDto(
       dto,
       new PageMetaDto({
@@ -57,29 +59,41 @@ export class SubScenarioApplicationService
   }
 
   private async loadReferenceMaps(subs: SubScenarioDomainEntity[]) {
-    const scenIds: number[] = uniq(subs.map((s) => s.scenarioId));
-    const areaIds: number[] = uniq(subs.flatMap((s) => s.activityAreaId ?? []));
-    const surfIds: number[] = uniq(
-      subs.flatMap((s) => s.fieldSurfaceTypeId ?? []),
+    // 1. Extraer listados de IDs (numbers), filtrando nulos
+    const scenarioIds = uniq(subs.map((s) => s.scenarioId));
+    const activityAreaIds = uniq(subs
+      .map((s) => s.activityAreaId)
+      .filter((id): id is number => id != null)
     );
-
-    const scenarios: ScenarioDomainEntity[] =
-      await this.scenarioRepository.findByIds(scenIds);
-
-    /* ids de barrios presentes en esos escenarios */
-    const neighIds: number[] = uniq(scenarios.flatMap((sc) => sc.neighborhoodId ?? []));
-
-    const [areas, surfs, neighs] = await Promise.all([
-      this.activityAreaareaRepository.findByIds(areaIds),
-      this.fieldSurfaceRepository.findByIds(surfIds),
-      this.neighborhoodRepository.findByIds(neighIds),
+    const fieldSurfaceTypeIds = uniq(subs
+      .map((s) => s.fieldSurfaceTypeId)
+      .filter((id): id is number => id != null)
+    );
+  
+    // 2. Cargar las entidades de cada repositorio en paralelo
+    const [scenarios, activityAreas, fieldSurfaces] = await Promise.all([
+      this.scenarioRepository.findByIds(scenarioIds),
+      this.activityAreaareaRepository.findByIds(activityAreaIds),
+      this.fieldSurfaceRepository.findByIds(fieldSurfaceTypeIds),
     ]);
-
+  
+    // 3. Ahora que ya tienes los escenarios, extrae los barrios
+    const neighborhoodIds = uniq(
+      scenarios
+        .map((sc) => sc.neighborhoodId)
+        .filter((id): id is number => id != null)
+    );
+    const neighborhoods = await this.neighborhoodRepository.findByIds(
+      neighborhoodIds
+    );
+  
+    // 4. Construye tus mapas
     return [
-      toMap(scenarios),
-      toMap(areas),
-      toMap(surfs),
-      toMap(neighs),
+      toMap(scenarios),         // Map<scenarioId, ScenarioDomainEntity>
+      toMap(activityAreas),     // Map<activityAreaId, ActivityAreaDomainEntity>
+      toMap(fieldSurfaces),     // Map<fieldSurfaceTypeId, FieldSurfaceTypeDomainEntity>
+      toMap(neighborhoods),     // Map<neighborhoodId, NeighborhoodDomainEntity>
     ] as const;
   }
+  
 }

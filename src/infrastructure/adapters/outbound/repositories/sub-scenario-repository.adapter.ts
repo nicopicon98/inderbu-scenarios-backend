@@ -56,8 +56,10 @@ export class SubScenarioRepositoryAdapter
 
     /* ───── filtros ───── */
     if (scenarioId) qb.andWhere('sc.id = :scenarioId', { scenarioId });
-    if (activityAreaId) qb.andWhere('aa.id = :activityAreaId', { activityAreaId });
-    if (neighborhoodId) qb.andWhere('n.id  = :neighborhoodId', { neighborhoodId });
+    if (activityAreaId)
+      qb.andWhere('aa.id = :activityAreaId', { activityAreaId });
+    if (neighborhoodId)
+      qb.andWhere('n.id  = :neighborhoodId', { neighborhoodId });
 
     /* ───── búsqueda ───── */
     if (search?.trim()) {
