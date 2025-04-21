@@ -2,9 +2,11 @@ import { DataSource } from 'typeorm';
 
 import { FieldSurfaceTypeEntity } from 'src/infrastructure/persistence/field-surface-type.entity';
 import { SubScenarioPriceEntity } from 'src/infrastructure/persistence/sub-scenario-price.entity';
+import { ReservationStateEntity } from 'src/infrastructure/persistence/reservation-state.entity';
 import { ActivityAreaEntity } from 'src/infrastructure/persistence/activity-area.entity';
 import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.entity';
 import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.entity';
+import { TimeSlotEntity } from 'src/infrastructure/persistence/time-slot.entity';
 import { ScenarioEntity } from 'src/infrastructure/persistence/scenario.entity';
 import { CommuneEntity } from 'src/infrastructure/persistence/commune.entity';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
@@ -72,6 +74,18 @@ export const repositoryEntitiesProviders = [
     provide: MYSQL_REPOSITORY.SUB_SCENARIO_PRICE,
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(SubScenarioPriceEntity),
+    inject: [DATA_SOURCE.MYSQL],
+  },
+  {
+    provide: MYSQL_REPOSITORY.TIME_SLOT,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(TimeSlotEntity),
+    inject: [DATA_SOURCE.MYSQL],
+  },
+  {
+    provide: MYSQL_REPOSITORY.RESERVATION_STATE,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ReservationStateEntity),
     inject: [DATA_SOURCE.MYSQL],
   },
 ];

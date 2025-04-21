@@ -1,5 +1,25 @@
 [
     {
+        "startTime": "00:00",
+        "endTime": "00:59"
+    },
+    {
+        "startTime": "01:00",
+        "endTime": "01:59"
+    },
+    {
+        "startTime": "02:00",
+        "endTime": "02:59"
+    },
+    {
+        "startTime": "03:00",
+        "endTime": "03:59"
+    },
+    {
+        "startTime": "04:00",
+        "endTime": "04:59"
+    },
+    {
         "startTime": "05:00",
         "endTime": "05:59"
     },
@@ -14,10 +34,6 @@
     {
         "startTime": "08:00",
         "endTime": "08:59"
-    },
-    {
-        "startTime": "09:00",
-        "endTime": "09:30"
     },
     {
         "startTime": "09:00",
@@ -64,10 +80,6 @@
         "endTime": "19:59"
     },
     {
-        "startTime": "19:00",
-        "endTime": "20:15"
-    },
-    {
         "startTime": "20:00",
         "endTime": "20:59"
     },
@@ -78,5 +90,9 @@
     {
         "startTime": "22:00",
         "endTime": "22:59"
+    },
+    {
+        "startTime": "23:00",
+        "endTime": "23:59"
     }
 ]

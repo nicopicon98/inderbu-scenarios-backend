@@ -1,0 +1,11 @@
+[
+    {
+        "state": "PENDIENTE"
+    },
+    {
+        "state": "CONFIRMADA"
+    },
+    {
+        "state": "CANCELADA"
+    }
+]

@@ -4,4 +4,5 @@ export const APPLICATION_PORTS = {
   USER: 'IUserApplicationPort',
   CITY: 'ICityApplicationPort',
   NEIGHBORHOOD: 'INeighborhoodApplicationPort',
+  RESERVATION: 'IReservationApplicationPort',
 } as const;

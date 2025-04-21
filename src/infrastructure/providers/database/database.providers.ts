@@ -1,16 +1,19 @@
 import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
-
 import { DATA_SOURCE } from 'src/infrastructure/tokens/data_sources';
 import { ENV_CONFIG } from 'src/infrastructure/config/env.constants';
 import { persistenceEntities } from './entities';
+import { Logger } from '@nestjs/common';
 
 export const databaseProviders = [
   {
     provide: DATA_SOURCE.MYSQL,
     useFactory: async (configService: ConfigService) => {
+      const logger = new Logger('DatabaseProvider');
+
       const dataSource = new DataSource({
         type: 'mysql',
+        timezone: 'Z',
         host: configService.get(ENV_CONFIG.DATABASE.HOST),
         port: configService.get<number>(ENV_CONFIG.DATABASE.PORT),
         username: configService.get(ENV_CONFIG.DATABASE.USER),
@@ -19,7 +22,16 @@ export const databaseProviders = [
         entities: [...persistenceEntities],
         synchronize: configService.get(ENV_CONFIG.DATABASE.SYNCHRONIZE) === 'true',
       });
-      return dataSource.initialize();
+
+      try {
+        await dataSource.initialize();
+        logger.log('✅ MySQL Data Source has been initialized!');
+      } catch (error) {
+        logger.error('❌ Error initializing MySQL Data Source:', error);
+        throw new Error(`Database connection failed: ${error.message}`);
+      }
+
+      return dataSource;
     },
     inject: [ConfigService],
   },

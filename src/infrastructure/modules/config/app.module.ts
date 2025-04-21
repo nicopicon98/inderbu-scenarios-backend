@@ -11,6 +11,7 @@ import { AppCommandModule } from './command.module';
 import { SeedingModule } from './seeding.module';
 import { AuthModule } from '../auth.module';
 import { UserModule } from '../user.module';
+import { ReservationModule } from '../reservation.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserModule } from '../user.module';
     LocationModule,
     SubScenarioModule,
     ActivityAreaModule,
+    ReservationModule,
     AppCommandModule,
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la aplicación

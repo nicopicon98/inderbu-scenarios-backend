@@ -3,11 +3,13 @@ import { SubScenarioPriceSeeder } from 'src/core/application/services/seeding/se
 import { ActivityAreaSeeder } from 'src/core/application/services/seeding/seeders/activity-area.seeder';
 import { NeighborhoodSeeder } from 'src/core/application/services/seeding/seeders/neighborhood.seeder';
 import { SubScenarioSeeder } from 'src/core/application/services/seeding/seeders/sub-scenario.seeder';
+import { TimeSlotSeeder } from 'src/core/application/services/seeding/seeders/time-slot.seeder';
 import { ScenarioSeeder } from 'src/core/application/services/seeding/seeders/scenario.seeder';
 import { CommuneSeeder } from 'src/core/application/services/seeding/seeders/commune.seeder';
 import { CitySeeder } from 'src/core/application/services/seeding/seeders/city.seeder';
 import { RoleSeeder } from 'src/core/application/services/seeding/seeders/role.seeder';
 import { UserSeeder } from 'src/core/application/services/seeding/seeders/user.seeder';
+import { ReservationStateSeeder } from 'src/core/application/services/seeding/seeders/reservation-state.seeder';
 
 /**
  * Important: Import seeders in the order of dependencies. Cardinality is important.
@@ -25,4 +27,6 @@ export const seederProviders = [
   ScenarioSeeder,
   SubScenarioSeeder,
   SubScenarioPriceSeeder,
+  TimeSlotSeeder,
+  ReservationStateSeeder
 ];

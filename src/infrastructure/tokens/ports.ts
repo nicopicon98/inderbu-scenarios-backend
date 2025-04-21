@@ -6,4 +6,7 @@ export const REPOSITORY_PORTS = {
   NEIGHBORHOOD: 'INeighborhoodRepositoryPort',
   USER: 'IUserRepositoryPort',
   CITY: 'ICityRepositoryPort',
+  RESERVATION: 'IReservationRepositoryPort',
+  TIME_SLOT: 'ITimeSlotRepositoryPort',
+  RESERVATION_STATE: 'IReservationStateRepositoryPort',
 } as const;
