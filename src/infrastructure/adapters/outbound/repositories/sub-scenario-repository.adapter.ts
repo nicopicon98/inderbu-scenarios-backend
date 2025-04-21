@@ -36,6 +36,14 @@ export class SubScenarioRepositoryAdapter
     return entities.map((entity) => this.toDomain(entity));
   }
 
+  async findByIdWithRelations(id: number): Promise<SubScenarioDomainEntity | null> {
+    const entity = await this.repository.findOne({
+      where: { id },
+      relations: ['scenario', 'scenario.neighborhood', 'activityArea', 'fieldSurfaceType'],
+    });
+    return entity ? this.toDomain(entity) : null;
+  }
+
   /** Lista paginada + búsqueda ponderada */
   async findPaged(opts: PageOptionsDto) {
     const {

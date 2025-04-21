@@ -1,5 +1,5 @@
-import { Controller, Get, Inject, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Inject, NotFoundException, Param, Query } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
 import { ISubScenarioApplicationPort } from 'src/core/application/ports/inbound/sub-scenario-application.port';
 import { SubScenarioWithRelationsDto } from '../dtos/sub-scenarios/sub-scenario-response-with-relations.dto';
@@ -29,4 +29,21 @@ export class SubScenarioController {
   ): Promise<PageDto<SubScenarioWithRelationsDto>> {
     return this.subScenarioApplicationService.listWithRelations(opts);
   }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtiene un sub-escenario por ID con relaciones' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del sub-escenario' })
+  @ApiResponse({ status: 200, type: SubScenarioWithRelationsDto })
+  @ApiResponse({ status: 404, description: 'Sub-escenario no encontrado' })
+  async getSubScenarioById(
+    @Param('id') id: number,
+  ): Promise<SubScenarioWithRelationsDto> {
+    const subScenario = await this.subScenarioApplicationService.getByIdWithRelations(id);
+    if (!subScenario) {
+      throw new NotFoundException(`SubScenario ${id} no encontrado`);
+    }
+    return subScenario;
+  }
+
+
 }

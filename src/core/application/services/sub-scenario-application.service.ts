@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 
 import {
   SubScenarioMapper,
@@ -18,7 +18,6 @@ import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/co
 import { IScenarioRepositoryPort } from 'src/core/domain/ports/outbound/scenario-repository.port';
 import { SubScenarioDomainEntity } from 'src/core/domain/entities/sub-scenario.domain-entity';
 import { ISubScenarioApplicationPort } from '../ports/inbound/sub-scenario-application.port';
-import { ScenarioDomainEntity } from 'src/core/domain/entities/scenario.domain-entity';
 import { REPOSITORY_PORTS } from 'src/infrastructure/tokens/ports';
 
 @Injectable()
@@ -56,6 +55,16 @@ export class SubScenarioApplicationService
         totalItems: total,
       }),
     );
+  }
+
+
+  async getByIdWithRelations(
+    id: number,
+  ): Promise<SubScenarioWithRelationsDto | null> {
+    const sub: SubScenarioDomainEntity | null = await this.subScenarioRepository.findByIdWithRelations(id);
+    if (!sub) throw new NotFoundException(`SubScenario ${id} no encontrado`);
+    const [ scenMap, areaMap, surfMap, neighMap ] = await this.loadReferenceMaps([sub]);
+    return SubScenarioMapper.toDto(sub, scenMap, areaMap, surfMap, neighMap);
   }
 
   private async loadReferenceMaps(subs: SubScenarioDomainEntity[]) {

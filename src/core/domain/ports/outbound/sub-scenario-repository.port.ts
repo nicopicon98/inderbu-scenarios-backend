@@ -4,4 +4,5 @@ import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.e
 
 export interface ISubScenarioRepositoryPort {
   findPaged(opts: PageOptionsDto): Promise<{ data: SubScenarioDomainEntity[]; total: number }>;
+  findByIdWithRelations(id: number): Promise<SubScenarioDomainEntity | null>;
 }

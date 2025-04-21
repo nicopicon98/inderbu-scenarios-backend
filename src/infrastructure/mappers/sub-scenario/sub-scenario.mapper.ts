@@ -1,32 +1,28 @@
-import { SubScenarioWithRelationsDto } from 'src/infrastructure/adapters/inbound/http/dtos/sub-scenarios/sub-scenario-response-with-relations.dto';
+import { NamedRefDto, NamedRefWithNeighborhoodDto, SubScenarioWithRelationsDto } from 'src/infrastructure/adapters/inbound/http/dtos/sub-scenarios/sub-scenario-response-with-relations.dto';
 import { FieldSurfaceTypeDomainEntity } from 'src/core/domain/entities/field-surface-type.domain-entity';
-import { ActivityAreaDomainEntity }    from 'src/core/domain/entities/activity-area.domain-entity';
-import { SubScenarioDomainEntity }     from 'src/core/domain/entities/sub-scenario.domain-entity';
-import { NeighborhoodDomainEntity }    from 'src/core/domain/entities/neighborhood.domain-entity';
-import { ScenarioDomainEntity }        from 'src/core/domain/entities/scenario.domain-entity';
+import { ActivityAreaDomainEntity } from 'src/core/domain/entities/activity-area.domain-entity';
+import { SubScenarioDomainEntity } from 'src/core/domain/entities/sub-scenario.domain-entity';
+import { NeighborhoodDomainEntity } from 'src/core/domain/entities/neighborhood.domain-entity';
+import { ScenarioDomainEntity } from 'src/core/domain/entities/scenario.domain-entity';
 
 export class SubScenarioMapper {
   static toDto(
     s: SubScenarioDomainEntity,
-    scenMap:  Map<number, ScenarioDomainEntity>,
-    areaMap:  Map<number, ActivityAreaDomainEntity>,
-    surfMap:  Map<number, FieldSurfaceTypeDomainEntity>,
-    neighMap: Map<number, NeighborhoodDomainEntity>,    // <- aquí
+    scenMap: Map<number, ScenarioDomainEntity>,
+    areaMap: Map<number, ActivityAreaDomainEntity>,
+    surfMap: Map<number, FieldSurfaceTypeDomainEntity>,
+    neighMap: Map<number, NeighborhoodDomainEntity>, // <- aquí
   ): SubScenarioWithRelationsDto {
     return {
-      id:                 s.id!,
-      name:               s.name,
-      hasCost:            s.hasCost,
+      id: s.id!,
+      name: s.name,
+      hasCost: s.hasCost,
       numberOfSpectators: s.numberOfSpectators,
-      numberOfPlayers:    s.numberOfPlayers,
-      recommendations:    s.recommendations,
+      numberOfPlayers: s.numberOfPlayers,
+      recommendations: s.recommendations,
 
       // escenario + barrio anidado
-      scenario: mapScenarioWithNeighborhood(
-        s.scenarioId,
-        scenMap,
-        neighMap,
-      ),
+      scenario: mapScenarioWithNeighborhood(s.scenarioId, scenMap, neighMap),
 
       activityArea: s.activityAreaId
         ? mapNamedRef(s.activityAreaId, areaMap)
@@ -49,24 +45,26 @@ export function mapScenarioWithNeighborhood<
   },
 >(
   id: number,
-  scenMap:  Map<number, S>,
-  neighMap: Map<number, NeighborhoodDomainEntity>,  // <- aquí
+  scenMap: Map<number, S>,
+  neighMap: Map<number, NeighborhoodDomainEntity>, // <- aquí
 ) {
   const sc = scenMap.get(id);
   // base del scenario
-  const base = sc && sc.id !== null
-    ? { id: sc.id, name: sc.name, address: sc.address }
-    : { id,     name: '',     address: '' };
+  const base =
+    sc && sc.id !== null
+      ? { id: sc.id, name: sc.name, address: sc.address }
+      : { id, name: '', address: '' };
 
   // extrae y mapea el barrio
   const nId = sc?.neighborhoodId;
-  const n   = nId != null ? neighMap.get(nId) : undefined;
+  const n = nId != null ? neighMap.get(nId) : undefined;
 
-  const neighborhood = n && n.id != null
-    ? { id: n.id, name: n.name }
-    : nId != null
-      ? { id: nId, name: '' }
-      : { id: 0,    name: '' };
+  const neighborhood =
+    n && n.id != null
+      ? { id: n.id, name: n.name }
+      : nId != null
+        ? { id: nId, name: '' }
+        : { id: 0, name: '' };
 
   return { ...base, neighborhood };
 }
@@ -92,7 +90,7 @@ export function mapNamedRef<T extends { id: number | null; name: string }>(
   return e && e.id !== null
     ? { id: e.id, name: e.name }
     : id != null
-      ? { id,     name: '' }
+      ? { id, name: '' }
       : undefined;
 }
 
@@ -102,5 +100,5 @@ export function mapNamedRefWithAddress<
   const e = map.get(id);
   return e && e.id !== null
     ? { id: e.id, name: e.name, address: e.address }
-    : { id,     name: '',     address: '' };
+    : { id, name: '', address: '' };
 }
