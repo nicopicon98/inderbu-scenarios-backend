@@ -7,12 +7,13 @@ import { LocationModule } from '../location/location.module';
 import { DatabaseModule } from '../database/database.module';
 import { ActivityAreaModule } from '../activity-area.module';
 import { SubScenarioModule } from '../sub-scenario.module';
+import { ReservationModule } from '../reservation.module';
 import { AppCommandModule } from './command.module';
 import { SeedingModule } from './seeding.module';
+import { EmailModule } from '../email.module';
 import { AuthModule } from '../auth.module';
 import { UserModule } from '../user.module';
-import { ReservationModule } from '../reservation.module';
-import { EmailModule } from '../email.module';
+import { RoleModule } from '../role.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { EmailModule } from '../email.module';
     ActivityAreaModule,
     ReservationModule,
     EmailModule,
+    RoleModule,
     AppCommandModule,
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la aplicación

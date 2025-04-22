@@ -9,4 +9,5 @@ export const REPOSITORY_PORTS = {
   RESERVATION: 'IReservationRepositoryPort',
   TIME_SLOT: 'ITimeSlotRepositoryPort',
   RESERVATION_STATE: 'IReservationStateRepositoryPort',
+  ROLE: 'IRoleRepositoryPort',
 } as const;

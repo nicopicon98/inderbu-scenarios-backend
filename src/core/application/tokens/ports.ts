@@ -5,5 +5,6 @@ export const APPLICATION_PORTS = {
   CITY: 'ICityApplicationPort',
   NEIGHBORHOOD: 'INeighborhoodApplicationPort',
   RESERVATION: 'IReservationApplicationPort',
-  NOTIFICATION_SERVICE: 'INotificationService'
+  NOTIFICATION_SERVICE: 'INotificationService',
+  ROLE: 'IRoleApplicationPort',
 } as const;

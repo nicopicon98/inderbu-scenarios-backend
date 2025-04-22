@@ -3,9 +3,9 @@ import { Repository } from 'typeorm';
 
 import { ICityRepositoryPort } from 'src/core/domain/ports/outbound/city-repository.port';
 import { CityDomainEntity } from 'src/core/domain/entities/city.domain-entity';
+import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { BaseRepositoryAdapter } from './common/base-repository.adapter';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
-import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 
 @Injectable()
 export class CityRepositoryAdapter
