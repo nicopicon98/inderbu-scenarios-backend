@@ -35,4 +35,13 @@ export class UserEntity {
   @ManyToOne(() => NeighborhoodEntity)
   @JoinColumn({ name: 'fk_id_neighborhood' })
   neighborhood: NeighborhoodEntity;
+
+  @Column({ default: false })
+  isActive: boolean;
+
+  @Column({ length: 128, nullable: true })
+  confirmationToken: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  confirmationTokenExpiresAt: Date;
 }

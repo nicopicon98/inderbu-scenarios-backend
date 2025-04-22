@@ -6,5 +6,5 @@ export interface ISubScenarioApplicationPort {
   listWithRelations(
     opts: PageOptionsDto,
   ): Promise<PageDto<SubScenarioWithRelationsDto>>;
-  getByIdWithRelations(id: number): Promise<SubScenarioWithRelationsDto | null>;
+  getByIdWithRelations(id: number): Promise<SubScenarioWithRelationsDto>;
 }

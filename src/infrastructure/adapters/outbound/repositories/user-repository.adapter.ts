@@ -36,4 +36,12 @@ export class UserRepositoryAdapter
     if (!userEntity) return null;
     return this.toDomain(userEntity);
   }
+
+  async findByConfirmationToken(token: string): Promise<UserDomainEntity | null> {
+    const entity = await this.repository.findOne({
+      where: { confirmationToken: token },
+    });
+    if (!entity) return null;
+    return this.toDomain(entity);
+  }
 }

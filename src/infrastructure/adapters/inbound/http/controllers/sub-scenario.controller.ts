@@ -38,11 +38,7 @@ export class SubScenarioController {
   async getSubScenarioById(
     @Param('id') id: number,
   ): Promise<SubScenarioWithRelationsDto> {
-    const subScenario = await this.subScenarioApplicationService.getByIdWithRelations(id);
-    if (!subScenario) {
-      throw new NotFoundException(`SubScenario ${id} no encontrado`);
-    }
-    return subScenario;
+    return this.subScenarioApplicationService.getByIdWithRelations(id);
   }
 
 

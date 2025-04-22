@@ -60,7 +60,7 @@ export class SubScenarioApplicationService
 
   async getByIdWithRelations(
     id: number,
-  ): Promise<SubScenarioWithRelationsDto | null> {
+  ): Promise<SubScenarioWithRelationsDto> {
     const sub: SubScenarioDomainEntity | null = await this.subScenarioRepository.findByIdWithRelations(id);
     if (!sub) throw new NotFoundException(`SubScenario ${id} no encontrado`);
     const [ scenMap, areaMap, surfMap, neighMap ] = await this.loadReferenceMaps([sub]);

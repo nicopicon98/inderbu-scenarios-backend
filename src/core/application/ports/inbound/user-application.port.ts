@@ -4,4 +4,6 @@ import { CreateUserDto } from "src/infrastructure/adapters/inbound/http/dtos/use
 export interface IUserApplicationPort {
   createUser(createUserDto: CreateUserDto): Promise<UserDomainEntity>;
   findByEmail(email: string): Promise<UserDomainEntity | null>;
+  confirmUser(token: string): Promise<{ message: string }>;
+  resendConfirmation(email: string): Promise<{ message: string }>;
 }

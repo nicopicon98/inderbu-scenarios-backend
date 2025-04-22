@@ -5,33 +5,37 @@ import { Expose } from 'class-transformer';
 export class UserDomainEntity {
   @Expose()
   public readonly id: number | null;
-  
+
   @Expose()
   public readonly dni: number;
-  
+
   @Expose()
   public readonly firstName: string;
-  
+
   @Expose()
   public readonly lastName: string;
-  
+
   @Expose()
   public readonly email: string;
-  
+
   @Expose()
   public readonly phone: string;
-  
+
   // La contraseña se almacena internamente como hash, pero no se expone.
   private readonly passwordHash: string;
-  
+
   @Expose()
   public readonly roleId: number;
-  
+
   @Expose()
   public readonly address: string;
-  
+
   @Expose()
   public readonly neighborhoodId: number;
+
+  @Expose() public readonly isActive: boolean;
+  private readonly confirmationToken: string;
+  private readonly confirmationTokenExpiresAt: Date | null;
 
   // Constructor privado: solo se puede llamar desde dentro de la clase.
   private constructor(builder: UserDomainBuilder) {
@@ -45,6 +49,9 @@ export class UserDomainEntity {
     this.roleId = builder.roleId;
     this.address = builder.address;
     this.neighborhoodId = builder.neighborhoodId;
+    this.isActive = builder.isActive;
+    this.confirmationToken = builder.confirmationToken;
+    this.confirmationTokenExpiresAt = builder.confirmationTokenExpiresAt;
   }
 
   // Método estático que permite construir la entidad a partir de un builder.
@@ -77,57 +84,73 @@ export class UserDomainBuilder {
   roleId: number = 0;
   address: string = '';
   neighborhoodId: number = 0;
+  isActive = false;
+  confirmationToken = '';
+  confirmationTokenExpiresAt: Date | null = null;
 
-  withId(id: number): UserDomainBuilder {
+  withId(id: number | null): UserDomainBuilder {
     this.id = id;
     return this;
   }
-  
+
   withDni(dni: number): UserDomainBuilder {
     this.dni = dni;
     return this;
   }
-  
+
   withFirstName(firstName: string): UserDomainBuilder {
     this.firstName = firstName;
     return this;
   }
-  
+
   withLastName(lastName: string): UserDomainBuilder {
     this.lastName = lastName;
     return this;
   }
-  
+
   withEmail(email: string): UserDomainBuilder {
     this.email = email;
     return this;
   }
-  
+
   withPhone(phone: string): UserDomainBuilder {
     this.phone = phone;
     return this;
   }
-  
+
   withPasswordHash(passwordHash: string): UserDomainBuilder {
     this.passwordHash = passwordHash;
     return this;
   }
-  
+
   withRoleId(roleId: number): UserDomainBuilder {
     this.roleId = roleId;
     return this;
   }
-  
+
   withAddress(address: string): UserDomainBuilder {
     this.address = address;
     return this;
   }
-  
+
   withNeighborhoodId(neighborhoodId: number): UserDomainBuilder {
     this.neighborhoodId = neighborhoodId;
     return this;
   }
-  
+
+  withIsActive(isActive: boolean): this {
+    this.isActive = isActive;
+    return this;
+  }
+  withConfirmationToken(token: string): this {
+    this.confirmationToken = token;
+    return this;
+  }
+  withConfirmationTokenExpiresAt(date: Date): this {
+    this.confirmationTokenExpiresAt = date;
+    return this;
+  }
+
   build(): UserDomainEntity {
     // En lugar de llamar directamente al constructor, se llama al método estático.
     return UserDomainEntity.buildFromBuilder(this);

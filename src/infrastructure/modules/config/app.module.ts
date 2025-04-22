@@ -12,6 +12,7 @@ import { SeedingModule } from './seeding.module';
 import { AuthModule } from '../auth.module';
 import { UserModule } from '../user.module';
 import { ReservationModule } from '../reservation.module';
+import { EmailModule } from '../email.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ReservationModule } from '../reservation.module';
     SubScenarioModule,
     ActivityAreaModule,
     ReservationModule,
+    EmailModule,
     AppCommandModule,
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la aplicación

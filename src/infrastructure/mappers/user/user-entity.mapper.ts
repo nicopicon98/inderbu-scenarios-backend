@@ -17,6 +17,9 @@ export class UserEntityMapper {
       .withRoleId(entity.role?.id) // Se asigna el ID del rol
       .withAddress(entity.address)
       .withNeighborhoodId(entity.neighborhood?.id)
+      .withIsActive(entity.isActive)
+      .withConfirmationToken(entity.confirmationToken)
+      .withConfirmationTokenExpiresAt(entity.confirmationTokenExpiresAt)
       .build();
   }
 
@@ -28,12 +31,13 @@ export class UserEntityMapper {
     entity.last_name = domain.lastName;
     entity.email = domain.email;
     entity.phone = domain.phone;
-    // Persistimos la contraseña (hash) almacenada en el dominio
     entity.password = (domain as any)['passwordHash'];
-    // Asignamos el rol como objeto minimal (solo el ID)
     entity.role = { id: domain.roleId } as RoleEntity;
     entity.address = domain.address;
     entity.neighborhood = { id: domain.neighborhoodId } as any;
+    entity.isActive = domain.isActive;
+    entity.confirmationToken = (domain as any).confirmationToken;
+    entity.confirmationTokenExpiresAt = (domain as any).confirmationTokenExpiresAt;
     return entity;
   }
 }

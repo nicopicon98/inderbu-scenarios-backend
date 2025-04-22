@@ -14,6 +14,7 @@ export class UserResponseMapper {
       roleId: userDomain.roleId,
       address: userDomain.address,
       neighborhoodId: userDomain.neighborhoodId,
+      isActive: userDomain.isActive
     };
   }
 }
