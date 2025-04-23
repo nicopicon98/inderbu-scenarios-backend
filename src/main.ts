@@ -1,18 +1,19 @@
-import 'reflect-metadata';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './infrastructure/modules/config/app.module';
-import * as dotenv from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import * as dotenv from 'dotenv';
+import 'reflect-metadata';
+
+import { AppModule } from './infrastructure/modules/config/app.module';
 import { ResponseInterceptor } from './infrastructure/common/incerceptors/response.intecerptor';
 import { HttpExceptionFilter } from './infrastructure/common/filters/http-exception.filter';
-import { ValidationPipe } from '@nestjs/common';
 
 function loadEnv() {
   dotenv.config();
 }
 async function bootstrap() {
   loadEnv();
-  const app = await NestFactory.create(AppModule);
+  const app: INestApplication<any> = await NestFactory.create(AppModule);
   // Registro de interceptores globales
   app.useGlobalInterceptors(new ResponseInterceptor());
   // Registro de filters globales

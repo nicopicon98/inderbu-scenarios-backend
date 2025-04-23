@@ -56,4 +56,5 @@ export class ReservationController {
     const userId = req.user.userId; // Se obtiene el userId del token JWT
     return this.reservationService.createReservation(dto, userId);
   }
+
 }

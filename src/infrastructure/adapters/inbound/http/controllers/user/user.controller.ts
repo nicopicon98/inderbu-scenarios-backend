@@ -3,10 +3,10 @@ import { Body, Controller, Get, HttpCode, Inject, Post, Query } from '@nestjs/co
 
 import { IUserApplicationPort } from 'src/core/application/ports/inbound/user-application.port';
 import { UserResponseMapper } from 'src/infrastructure/mappers/user/user-response.mapper';
-import { UserResponseDto } from '../dtos/user/create-user-response.dto';
+import { UserResponseDto } from '../../dtos/user/create-user-response.dto';
 import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
-import { CreateUserDto } from '../dtos/user/create-user-request.dto';
-import { ResendConfirmationDto } from '../dtos/user/resend-confirmation-request.dto';
+import { CreateUserDto } from '../../dtos/user/create-user-request.dto';
+import { ResendConfirmationDto } from '../../dtos/user/resend-confirmation-request.dto';
 
 @Controller('users')
 export class UserController {
@@ -50,4 +50,6 @@ export class UserController {
   ): Promise<{ message: string }> {
     return this.userApplicationService.confirmUser(token);
   }
+
+  
 }
