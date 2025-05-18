@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { In, Repository, SelectQueryBuilder } from 'typeorm';
+import { PageOptionsDto } from '../../inbound/http/dtos/common/page-options.dto';
 
 import { ActivityAreaEntityMapper } from 'src/infrastructure/mappers/activity-area/activity-area-entity.mapper';
 import { IActivityAreaRepositoryPort } from 'src/core/domain/ports/outbound/activity-area-repository.port';
@@ -34,5 +35,74 @@ export class ActivityAreaRepositoryAdapter
   async findAll(): Promise<ActivityAreaDomainEntity[]> {
     const list = await this.repository.find({ order: { name: 'ASC' } });
     return list.map(ActivityAreaEntityMapper.toDomain);
+  }
+
+  async findPaged(opts: PageOptionsDto): Promise<{ data: ActivityAreaDomainEntity[]; total: number }> {
+    const {
+      page = 1,
+      limit = 20,
+      search
+    } = opts;
+
+    const qb: SelectQueryBuilder<ActivityAreaEntity> = this.repository
+      .createQueryBuilder('aa');
+
+    /* ───── búsqueda ───── */
+    if (search?.trim()) {
+      const term = search.trim();
+      const isTiny = term.length < 4;
+
+      if (isTiny) {
+        /* LIKE prefijo + contiene */
+        const likeAny = `%${term}%`;
+        const likePref = `${term}%`;
+
+        qb.addSelect(
+          `
+          ((aa.name LIKE :pref)*1 + (aa.name LIKE :any)*0.5)
+          `,
+          'score',
+        ).andWhere(
+          `
+          aa.name LIKE :any
+          `,
+          { pref: likePref, any: likeAny },
+        );
+
+        /* posición de la coincidencia en name */
+        qb.addSelect('LOCATE(:loc, aa.name)', 'pos')
+          .setParameter('loc', term)
+          .orderBy('score', 'DESC')
+          .addOrderBy('pos', 'ASC');
+      } else {
+        /* FULLTEXT BOOLEAN MODE con wildcard * */
+        const boolean = term
+          .split(/\s+/)
+          .map((w) => `+${w}*`)
+          .join(' ');
+
+        qb.addSelect(
+          `
+          (MATCH(aa.name) AGAINST (:q IN BOOLEAN MODE))
+          `,
+          'score',
+        )
+          .andWhere(
+            `
+            MATCH(aa.name) AGAINST (:q IN BOOLEAN MODE)
+            `,
+            { q: boolean },
+          )
+          .orderBy('score', 'DESC');
+      }
+    }
+
+    /* ───── orden secundario + paginación ───── */
+    qb.addOrderBy('aa.name', 'ASC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [entities, total] = await qb.getManyAndCount();
+    return { data: entities.map(ActivityAreaEntityMapper.toDomain), total };
   }
 }

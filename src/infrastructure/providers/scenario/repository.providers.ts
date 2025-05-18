@@ -1,9 +1,9 @@
+import { FieldSurfaceTypeRepositoryAdapter } from 'src/infrastructure/adapters/outbound/repositories/field-surface-type.repository.adapter';
 import { ActivityAreaRepositoryAdapter } from '../../adapters/outbound/repositories/activity-area-repository.adapter';
 import { NeighborhoodRepositoryAdapter } from '../../adapters/outbound/repositories/neighborhood-repository.adapter';
 import { SubScenarioRepositoryAdapter } from '../../adapters/outbound/repositories/sub-scenario-repository.adapter';
 import { ScenarioRepositoryAdapter } from '../../adapters/outbound/repositories/scenario-repository.adapter';
 import { REPOSITORY_PORTS } from '../../tokens/ports';
-import { FieldSurfaceTypeRepositoryAdapter } from 'src/infrastructure/adapters/outbound/repositories/field-surface-type.repository.adapter';
 
 export const repositoryProviders = [
   {

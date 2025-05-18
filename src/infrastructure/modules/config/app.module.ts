@@ -7,6 +7,7 @@ import { LocationModule } from '../location/location.module';
 import { DatabaseModule } from '../database/database.module';
 import { ActivityAreaModule } from '../activity-area.module';
 import { SubScenarioModule } from '../sub-scenario.module';
+import { ScenarioModule } from '../scenario.module';
 import { ReservationModule } from '../reservation.module';
 import { AppCommandModule } from './command.module';
 import { SeedingModule } from './seeding.module';
@@ -21,6 +22,7 @@ import { RoleModule } from '../role.module';
     AuthModule,
     UserModule,
     LocationModule,
+    ScenarioModule,
     SubScenarioModule,
     ActivityAreaModule,
     ReservationModule,
