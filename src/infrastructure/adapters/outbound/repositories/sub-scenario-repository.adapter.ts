@@ -137,6 +137,7 @@ export class SubScenarioRepositoryAdapter
       .take(limit);
 
     const [entities, total] = await qb.getManyAndCount();
+    console.log({entities});
     return { data: entities.map(SubScenarioEntityMapper.toDomain), total };
   }
 }

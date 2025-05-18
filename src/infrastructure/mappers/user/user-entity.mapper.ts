@@ -6,7 +6,7 @@ import { RoleEntity } from 'src/infrastructure/persistence/role.entity';
 
 export class UserEntityMapper {
   static toDomain(entity: UserEntity): UserDomainEntity {
-    return UserDomainEntity.builder()
+    const domainEntity = UserDomainEntity.builder()
       .withId(entity.id)
       .withDni(entity.dni)
       .withFirstName(entity.first_name)
@@ -21,6 +21,23 @@ export class UserEntityMapper {
       .withConfirmationToken(entity.confirmationToken)
       .withConfirmationTokenExpiresAt(entity.confirmationTokenExpiresAt)
       .build();
+
+    // Preservamos las entidades relacionadas sin romper los principios de DDD
+    // Estas propiedades no son parte formal del dominio pero son necesarias para el mapeo
+    if (entity.role) {
+      (domainEntity as any).role = entity.role;
+    }
+    if (entity.neighborhood) {
+      (domainEntity as any).neighborhood = entity.neighborhood;
+      if (entity.neighborhood.commune) {
+        (domainEntity as any).commune = entity.neighborhood.commune;
+        if (entity.neighborhood.commune.city) {
+          (domainEntity as any).city = entity.neighborhood.commune.city;
+        }
+      }
+    }
+    
+    return domainEntity;
   }
 
   static toEntity(domain: UserDomainEntity): UserEntity {

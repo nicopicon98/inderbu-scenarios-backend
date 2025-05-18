@@ -21,6 +21,13 @@ export class UserResponseMapper {
   }
 
   static toDtoWithRelations(domain: UserDomainEntity): UserWithRelationsDto {
+    // Get the full relation objects from the domain
+    const role = (domain as any).role;
+    const neighborhood = (domain as any).neighborhood;
+    const commune = (domain as any).commune;
+    const city = (domain as any).city;
+
+    // Create DTO with all relations properly mapped
     return plainToInstance(UserWithRelationsDto, {
       id: domain.id,
       dni: domain.dni,
@@ -30,8 +37,10 @@ export class UserResponseMapper {
       phone: domain.phone,
       address: domain.address,
       isActive: domain.isActive,
-      role: (domain as any).role,
-      neighborhood: (domain as any).neighborhood,
+      role: role,
+      neighborhood: neighborhood,
+      commune: commune,
+      city: city
     }, { excludeExtraneousValues: true });
   }
 }

@@ -42,6 +42,7 @@ export class SubScenarioApplicationService
   ): Promise<PageDto<SubScenarioWithRelationsDto>> {
     const { data: subs, total } =
       await this.subScenarioRepository.findPaged(opts); // 1. dominio
+      console.log('subscenarios response', subs)
     const [scen, area, surf, neigh] = await this.loadReferenceMaps(subs); // 2. catálogos
     const dto = subs.map((s) =>
       SubScenarioMapper.toDto(s, scen, area, surf, neigh),

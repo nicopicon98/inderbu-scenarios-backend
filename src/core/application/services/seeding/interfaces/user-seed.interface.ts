@@ -7,4 +7,5 @@ export interface IUserSeed {
   role: { name: string };
   address: string;  
   neighborhood: { name: string };
+  isActive: number;
 }

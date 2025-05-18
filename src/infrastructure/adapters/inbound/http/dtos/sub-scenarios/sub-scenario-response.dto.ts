@@ -6,6 +6,9 @@ export class SubScenarioResponseDto {
 
   @ApiProperty()
   name: string;
+  
+  @ApiProperty()
+  state: boolean;
 
   @ApiProperty()
   hasCost: boolean;
@@ -27,4 +30,7 @@ export class SubScenarioResponseDto {
 
   @ApiProperty({ required: false, description: 'Id del tipo de superficie' })
   fieldSurfaceTypeId?: number;
+  
+  @ApiProperty({ required: false })
+  createdAt?: Date;
 }

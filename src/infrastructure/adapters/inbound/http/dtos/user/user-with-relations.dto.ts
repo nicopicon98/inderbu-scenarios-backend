@@ -5,6 +5,10 @@ import { Expose, Type } from "class-transformer";
 import { RoleResponseDto } from "../role/role-response.dto";
 import { NeighborhoodResponseDto } from "../neighborhood/neighborhood-response.dto";
 
+// Import DTOs for Commune and City
+import { CommuneResponseDto } from "../commune/commune-response.dto";
+import { CityResponseDto } from "../city/city-response.dto";
+
 export class UserWithRelationsDto {
   @ApiProperty()
   @Expose()
@@ -47,4 +51,14 @@ export class UserWithRelationsDto {
   @Expose()
   @Type(() => NeighborhoodResponseDto)
   neighborhood: NeighborhoodResponseDto;
+  
+  @ApiProperty({ type: () => CommuneResponseDto })
+  @Expose()
+  @Type(() => CommuneResponseDto)
+  commune: CommuneResponseDto;
+  
+  @ApiProperty({ type: () => CityResponseDto })
+  @Expose()
+  @Type(() => CityResponseDto)
+  city: CityResponseDto;
 }

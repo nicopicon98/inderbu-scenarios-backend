@@ -1,6 +1,7 @@
 export class SubScenarioDomainEntity {
   public readonly id: number | null;
   public readonly name: string;
+  public readonly state: boolean;
   public readonly hasCost: boolean;
   public readonly numberOfSpectators?: number;
   public readonly numberOfPlayers?: number;
@@ -8,10 +9,12 @@ export class SubScenarioDomainEntity {
   public readonly scenarioId: number;
   public readonly activityAreaId?: number;
   public readonly fieldSurfaceTypeId?: number;
+  public readonly createdAt?: Date;
 
   constructor(builder: SubScenarioDomainBuilder) {
     this.id = builder.id;
     this.name = builder.name;
+    this.state = builder.state;
     this.hasCost = builder.hasCost;
     this.numberOfSpectators = builder.numberOfSpectators;
     this.numberOfPlayers = builder.numberOfPlayers;
@@ -19,6 +22,7 @@ export class SubScenarioDomainEntity {
     this.scenarioId = builder.scenarioId;
     this.activityAreaId = builder.activityAreaId;
     this.fieldSurfaceTypeId = builder.fieldSurfaceTypeId;
+    this.createdAt = builder.createdAt;
   }
 
   static builder(): SubScenarioDomainBuilder {
@@ -29,6 +33,7 @@ export class SubScenarioDomainEntity {
 export class SubScenarioDomainBuilder {
   id: number | null = null;
   name: string = '';
+  state: boolean = false;
   hasCost: boolean = false;
   numberOfSpectators?: number;
   numberOfPlayers?: number;
@@ -36,6 +41,7 @@ export class SubScenarioDomainBuilder {
   scenarioId: number = 0;
   activityAreaId?: number;
   fieldSurfaceTypeId?: number;
+  createdAt?: Date;
 
   withId(id: number): SubScenarioDomainBuilder {
     this.id = id;
@@ -44,6 +50,11 @@ export class SubScenarioDomainBuilder {
 
   withName(name: string): SubScenarioDomainBuilder {
     this.name = name;
+    return this;
+  }
+  
+  withState(state: boolean): SubScenarioDomainBuilder {
+    this.state = state;
     return this;
   }
 
@@ -79,6 +90,11 @@ export class SubScenarioDomainBuilder {
 
   withFieldSurfaceTypeId(fieldSurfaceTypeId: number): SubScenarioDomainBuilder {
     this.fieldSurfaceTypeId = fieldSurfaceTypeId;
+    return this;
+  }
+  
+  withCreatedAt(createdAt: Date): SubScenarioDomainBuilder {
+    this.createdAt = createdAt;
     return this;
   }
 

@@ -16,10 +16,15 @@ export class SubScenarioMapper {
     return {
       id: s.id!,
       name: s.name,
+      state: s.state,
       hasCost: s.hasCost,
       numberOfSpectators: s.numberOfSpectators,
       numberOfPlayers: s.numberOfPlayers,
       recommendations: s.recommendations,
+      createdAt: s.createdAt,
+      scenarioId: s.scenarioId,
+      activityAreaId: s.activityAreaId,
+      fieldSurfaceTypeId: s.fieldSurfaceTypeId,
 
       // escenario + barrio anidado
       scenario: mapScenarioWithNeighborhood(s.scenarioId, scenMap, neighMap),

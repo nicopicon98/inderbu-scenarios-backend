@@ -58,6 +58,7 @@ export class UserSeeder
           role,
           address: seed.address,
           neighborhood,
+          isActive: Boolean(seed.isActive)
         });
       }),
     );

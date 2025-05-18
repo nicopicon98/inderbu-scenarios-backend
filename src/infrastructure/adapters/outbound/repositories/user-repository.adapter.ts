@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository, Like, FindOptionsWhere } from 'typeorm';
+import { Repository, Like, FindOptionsWhere, Not } from 'typeorm';
 
 import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page-options.dto';
 import { IUserRepositoryPort } from 'src/core/domain/ports/outbound/user-repository.port';
@@ -60,21 +60,31 @@ export class UserRepositoryAdapter
 
     let whereCondition: FindOptionsWhere<UserEntity>[] = [];
 
+    // Base condition: exclude users with role 'super-admin'
+    const baseCondition = {
+      role: {
+        name: Not('super-admin')
+      }
+    };
+
     if (search) {
       const like = Like(`%${search}%`);
       whereCondition = [
-        { first_name: like },
-        { last_name: like },
-        { email: like },
+        { first_name: like, ...baseCondition },
+        { last_name: like, ...baseCondition },
+        { email: like, ...baseCondition },
       ];
 
       if (!isNaN(Number(search))) {
-        whereCondition.push({ dni: Number(search) } as any);
+        whereCondition.push({ dni: Number(search), ...baseCondition } as any);
       }
+    } else {
+      // If no search term, just use the base condition
+      whereCondition = [baseCondition];
     }
 
     const [users, totalItems] = await this.repository.findAndCount({
-      where: whereCondition.length ? whereCondition : {},
+      where: whereCondition,
       relations: [...DEFAULT_RELATIONS],
       skip,
       take: limit,
@@ -96,19 +106,31 @@ export class UserRepositoryAdapter
     const { page, limit, search } = pageOptionsDto;
     const skip = (page - 1) * limit;
 
-    let whereCondition:
-      | FindOptionsWhere<UserEntity>
-      | FindOptionsWhere<UserEntity>[] = {
-      role: { id: roleId },
-    };
+    // Primero obtenemos el rol para verificar que no es super-admin
+    const role = await this.repository.manager.find({
+      where: { id: roleId, name: Not('super-admin') },
+    } as any);
+
+    // Si el rol solicitado es super-admin, retornamos lista vacía
+    if (!role) {
+      return { users: [], totalItems: 0 };
+    }
+
+    let whereCondition: FindOptionsWhere<UserEntity>[] = [
+      { role: { id: roleId } },
+    ];
 
     if (search) {
+      const like = Like(`%${search}%`);
       whereCondition = [
-        { first_name: Like(`%${search}%`), role: { id: roleId } },
-        { last_name: Like(`%${search}%`), role: { id: roleId } },
-        { email: Like(`%${search}%`), role: { id: roleId } },
-        { dni: Like(`%${search}%`), role: { id: roleId } },
-      ] as any;
+        { first_name: like, role: { id: roleId } },
+        { last_name: like, role: { id: roleId } },
+        { email: like, role: { id: roleId } },
+      ];
+
+      if (!isNaN(Number(search))) {
+        whereCondition.push({ dni: Number(search), role: { id: roleId } });
+      }
     }
 
     const [users, totalItems] = await this.repository.findAndCount({
@@ -127,7 +149,7 @@ export class UserRepositoryAdapter
 
   async findByIdWithRelations(id: number): Promise<UserDomainEntity | null> {
     const entity = await this.repository.findOne({
-      where: { id },
+      where: { id, role: { name: Not('super-admin') } },
       relations: [...DEFAULT_RELATIONS],
     });
 

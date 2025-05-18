@@ -79,7 +79,7 @@ export class SubScenarioSeeder
       }
 
       // Create the entity properly
-      const subScenario = new SubScenarioEntity();
+      const subScenario: SubScenarioEntity = new SubScenarioEntity();
       subScenario.name = seed.name;
       subScenario.hasCost = seed.hasCost;
       subScenario.numberOfPlayers = seed.numberOfPlayers || 0;
@@ -88,6 +88,7 @@ export class SubScenarioSeeder
       subScenario.scenario = scenario;
       subScenario.activityArea = activityArea!;
       subScenario.fieldSurfaceType = fieldSurfaceType!;
+      subScenario.state = true
 
       entities.push(subScenario);
     }
