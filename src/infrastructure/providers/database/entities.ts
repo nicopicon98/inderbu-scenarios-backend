@@ -14,6 +14,7 @@ import { ModuleEntity } from 'src/infrastructure/persistence/module.entity';
 import { CityEntity } from 'src/infrastructure/persistence/city.entity';
 import { RoleEntity } from 'src/infrastructure/persistence/role.entity';
 import { UserEntity } from 'src/infrastructure/persistence/user.entity';
+import { SubScenarioImageEntity } from 'src/infrastructure/persistence/image.entity';
 
 export const persistenceEntities = [
   UserEntity,
@@ -31,5 +32,6 @@ export const persistenceEntities = [
   SubScenarioPriceEntity,
   TimeSlotEntity,
   ReservationStateEntity,
-  ReservationEntity
+  ReservationEntity,
+  SubScenarioImageEntity
 ];

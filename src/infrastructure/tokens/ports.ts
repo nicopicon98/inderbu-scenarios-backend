@@ -10,4 +10,5 @@ export const REPOSITORY_PORTS = {
   TIME_SLOT: 'ITimeSlotRepositoryPort',
   RESERVATION_STATE: 'IReservationStateRepositoryPort',
   ROLE: 'IRoleRepositoryPort',
+  SUB_SCENARIO_IMAGE: 'ISubScenarioImageRepositoryPort',
 } as const;

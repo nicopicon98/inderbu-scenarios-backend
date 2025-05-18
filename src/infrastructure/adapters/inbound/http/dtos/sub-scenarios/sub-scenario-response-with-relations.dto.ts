@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SubScenarioResponseDto } from './sub-scenario-response.dto';
+import { SubScenarioImageResponseDto } from '../images/image-response.dto';
 
 export class NamedRefDto {
   @ApiProperty() id!: number;
@@ -24,4 +25,7 @@ export class SubScenarioWithRelationsDto extends SubScenarioResponseDto {
 
   @ApiProperty({ required: false, type: () => NamedRefDto })
   fieldSurfaceType?: NamedRefDto;
+
+  @ApiProperty({ type: [SubScenarioImageResponseDto], required: false })
+  images?: SubScenarioImageResponseDto[];
 }

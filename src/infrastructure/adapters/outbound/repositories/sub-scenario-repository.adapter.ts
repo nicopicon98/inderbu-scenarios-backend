@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 
 import { SubScenarioEntityMapper } from 'src/infrastructure/mappers/sub-scenario/sub-scenario-entity.mapper';
@@ -34,6 +34,24 @@ export class SubScenarioRepositoryAdapter
       relations: ['scenario', 'activityArea', 'fieldSurfaceType'],
     });
     return entities.map((entity) => this.toDomain(entity));
+  }
+  
+  async findById(id: number): Promise<SubScenarioDomainEntity | null> {
+    const entity = await this.repository.findOne({
+      where: { id },
+    });
+    return entity ? this.toDomain(entity) : null;
+  }
+  
+  async save(domainEntity: SubScenarioDomainEntity): Promise<SubScenarioDomainEntity> {
+    const entity = this.toEntity(domainEntity);
+    const savedEntity = await this.repository.save(entity);
+    return this.toDomain(savedEntity);
+  }
+  
+  async delete(id: number): Promise<boolean> {
+    const result = await this.repository.delete(id);
+    return typeof result.affected === 'number' && result.affected > 0;
   }
 
   async findByIdWithRelations(id: number): Promise<SubScenarioDomainEntity | null> {

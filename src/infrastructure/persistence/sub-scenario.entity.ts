@@ -12,6 +12,7 @@ import { ScenarioEntity } from './scenario.entity';
 import { SubScenarioPriceEntity } from './sub-scenario-price.entity';
 import { FieldSurfaceTypeEntity } from './field-surface-type.entity';
 import { ActivityAreaEntity } from './activity-area.entity';
+import { SubScenarioImageEntity } from './image.entity';
 
 @Entity('sub_scenarios')
 @Index('ft_sub_name', ['name'], { fulltext: true })
@@ -76,4 +77,11 @@ export class SubScenarioEntity {
     (subScenarioPrice) => subScenarioPrice.subScenario,
   )
   subScenarioPrices: SubScenarioPriceEntity[];
+
+  // Relación con SubScenarioImageEntity
+  @OneToMany(
+    () => SubScenarioImageEntity,
+    (image) => image.subScenario,
+  )
+  images: SubScenarioImageEntity[];
 }

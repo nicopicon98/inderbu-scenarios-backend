@@ -4,6 +4,8 @@ import { ActivityAreaDomainEntity } from 'src/core/domain/entities/activity-area
 import { SubScenarioDomainEntity } from 'src/core/domain/entities/sub-scenario.domain-entity';
 import { NeighborhoodDomainEntity } from 'src/core/domain/entities/neighborhood.domain-entity';
 import { ScenarioDomainEntity } from 'src/core/domain/entities/scenario.domain-entity';
+import { SubScenarioImageDomainEntity } from 'src/core/domain/entities/sub-scenario-image.domain-entity';
+import { SubScenarioImageResponseMapper } from 'src/infrastructure/mappers/images/image-response.mapper';
 
 export class SubScenarioMapper {
   static toDto(
@@ -11,7 +13,8 @@ export class SubScenarioMapper {
     scenMap: Map<number, ScenarioDomainEntity>,
     areaMap: Map<number, ActivityAreaDomainEntity>,
     surfMap: Map<number, FieldSurfaceTypeDomainEntity>,
-    neighMap: Map<number, NeighborhoodDomainEntity>, // <- aquí
+    neighMap: Map<number, NeighborhoodDomainEntity>,
+    images: SubScenarioImageDomainEntity[] = [],
   ): SubScenarioWithRelationsDto {
     return {
       id: s.id!,
@@ -35,6 +38,11 @@ export class SubScenarioMapper {
 
       fieldSurfaceType: s.fieldSurfaceTypeId
         ? mapNamedRef(s.fieldSurfaceTypeId, surfMap)
+        : undefined,
+        
+      // Incluir imágenes si existen
+      images: images.length > 0 
+        ? images.map(SubScenarioImageResponseMapper.toDto)
         : undefined,
     };
   }

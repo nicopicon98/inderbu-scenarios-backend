@@ -1,13 +1,36 @@
-import { Controller, Get, Inject, NotFoundException, Param, Query } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { 
+  Controller, 
+  Get, 
+  Post,
+  Put,
+  Delete,
+  Inject, 
+  NotFoundException, 
+  Param, 
+  Query,
+  Body,
+  ParseIntPipe,
+  UseInterceptors,
+  UploadedFiles,
+} from '@nestjs/common';
+import { 
+  ApiOperation, 
+  ApiParam, 
+  ApiQuery, 
+  ApiResponse,
+  ApiConsumes,
+  ApiTags, 
+} from '@nestjs/swagger';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { ISubScenarioApplicationPort } from 'src/core/application/ports/inbound/sub-scenario-application.port';
 import { SubScenarioWithRelationsDto } from '../dtos/sub-scenarios/sub-scenario-response-with-relations.dto';
 import { PageOptionsDto } from '../dtos/common/page-options.dto';
 import { PageDto } from '../dtos/common/page.dto';
+import { CreateSubScenarioDto } from '../dtos/sub-scenarios/create-sub-scenario.dto';
+import { UpdateSubScenarioDto } from '../dtos/sub-scenarios/update-sub-scenario.dto';
 
-
-
+@ApiTags('Sub-escenarios')
 @Controller('sub-scenarios')
 export class SubScenarioController {
   constructor(
@@ -36,10 +59,43 @@ export class SubScenarioController {
   @ApiResponse({ status: 200, type: SubScenarioWithRelationsDto })
   @ApiResponse({ status: 404, description: 'Sub-escenario no encontrado' })
   async getSubScenarioById(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<SubScenarioWithRelationsDto> {
     return this.subScenarioApplicationService.getByIdWithRelations(id);
   }
 
+  @Post()
+  @ApiOperation({ summary: 'Crea un nuevo sub-escenario' })
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({ status: 201, type: SubScenarioWithRelationsDto })
+  @UseInterceptors(FilesInterceptor('images'))
+  async createSubScenario(
+    @Body() createDto: CreateSubScenarioDto,
+    @UploadedFiles() images?: Express.Multer.File[],
+  ): Promise<SubScenarioWithRelationsDto> {
+    return this.subScenarioApplicationService.create(createDto, images);
+  }
 
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualiza un sub-escenario existente' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del sub-escenario' })
+  @ApiResponse({ status: 200, type: SubScenarioWithRelationsDto })
+  @ApiResponse({ status: 404, description: 'Sub-escenario no encontrado' })
+  async updateSubScenario(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateSubScenarioDto,
+  ): Promise<SubScenarioWithRelationsDto> {
+    return this.subScenarioApplicationService.update(id, updateDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Elimina un sub-escenario' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del sub-escenario' })
+  @ApiResponse({ status: 200, type: Boolean, description: 'true si se eliminó correctamente' })
+  @ApiResponse({ status: 404, description: 'Sub-escenario no encontrado' })
+  async deleteSubScenario(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<boolean> {
+    return this.subScenarioApplicationService.delete(id);
+  }
 }
