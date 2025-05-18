@@ -13,6 +13,9 @@ import { IReservationApplicationPort } from '../ports/inbound/reservation-applic
 import { TimeSlotDomainEntity } from 'src/core/domain/entities/time-slot.domain-entity';
 import { TimeSlotMapper } from 'src/infrastructure/mappers/time-slot/timeslot.mapper';
 import { REPOSITORY_PORTS } from 'src/infrastructure/tokens/ports';
+import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page-options.dto';
+import { PageDto, PageMetaDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page.dto';
+import { ReservationWithRelationsResponseDto } from 'src/infrastructure/adapters/inbound/http/dtos/reservation/reservation-with-relations-response.dto';
 
 @Injectable()
 export class ReservationApplicationService
@@ -72,6 +75,22 @@ export class ReservationApplicationService
     );
     const created: ReservationDomainEntity =
       await this.reservationRepo.save(domain);
+    console.log({created});
     return ReservationMapper.toResponse(created);
+  }
+
+  async listReservations(opts: PageOptionsDto): Promise<PageDto<ReservationWithRelationsResponseDto>> {
+    const { data: reservations, total } = await this.reservationRepo.findPaged(opts);
+    
+    const dtos = reservations.map(reservation => ReservationMapper.toResponseWithRelations(reservation));
+    console.log(dtos);
+    return new PageDto(
+      dtos,
+      new PageMetaDto({
+        page: opts.page,
+        limit: opts.limit,
+        totalItems: total,
+      }),
+    );
   }
 }

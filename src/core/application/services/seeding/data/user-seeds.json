@@ -1,23 +1,52 @@
 [
-    {
-      "dni": 123456789,
-      "first_name": "John",
-      "last_name": "Doe",
-      "email": "john.doe@example.com",
-      "phone": "1234567890",
-      "role": { "name": "super-admin" },
-      "address": "123 Main Street",
-      "neighborhood": { "name": "San Alonso" }
-    },
-    {
-      "dni": 987654321,
-      "first_name": "Jane",
-      "last_name": "Smith",
-      "email": "jane.smith@example.com",
-      "phone": "0987654321",
-      "role": { "name": "admin" },
-      "address": "456 Elm Street",
-      "neighborhood": { "name": "San Alonso" }
-    }
-  ]
-  
+  {
+    "dni": 123456789,
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "phone": "1234567890",
+    "role": { "name": "super-admin" },
+    "address": "123 Main Street",
+    "neighborhood": { "name": "San Alonso" }
+  },
+  {
+    "dni": 987654321,
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane.smith@example.com",
+    "phone": "0987654321",
+    "role": { "name": "admin" },
+    "address": "456 Elm Street",
+    "neighborhood": { "name": "San Alonso" }
+  },
+  {
+    "dni": 112233445,
+    "first_name": "Carlos",
+    "last_name": "Rojas",
+    "email": "carlos.rojas@example.com",
+    "phone": "3216549870",
+    "role": { "name": "independiente" },
+    "address": "789 Oak Avenue",
+    "neighborhood": { "name": "Cabecera del Llano" }
+  },
+  {
+    "dni": 556677889,
+    "first_name": "Luisa",
+    "last_name": "Martínez",
+    "email": "luisa.martinez@example.com",
+    "phone": "3109876543",
+    "role": { "name": "club-deportivo" },
+    "address": "321 Pine Street",
+    "neighborhood": { "name": "Mutis" }
+  },
+  {
+    "dni": 998877665,
+    "first_name": "Andrés",
+    "last_name": "Gómez",
+    "email": "andres.gomez@example.com",
+    "phone": "3001122334",
+    "role": { "name": "entrenador" },
+    "address": "654 Maple Road",
+    "neighborhood": { "name": "La Victoria" }
+  }
+]
