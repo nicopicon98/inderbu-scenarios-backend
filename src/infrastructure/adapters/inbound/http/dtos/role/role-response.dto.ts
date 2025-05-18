@@ -1,12 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
+// src/infrastructure/adapters/inbound/http/dtos/role/role-response.dto.ts
+
+import { ApiProperty } from "@nestjs/swagger";
+import { Expose } from "class-transformer";
 
 export class RoleResponseDto {
-  @ApiProperty({ example: 1 })
-  readonly id: number;
+  @ApiProperty()
+  @Expose()
+  id: number;
 
-  @ApiProperty({ example: 'user', description: 'Nombre del rol' })
-  readonly name: string;
+  @ApiProperty()
+  @Expose()
+  name: string;
 
-  @ApiProperty({ example: 'User Role', description: 'Descripción del rol' })
-  readonly description: string;
+  @ApiProperty()
+  @Expose()
+  description: string;
 }

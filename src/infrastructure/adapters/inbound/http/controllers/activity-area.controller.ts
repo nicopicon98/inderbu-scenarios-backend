@@ -17,7 +17,7 @@ export class ActivityAreaController {
 
   @Get()
   @ApiOperation({ summary: 'Lista de áreas de actividad' })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Página (1‑based)' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Página (1-based)' })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Tamaño de página' })
   @ApiQuery({ name: 'search', required: false, type: String, description: 'Texto libre sobre name' })
   @ApiResponse({ status: 200, type: [ActivityAreaResponseDto], description: 'Retorna lista completa sin paginación si no se especifican parámetros' })
