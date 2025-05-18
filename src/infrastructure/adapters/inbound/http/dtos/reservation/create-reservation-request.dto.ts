@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsInt, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsInt, IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class CreateReservationRequestDto {
   @ApiProperty({ example: 1, description: 'ID del SubScenario' })
@@ -19,4 +19,13 @@ export class CreateReservationRequestDto {
   @IsNotEmpty()
   @IsDateString()
   reservationDate: string;
+
+  @ApiProperty({
+    example: 'Partido de fútbol amistoso para niños',
+    description: 'Comentarios adicionales sobre la reserva (opcional)',
+    required: false
+  })
+  @IsOptional()
+  @IsString()
+  comments?: string;
 }

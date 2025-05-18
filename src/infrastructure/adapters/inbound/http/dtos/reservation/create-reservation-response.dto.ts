@@ -18,4 +18,11 @@ export class CreateReservationResponseDto {
 
   @ApiProperty({ example: 1, description: 'ID del estado de reserva (PENDIENTE)' })
   reservationStateId: number;
+
+  @ApiProperty({ 
+    example: 'Partido de fútbol amistoso para niños', 
+    description: 'Comentarios adicionales sobre la reserva',
+    required: false
+  })
+  comments?: string;
 }

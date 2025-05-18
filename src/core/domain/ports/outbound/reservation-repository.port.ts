@@ -13,5 +13,7 @@ export interface IReservationRepositoryPort {
     timeSlotId: number,
   ): Promise<ReservationDomainEntity | null>
   save(reservation: ReservationDomainEntity): Promise<ReservationDomainEntity>;
+  findById(id: number): Promise<ReservationDomainEntity | null>;
+  update(reservation: ReservationDomainEntity): Promise<ReservationDomainEntity>;
   findPaged(opts: PageOptionsDto): Promise<{ data: ReservationEntity[]; total: number }>;
 }

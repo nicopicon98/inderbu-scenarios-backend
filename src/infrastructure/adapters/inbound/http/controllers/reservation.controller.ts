@@ -3,6 +3,9 @@ import {
   Controller,
   Get,
   Inject,
+  Param,
+  ParseIntPipe,
+  Patch,
   Post,
   Query,
   Request,
@@ -10,20 +13,22 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
-import { IReservationApplicationPort } from 'src/core/application/ports/inbound/reservation-application.port';
-import { AvailableTimeslotsQueryDto } from '../dtos/time-slot/available-timeslots-query.dto';
-import { TimeslotResponseDto } from '../dtos/time-slot/timeslot-response.dto';
-import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
-import { CreateReservationRequestDto } from '../dtos/reservation/create-reservation-request.dto';
-import { CreateReservationResponseDto } from '../dtos/reservation/create-reservation-response.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { Request as ExpressRequest } from 'express';
-import { IUserRequest } from 'src/infrastructure/types/user-request.type';
-import { PageOptionsDto } from '../dtos/common/page-options.dto';
-import { PageDto } from '../dtos/common/page.dto';
 import { ReservationWithRelationsResponseDto } from '../dtos/reservation/reservation-with-relations-response.dto';
+import { IReservationApplicationPort } from 'src/core/application/ports/inbound/reservation-application.port';
+import { CreateReservationResponseDto } from '../dtos/reservation/create-reservation-response.dto';
+import { CreateReservationRequestDto } from '../dtos/reservation/create-reservation-request.dto';
+import { AvailableTimeslotsQueryDto } from '../dtos/time-slot/available-timeslots-query.dto';
+import { UpdateReservationStateDto } from '../dtos/reservation/update-reservation-state.dto';
+import { UpdateReservationStatusDto } from '../dtos/reservation/update-reservation-status.dto';
+import { TimeslotResponseDto } from '../dtos/time-slot/timeslot-response.dto';
+import { IUserRequest } from 'src/infrastructure/types/user-request.type';
+import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
+import { PageOptionsDto } from '../dtos/common/page-options.dto';
+import { Request as ExpressRequest } from 'express';
+import { PageDto } from '../dtos/common/page.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiBearerAuth('jwt-auth')
 @Controller('reservations')
@@ -77,4 +82,49 @@ export class ReservationController {
     return this.reservationService.listReservations(opts);
   }
 
+  @Get('states')
+  @ApiOperation({
+    summary: 'Obtiene todos los estados de reserva disponibles',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de estados de reserva',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'number' },
+          state: { type: 'string' },
+        },
+      },
+    },
+  })
+  async getReservationStates(): Promise<{ id: number; state: string }[]> {
+    return this.reservationService.getAllReservationStates();
+  }
+
+  @Patch(':id/state')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: 'Actualiza el estado de una reserva por ID de estado (JWT requerido)',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la reserva',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reserva actualizada exitosamente',
+    type: ReservationWithRelationsResponseDto,
+  })
+  @ApiResponse({ status: 404, description: 'Reserva no encontrada' })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async updateReservationState(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateReservationStateDto,
+  ): Promise<ReservationWithRelationsResponseDto> {
+    return this.reservationService.updateReservationState(id, dto);
+  }
 }

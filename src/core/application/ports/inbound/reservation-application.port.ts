@@ -4,6 +4,7 @@ import { TimeslotResponseDto } from 'src/infrastructure/adapters/inbound/http/dt
 import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page-options.dto';
 import { PageDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page.dto';
 import { ReservationWithRelationsResponseDto } from 'src/infrastructure/adapters/inbound/http/dtos/reservation/reservation-with-relations-response.dto';
+import { UpdateReservationStateDto } from 'src/infrastructure/adapters/inbound/http/dtos/reservation/update-reservation-state.dto';
 
 export interface IReservationApplicationPort {
   getAvailableTimeSlots(
@@ -19,4 +20,11 @@ export interface IReservationApplicationPort {
   listReservations(
     opts: PageOptionsDto
   ): Promise<PageDto<ReservationWithRelationsResponseDto>>;
+
+  updateReservationState(
+    reservationId: number,
+    dto: UpdateReservationStateDto
+  ): Promise<ReservationWithRelationsResponseDto>;
+
+  getAllReservationStates(): Promise<{id: number, state: string}[]>;
 }

@@ -28,6 +28,7 @@ export class ReservationRepositoryAdapter
       user: { id: domain.userId },
       timeSlot: { id: domain.timeSlotId },
       reservationState: { id: domain.reservationStateId },
+      comments: domain.comments || null,
     });
   }
 
@@ -39,6 +40,7 @@ export class ReservationRepositoryAdapter
       .withUserId(entity.user.id)
       .withTimeSlotId(entity.timeSlot.id)
       .withReservationStateId(entity.reservationState.id)
+      .withComments(entity.comments || undefined)
       .build();
   }
 
@@ -75,6 +77,24 @@ export class ReservationRepositoryAdapter
     });
 
     return reservations.map(this.toDomain);
+  }
+
+  async findById(id: number): Promise<ReservationDomainEntity | null> {
+    const entity = await this.repository.findOne({
+      where: { id },
+      relations: [
+        'subScenario',
+        'subScenario.scenario',
+        'subScenario.scenario.neighborhood',
+        'subScenario.scenario.neighborhood.commune',
+        'subScenario.scenario.neighborhood.commune.city',
+        'user',
+        'timeSlot',
+        'reservationState',
+      ],
+    });
+
+    return entity ? this.toDomain(entity) : null;
   }
 
   async findPaged(opts: PageOptionsDto): Promise<{ data: ReservationEntity[]; total: number }> {
@@ -127,5 +147,50 @@ export class ReservationRepositoryAdapter
       console.error('Error en findPaged:', error);
       throw error;
     }
+  }
+
+  async update(reservation: ReservationDomainEntity): Promise<ReservationDomainEntity> {
+    // Obtenemos la entidad existente para asegurarnos de actualizar solo los campos que nos interesan
+    const existingEntity = await this.repository.findOne({
+      where: { id: reservation.id as number },
+      relations: [
+        'subScenario',
+        'user',
+        'timeSlot',
+        'reservationState',
+      ],
+    });
+
+    if (!existingEntity) {
+      throw new Error(`Reserva con ID ${reservation.id} no encontrada`);
+    }
+
+    // Actualizamos solo los campos que nos interesan (el estado en este caso)
+    existingEntity.reservationState = { id: reservation.reservationStateId } as any;
+    
+    // Si hay comentarios, los actualizamos
+    if (reservation.comments !== undefined) {
+      existingEntity.comments = reservation.comments;
+    }
+
+    // Guardamos la entidad actualizada
+    const updated = await this.repository.save(existingEntity);
+
+    // Recargamos la entidad con todas sus relaciones para devolverla completa
+    const reloaded = await this.repository.findOne({
+      where: { id: updated.id },
+      relations: [
+        'subScenario',
+        'subScenario.scenario',
+        'subScenario.scenario.neighborhood',
+        'subScenario.scenario.neighborhood.commune',
+        'subScenario.scenario.neighborhood.commune.city',
+        'user',
+        'timeSlot',
+        'reservationState',
+      ],
+    });
+
+    return this.toDomain(reloaded!);
   }
 }

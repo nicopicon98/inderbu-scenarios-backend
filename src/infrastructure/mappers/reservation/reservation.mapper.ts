@@ -13,6 +13,7 @@ export class ReservationMapper {
       userId: domain.userId,
       timeSlotId: domain.timeSlotId,
       reservationStateId: domain.reservationStateId,
+      comments: domain.comments,
     };
   }
 
@@ -29,6 +30,7 @@ export class ReservationMapper {
       id: entity.id,
       reservationDate: entity.reservationDate.toISOString().split('T')[0],
       createdAt: entity.createdAt.toISOString(),
+      comments: entity.comments || undefined,
       subScenario: {
         id: subScenario.id,
         name: subScenario.name,
@@ -116,6 +118,7 @@ export class ReservationMapper {
       .withTimeSlotId(dto.timeSlotId)
       .withReservationDate(new Date(dto.reservationDate + 'T00:00:00Z'))
       .withReservationStateId(reservationStateId)
+      .withComments(dto.comments)
       .build();
   }
 }

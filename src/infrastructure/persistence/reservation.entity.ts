@@ -21,6 +21,12 @@ export class ReservationEntity {
   })
   reservationDate: Date;
 
+  @Column({
+    type: 'text',
+    nullable: true
+  })
+  comments: string | null;
+
   @ManyToOne(() => SubScenarioEntity, { eager: true })
   @JoinColumn({ name: 'fk_sub_scenario_id' })
   subScenario: SubScenarioEntity;

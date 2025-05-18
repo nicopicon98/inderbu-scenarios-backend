@@ -40,4 +40,18 @@ export class ReservationStateRepositoryAdapter
     });
     return entity ? this.toDomain(entity) : null;
   }
+
+  async findAll(): Promise<ReservationStateDomainEntity[]> {
+    const entities = await this.repository.find({
+      order: { id: 'ASC' },
+    });
+    return entities.map(entity => this.toDomain(entity));
+  }
+
+  async findById(id: number): Promise<ReservationStateDomainEntity | null> {
+    const entity = await this.repository.findOne({
+      where: { id }
+    });
+    return entity ? this.toDomain(entity) : null;
+  }
 }

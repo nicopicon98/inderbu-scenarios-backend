@@ -151,6 +151,13 @@ export class ReservationWithRelationsResponseDto {
 
   @ApiProperty()
   createdAt: string;
+  
+  @ApiProperty({ 
+    example: 'Partido de fútbol amistoso para niños', 
+    description: 'Comentarios adicionales sobre la reserva',
+    required: false
+  })
+  comments?: string;
 
   @ApiProperty({ type: SubScenarioDto })
   subScenario: SubScenarioDto;

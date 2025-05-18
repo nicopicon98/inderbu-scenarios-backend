@@ -7,6 +7,7 @@ export class ReservationDomainEntity {
   @Expose() readonly userId: number;
   @Expose() readonly timeSlotId: number;
   @Expose() readonly reservationStateId: number;
+  @Expose() readonly comments?: string;
 
   constructor(builder: ReservationDomainBuilder) {
     this.id = builder.id;
@@ -15,6 +16,7 @@ export class ReservationDomainEntity {
     this.userId = builder.userId;
     this.timeSlotId = builder.timeSlotId;
     this.reservationStateId = builder.reservationStateId;
+    this.comments = builder.comments;
   }
 
   static builder(): ReservationDomainBuilder {
@@ -29,6 +31,7 @@ export class ReservationDomainBuilder {
   userId: number;
   timeSlotId: number;
   reservationStateId: number;
+  comments?: string;
 
   withId(id: number): this {
     this.id = id;
@@ -52,6 +55,11 @@ export class ReservationDomainBuilder {
   }
   withReservationStateId(id: number): this {
     this.reservationStateId = id;
+    return this;
+  }
+
+  withComments(comments?: string): this {
+    this.comments = comments;
     return this;
   }
 
