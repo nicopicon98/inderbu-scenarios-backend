@@ -1,21 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SubScenarioImageResponseDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'ID único de la imagen' })
   id: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Ruta del archivo de imagen en el servidor' })
   path: string;
   
-  @ApiProperty()
+  @ApiProperty({ description: 'URL completa de la imagen' })
+  url: string;
+  
+  @ApiProperty({ description: 'Indica si esta imagen es la destacada (principal) del sub-escenario' })
   isFeature: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Orden de visualización de la imagen' })
   displayOrder: number;
 
-  @ApiProperty({ description: 'Id del sub-escenario al que pertenece' })
+  @ApiProperty({ description: 'ID del sub-escenario al que pertenece esta imagen' })
   subScenarioId: number;
   
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Fecha de creación de la imagen' })
   createdAt?: Date;
 }

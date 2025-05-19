@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 
 import { SubScenarioImageEntity } from 'src/infrastructure/persistence/image.entity';
 import { ISubScenarioImageRepositoryPort } from 'src/core/domain/ports/outbound/sub-scenario-image-repository.port';
@@ -35,18 +35,69 @@ export class SubScenarioImageRepositoryAdapter
   async findBySubScenarioId(
     subScenarioId: number,
   ): Promise<SubScenarioImageDomainEntity[]> {
-    const entities = await this.repository.find({
-      where: { subScenario: { id: subScenarioId } },
-      order: { isFeature: 'DESC', displayOrder: 'ASC' },
-    });
-    return entities.map(SubScenarioImageEntityMapper.toDomain);
+    try {
+      const entities = await this.repository.find({
+        where: { subScenario: { id: subScenarioId } },
+        relations: ['subScenario'],
+        order: { isFeature: 'DESC', displayOrder: 'ASC' },
+      });
+      return entities.map(SubScenarioImageEntityMapper.toDomain);
+    } catch (error) {
+      console.error('Error fetching images for subScenarioId:', subScenarioId, error);
+      return []; // Retornar un array vacío en caso de error
+    }
+  }
+  
+  async findBySubScenarioIds(
+    subScenarioIds: number[],
+  ): Promise<SubScenarioImageDomainEntity[]> {
+    try {
+      console.log(`Buscando imágenes para ${subScenarioIds.length} sub-escenarios: ${subScenarioIds.join(', ')}`);
+      
+      if (subScenarioIds.length === 0) {
+        return [];
+      }
+      
+      const entities = await this.repository.find({
+        where: { subScenario: { id: In(subScenarioIds) } },
+        relations: ['subScenario'],
+        order: { isFeature: 'DESC', displayOrder: 'ASC' },
+      });
+      
+      console.log(`Encontradas ${entities.length} imágenes para los sub-escenarios`);
+      
+      // Agrupar imágenes por subScenarioId para depuración
+      const imagesBySubScenario = {};
+      entities.forEach(entity => {
+        const subScenarioId = entity.subScenario?.id;
+        if (subScenarioId) {
+          if (!imagesBySubScenario[subScenarioId]) {
+            imagesBySubScenario[subScenarioId] = [];
+          }
+          imagesBySubScenario[subScenarioId].push(entity.id);
+        }
+      });
+      
+      console.log('Distribución de imágenes por sub-escenario:', imagesBySubScenario);
+      
+      return entities.map(SubScenarioImageEntityMapper.toDomain);
+    } catch (error) {
+      console.error('Error fetching images for multiple subScenarioIds:', subScenarioIds, error);
+      return []; // Retornar un array vacío en caso de error
+    }
   }
 
   async findById(id: number): Promise<SubScenarioImageDomainEntity | null> {
-    const entity = await this.repository.findOne({
-      where: { id },
-    });
-    return entity ? SubScenarioImageEntityMapper.toDomain(entity) : null;
+    try {
+      const entity = await this.repository.findOne({
+        where: { id },
+        relations: ['subScenario'],
+      });
+      return entity ? SubScenarioImageEntityMapper.toDomain(entity) : null;
+    } catch (error) {
+      console.error('Error fetching image by id:', id, error);
+      return null;
+    }
   }
 
   async delete(id: number): Promise<boolean> {

@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { createWriteStream, existsSync, mkdirSync, unlinkSync } from 'fs';
+import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { promisify } from 'util';
-import { pipeline } from 'stream';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class FileStorageService {
-  private readonly pipelineAsync = promisify(pipeline);
   private readonly uploadDir = join(process.cwd(), 'uploads/images');
 
   constructor() {
@@ -23,16 +20,24 @@ export class FileStorageService {
    * @returns Ruta relativa del archivo guardado
    */
   async saveFile(file: Express.Multer.File): Promise<string> {
+    // Validar que el archivo exista y tenga contenido
+    if (!file || !file.buffer) {
+      throw new Error('Archivo inválido o vacío');
+    }
+
     const fileExtension = file.originalname.split('.').pop();
     const fileName = `${uuidv4()}.${fileExtension}`;
-    const relativePath = `/images/${fileName}`;
+    const relativePath = `/uploads/images/${fileName}`;
     const fullPath = join(this.uploadDir, fileName);
 
-    // Guardar el archivo en el sistema de archivos
-    const writeStream = createWriteStream(fullPath);
-    await this.pipelineAsync(file.buffer, writeStream);
-
-    return relativePath;
+    // Guardar el archivo usando writeFileSync (más directo que pipeline para buffers)
+    try {
+      writeFileSync(fullPath, file.buffer);
+      return relativePath;
+    } catch (error) {
+      console.error(`Error al guardar archivo: ${error.message}`);
+      throw new Error(`No se pudo guardar el archivo: ${error.message}`);
+    }
   }
 
   /**
@@ -44,7 +49,14 @@ export class FileStorageService {
     if (!relativePath) return false;
 
     try {
-      const fullPath = join(process.cwd(), 'uploads', relativePath);
+      // Ajustar la ruta si no incluye 'uploads'
+      let fullPath = '';
+      if (relativePath.startsWith('/uploads/')) {
+        fullPath = join(process.cwd(), relativePath);
+      } else {
+        fullPath = join(process.cwd(), 'uploads', relativePath);
+      }
+      
       if (existsSync(fullPath)) {
         unlinkSync(fullPath);
         return true;

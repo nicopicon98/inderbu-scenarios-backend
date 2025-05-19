@@ -1,7 +1,9 @@
+import { diskStorage } from 'multer';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MulterModule } from '@nestjs/platform-express';
 import { Module } from '@nestjs/common';
 import { join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 
 import { SubScenarioImageController } from '../adapters/inbound/http/controllers/sub-scenario-image.controller';
 import { subScenarioImageProviders } from '../providers/sub-scenario-image/sub-scenario-image.providers';

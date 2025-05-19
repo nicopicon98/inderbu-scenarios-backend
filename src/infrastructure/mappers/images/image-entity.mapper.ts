@@ -9,7 +9,7 @@ export class SubScenarioImageEntityMapper {
       .withPath(entity.path)
       .withIsFeature(entity.isFeature)
       .withDisplayOrder(entity.displayOrder)
-      .withSubScenarioId(entity.subScenario.id)
+      .withSubScenarioId(entity.subScenario?.id)
       .withCreatedAt(entity.createdAt)
       .build();
   }

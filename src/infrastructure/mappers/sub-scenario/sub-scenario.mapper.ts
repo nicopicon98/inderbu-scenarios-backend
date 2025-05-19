@@ -16,6 +16,23 @@ export class SubScenarioMapper {
     neighMap: Map<number, NeighborhoodDomainEntity>,
     images: SubScenarioImageDomainEntity[] = [],
   ): SubScenarioWithRelationsDto {
+    // Convertir todas las imágenes a DTOs
+    const imageDtos = images.map(SubScenarioImageResponseMapper.toDto);
+    
+    // Ordenar imágenes por orden de visualización
+    const sortedImages = [...imageDtos].sort((a, b) => a.displayOrder - b.displayOrder);
+    
+    // Separar imagen destacada y adicionales
+    const featuredImage = sortedImages.find(img => img.isFeature);
+    const additionalImages = sortedImages.filter(img => !img.isFeature);
+    
+    // Crear estructura de galería (siempre incluirla)
+    const imageGallery = {
+      featured: featuredImage,
+      additional: additionalImages,
+      count: sortedImages.length
+    };
+    
     return {
       id: s.id!,
       name: s.name,
@@ -40,10 +57,11 @@ export class SubScenarioMapper {
         ? mapNamedRef(s.fieldSurfaceTypeId, surfMap)
         : undefined,
         
-      // Incluir imágenes si existen
-      images: images.length > 0 
-        ? images.map(SubScenarioImageResponseMapper.toDto)
-        : undefined,
+      // Siempre incluir galería de imágenes, incluso si está vacía
+      imageGallery: imageGallery,
+      
+      // Siempre incluir el array de imágenes, incluso si está vacío
+      images: sortedImages,
     };
   }
 }

@@ -51,18 +51,33 @@ export class SubScenarioApplicationService
     console.log('subscenarios response', subs)
     const [scen, area, surf, neigh] = await this.loadReferenceMaps(subs); // 2. catálogos
     
-    // Obtener imágenes para cada sub-escenario
-    const subsWithImages = await Promise.all(
-      subs.map(async (s) => {
-        if (s.id === null) return { sub: s, images: [] };
-        const images = await this.imageRepository.findBySubScenarioId(s.id);
-        return { sub: s, images };
-      })
-    );
+    // Obtener IDs de todos los sub-escenarios
+    const subScenarioIds = subs
+      .map(s => s.id)
+      .filter((id): id is number => id !== null);
     
-    const dto = subsWithImages.map(({ sub, images }) =>
-      SubScenarioMapper.toDto(sub, scen, area, surf, neigh, images),
-    );
+    // Obtener todas las imágenes en una sola consulta agrupadas por subScenarioId
+    const allImages = await this.imageRepository.findBySubScenarioIds(subScenarioIds);
+    
+    // Agrupar imágenes por subScenarioId para un acceso más rápido
+    const imagesBySubScenarioId = new Map<number, SubScenarioImageDomainEntity[]>();
+    
+    allImages.forEach(image => {
+      if (!imagesBySubScenarioId.has(image.subScenarioId)) {
+        imagesBySubScenarioId.set(image.subScenarioId, []);
+      }
+      imagesBySubScenarioId.get(image.subScenarioId)!.push(image);
+    });
+    
+    // Mapear sub-escenarios con sus imágenes
+    const dto = subs.map(sub => {
+      if (sub.id === null) {
+        return SubScenarioMapper.toDto(sub, scen, area, surf, neigh, []);
+      }
+      
+      const subImages = imagesBySubScenarioId.get(sub.id) || [];
+      return SubScenarioMapper.toDto(sub, scen, area, surf, neigh, subImages);
+    });
     
     console.log('DTO', dto);
     return new PageDto(

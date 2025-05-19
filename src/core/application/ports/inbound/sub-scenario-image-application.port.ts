@@ -18,11 +18,5 @@ export interface ISubScenarioImageApplicationPort {
     imageId: number,
     updateDto: UpdateImageDto,
   ): Promise<SubScenarioImageResponseDto>;
-  
-  updateImagesOrder(
-    subScenarioId: number,
-    updateOrderDto: UpdateImagesOrderDto,
-  ): Promise<SubScenarioImageResponseDto[]>;
-  
-  deleteImage(imageId: number): Promise<boolean>;
+
 }
