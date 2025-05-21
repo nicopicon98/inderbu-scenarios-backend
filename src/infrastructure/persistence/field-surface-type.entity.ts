@@ -1,16 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Index } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SubScenarioEntity } from './sub-scenario.entity';
 
 @Entity('field_surface_types')
-@Index('ft_fs_name', ['name'], { fulltext: true })
 export class FieldSurfaceTypeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, unique: true })
   name: string;
 
-  // Un tipo de superficie puede estar asociado a varios sub-escenarios
-  @OneToMany(() => SubScenarioEntity, (subScenario) => subScenario.fieldSurfaceType)
-  subScenarios: SubScenarioEntity[];
+  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  // Relaciones
+  @OneToMany(() => SubScenarioEntity, subScenario => subScenario.fieldSurfaceType)
+  subScenarios?: SubScenarioEntity[];
 }

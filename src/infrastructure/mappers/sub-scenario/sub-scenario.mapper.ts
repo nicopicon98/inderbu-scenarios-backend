@@ -1,11 +1,11 @@
-import { NamedRefDto, NamedRefWithNeighborhoodDto, SubScenarioWithRelationsDto } from 'src/infrastructure/adapters/inbound/http/dtos/sub-scenarios/sub-scenario-response-with-relations.dto';
+import { SubScenarioWithRelationsDto } from 'src/infrastructure/adapters/inbound/http/dtos/sub-scenarios/sub-scenario-response-with-relations.dto';
 import { FieldSurfaceTypeDomainEntity } from 'src/core/domain/entities/field-surface-type.domain-entity';
-import { ActivityAreaDomainEntity } from 'src/core/domain/entities/activity-area.domain-entity';
-import { SubScenarioDomainEntity } from 'src/core/domain/entities/sub-scenario.domain-entity';
-import { NeighborhoodDomainEntity } from 'src/core/domain/entities/neighborhood.domain-entity';
-import { ScenarioDomainEntity } from 'src/core/domain/entities/scenario.domain-entity';
 import { SubScenarioImageDomainEntity } from 'src/core/domain/entities/sub-scenario-image.domain-entity';
 import { SubScenarioImageResponseMapper } from 'src/infrastructure/mappers/images/image-response.mapper';
+import { ActivityAreaDomainEntity } from 'src/core/domain/entities/activity-area.domain-entity';
+import { NeighborhoodDomainEntity } from 'src/core/domain/entities/neighborhood.domain-entity';
+import { SubScenarioDomainEntity } from 'src/core/domain/entities/sub-scenario.domain-entity';
+import { ScenarioDomainEntity } from 'src/core/domain/entities/scenario.domain-entity';
 
 export class SubScenarioMapper {
   static toDto(
@@ -113,16 +113,22 @@ export function toMap<T extends { id: number | null }>(list: T[]) {
   );
 }
 
-export function mapNamedRef<T extends { id: number | null; name: string }>(
+export function mapNamedRef<T extends { id: number | null } & ({ name: string } | { getName(): string })>(
   id: number | undefined,
   map: Map<number, T>,
 ) {
   const e = id != null ? map.get(id) : undefined;
-  return e && e.id !== null
-    ? { id: e.id, name: e.name }
-    : id != null
-      ? { id, name: '' }
-      : undefined;
+
+  // Si existe la entidad y tiene un ID
+  if (e && e.id !== null) {
+    // Determinar cómo obtener el nombre (propiedad directa o método getter)
+    const name = 'name' in e ? e.name : 'getName' in e && typeof e.getName === 'function' ? e.getName() : '';
+    return { id: e.id, name };
+  } else if (id != null) {
+    return { id, name: '' };
+  } else {
+    return undefined;
+  }
 }
 
 export function mapNamedRefWithAddress<

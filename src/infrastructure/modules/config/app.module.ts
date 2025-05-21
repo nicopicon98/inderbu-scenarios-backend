@@ -15,6 +15,7 @@ import { EmailModule } from '../email.module';
 import { AuthModule } from '../auth.module';
 import { UserModule } from '../user.module';
 import { RoleModule } from '../role.module';
+import { FieldSurfaceTypeModule } from '../field-surface-type.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RoleModule } from '../role.module';
     ReservationModule,
     EmailModule,
     RoleModule,
+    FieldSurfaceTypeModule,
     AppCommandModule,
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la aplicación

@@ -5,16 +5,58 @@ import { FieldSurfaceTypeEntityMapper } from 'src/infrastructure/mappers/field-s
 import { IFieldSurfaceTypeRepositoryPort } from 'src/core/domain/ports/outbound/field-surface-type-repository.port';
 import { FieldSurfaceTypeDomainEntity } from 'src/core/domain/entities/field-surface-type.domain-entity';
 import { FieldSurfaceTypeEntity } from 'src/infrastructure/persistence/field-surface-type.entity';
+import { PageOptionsDto } from '../../inbound/http/dtos/common/page-options.dto';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
+import { BaseRepositoryAdapter } from './common/base-repository.adapter';
 
 @Injectable()
 export class FieldSurfaceTypeRepositoryAdapter
+  extends BaseRepositoryAdapter<
+    FieldSurfaceTypeEntity,
+    FieldSurfaceTypeDomainEntity
+  >
   implements IFieldSurfaceTypeRepositoryPort
 {
+
   constructor(
     @Inject(MYSQL_REPOSITORY.FIELD_SURFACE_TYPE)
-    private readonly repository: Repository<FieldSurfaceTypeEntity>,
-  ) {}
+    readonly repository: Repository<FieldSurfaceTypeEntity>,
+  ) {
+    super(repository);
+  }
+
+    protected toEntity(domain: FieldSurfaceTypeDomainEntity): FieldSurfaceTypeEntity {
+    return FieldSurfaceTypeEntityMapper.toEntity(domain);
+  }
+
+  protected toDomain(entity: FieldSurfaceTypeEntity): FieldSurfaceTypeDomainEntity {
+    return FieldSurfaceTypeEntityMapper.toDomain(entity);
+  }
+
+  async findAll(): Promise<FieldSurfaceTypeDomainEntity[]> {
+    const entities = await this.repository.find();
+    return entities.map(FieldSurfaceTypeEntityMapper.toDomain);
+  }
+
+  async findByName(name: string): Promise<FieldSurfaceTypeDomainEntity | null> {
+    const entity = await this.repository.findOne({ where: { name } });
+    return entity ? FieldSurfaceTypeEntityMapper.toDomain(entity) : null;
+  }
+
+  async findPaged(options: PageOptionsDto): Promise<{ data: FieldSurfaceTypeDomainEntity[]; total: number; }> {
+    const [entities, total] = await this.repository.findAndCount({
+      take: options.limit
+    });
+    return {
+      data: entities.map(FieldSurfaceTypeEntityMapper.toDomain),
+      total,
+    };
+  }
+
+  async delete(id: number): Promise<boolean> {
+    const result = await this.repository.delete(id);
+    return typeof result.affected === 'number' && result.affected > 0;
+  }
 
   async findById(id: number) {
     const e = await this.repository.findOne({ where: { id } });
@@ -28,6 +70,9 @@ export class FieldSurfaceTypeRepositoryAdapter
   }
 
   async save(d: FieldSurfaceTypeDomainEntity) {
-    await this.repository.save(FieldSurfaceTypeEntityMapper.toEntity(d));
+    const entity = await this.repository.save(
+      FieldSurfaceTypeEntityMapper.toEntity(d),
+    );
+    return entity;
   }
 }
