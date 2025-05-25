@@ -23,5 +23,6 @@ export class PageOptionsDto {
 
   @ApiPropertyOptional() @IsOptional() @Type(() => Number) scenarioId?: number;
   @ApiPropertyOptional() @IsOptional() @Type(() => Number) activityAreaId?: number;
-  @ApiPropertyOptional() @IsOptional() @Type(() => Number)  neighborhoodId?: number;
+  @ApiPropertyOptional() @IsOptional() @Type(() => Number) neighborhoodId?: number;
+  @ApiPropertyOptional() @IsOptional() @Type(() => Number) userId?: number;
 }

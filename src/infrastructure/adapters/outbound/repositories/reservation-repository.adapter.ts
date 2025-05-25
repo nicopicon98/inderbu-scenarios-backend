@@ -105,6 +105,7 @@ export class ReservationRepositoryAdapter
       scenarioId,
       activityAreaId,
       neighborhoodId,
+      userId,
     } = opts;
 
     try {
@@ -123,6 +124,7 @@ export class ReservationRepositoryAdapter
       if (scenarioId) qb.andWhere('sc.id = :scenarioId', { scenarioId });
       if (activityAreaId) qb.andWhere('ss.fk_activity_area_id = :activityAreaId', { activityAreaId });
       if (neighborhoodId) qb.andWhere('n.id = :neighborhoodId', { neighborhoodId });
+      if (userId) qb.andWhere('u.id = :userId', { userId });
 
       // Búsqueda por texto si está presente
       if (search?.trim()) {

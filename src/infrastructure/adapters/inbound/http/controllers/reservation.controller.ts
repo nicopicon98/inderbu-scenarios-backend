@@ -67,14 +67,18 @@ export class ReservationController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtiene listado paginado de reservas' })
+  @ApiOperation({ 
+    summary: 'Obtiene listado paginado de reservas con filtros',
+    description: 'Permite filtrar reservas por escenario, área de actividad, barrio y usuario específico'
+  })
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Página (1-based)' })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Tamaño de página' })
-  @ApiQuery({ name: 'search', required: false, type: String, description: 'Texto libre para búsqueda' })
-  @ApiQuery({ name: 'scenarioId', required: false, type: Number, description: 'Filtra por escenario' })
+  @ApiQuery({ name: 'search', required: false, type: String, description: 'Texto libre para búsqueda en nombres y ubicaciones' })
+  @ApiQuery({ name: 'scenarioId', required: false, type: Number, description: 'Filtra por escenario específico' })
   @ApiQuery({ name: 'activityAreaId', required: false, type: Number, description: 'Filtra por área de actividad' })
   @ApiQuery({ name: 'neighborhoodId', required: false, type: Number, description: 'Filtra por barrio (id)' })
-  @ApiResponse({ status: 200, type: PageDto })
+  @ApiQuery({ name: 'userId', required: false, type: Number, description: '🆕 Filtra por usuario específico - muestra solo las reservas de ese usuario' })
+  @ApiResponse({ status: 200, type: PageDto, description: 'Lista paginada de reservas con relaciones completas' })
   @UsePipes(new ValidationPipe({ transform: true }))
   async getReservations(
     @Query() opts: PageOptionsDto,
