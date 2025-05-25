@@ -57,32 +57,29 @@ export class ScenarioRepositoryAdapter
       .createQueryBuilder('s')
       .leftJoinAndSelect('s.neighborhood', 'n');
 
-    /* ───── filtros ───── */
+    /* ───── FILTROS EXACTOS ───── */
     if (neighborhoodId) {
       qb.andWhere('n.id = :neighborhoodId', { neighborhoodId });
     }
     
-    /* ───── búsqueda ───── */
+    /* ───── BÚSQUEDA POR TEXTO EN NOMBRE DE ESCENARIO ───── */
     if (search?.trim()) {
       const term = search.trim();
       const isTiny = term.length < 4;
 
       if (isTiny) {
-        /* LIKE prefijo + contiene */
+        /* LIKE prefijo + contiene - SOLO EN SCENARIO NAME */
         const likeAny = `%${term}%`;
         const likePref = `${term}%`;
 
         qb.addSelect(
           `
         (
-          (s.name LIKE :pref)*1 + (s.name LIKE :any)*0.5 +
-          (n.name LIKE :pref)*0.5 + (n.name LIKE :any)*0.25
+          (s.name LIKE :pref)*1 + (s.name LIKE :any)*0.5
         )`,
           'score',
         ).andWhere(
-          `
-          s.name LIKE :any OR n.name LIKE :any
-       `,
+          `s.name LIKE :any`,
           { pref: likePref, any: likeAny },
         );
 
@@ -92,25 +89,18 @@ export class ScenarioRepositoryAdapter
           .orderBy('score', 'DESC')
           .addOrderBy('pos', 'ASC');
       } else {
-        /* FULLTEXT BOOLEAN MODE con wildcard * */
+        /* FULLTEXT BOOLEAN MODE - SOLO EN SCENARIO NAME */
         const boolean = term
           .split(/\s+/)
           .map((w) => `+${w}*`)
           .join(' ');
 
         qb.addSelect(
-          `
-        (
-          (MATCH(s.name) AGAINST (:q IN BOOLEAN MODE))*1 +
-          (MATCH(n.name) AGAINST (:q IN BOOLEAN MODE))*0.5
-        )`,
+          `(MATCH(s.name) AGAINST (:q IN BOOLEAN MODE))`,
           'score',
         )
           .andWhere(
-            `
-          MATCH(s.name) AGAINST (:q IN BOOLEAN MODE) OR
-          MATCH(n.name) AGAINST (:q IN BOOLEAN MODE)
-      `,
+            `MATCH(s.name) AGAINST (:q IN BOOLEAN MODE)`,
             { q: boolean },
           )
           .orderBy('score', 'DESC');
