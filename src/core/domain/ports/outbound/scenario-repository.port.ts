@@ -7,4 +7,8 @@ export interface IScenarioRepositoryPort {
   findByIds(ids: number[]): Promise<ScenarioDomainEntity[]>;
   findPaged(opts: PageOptionsDto): Promise<{ data: ScenarioDomainEntity[]; total: number }>;
   findAll(): Promise<ScenarioDomainEntity[]>;
+  
+  // ⭐ NUEVOS MÉTODOS CRUD
+  save(scenario: ScenarioDomainEntity): Promise<ScenarioDomainEntity>;
+  delete(id: number): Promise<boolean>;
 }

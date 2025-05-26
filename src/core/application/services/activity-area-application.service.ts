@@ -1,7 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page-options.dto';
 import { PageDto, PageMetaDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page.dto';
 import { ActivityAreaResponseDto } from 'src/infrastructure/adapters/inbound/http/dtos/activity-area/activity-area-response.dto';
+import { CreateActivityAreaDto } from 'src/infrastructure/adapters/inbound/http/dtos/activity-area/create-activity-area.dto';
+import { UpdateActivityAreaDto } from 'src/infrastructure/adapters/inbound/http/dtos/activity-area/update-activity-area.dto';
 import { ActivityAreaResponseMapper } from 'src/infrastructure/mappers/activity-area/activity-area-response.mapper';
 
 import { IActivityAreaRepositoryPort } from 'src/core/domain/ports/outbound/activity-area-repository.port';
@@ -34,5 +36,61 @@ export class ActivityAreaApplicationService
         totalItems: total,
       }),
     );
+  }
+
+  // ⭐ NUEVOS MÉTODOS CRUD
+  async getById(id: number): Promise<ActivityAreaDomainEntity | null> {
+    return this.repo.findById(id);
+  }
+
+  async create(dto: CreateActivityAreaDto): Promise<ActivityAreaResponseDto> {
+    // Crear la entidad de dominio
+    const activityAreaDomain = ActivityAreaDomainEntity.builder()
+      .withName(dto.name)
+      .build();
+
+    // Guardar en el repositorio
+    const savedActivityArea = await this.repo.save(activityAreaDomain);
+
+    // Retornar DTO de respuesta
+    return ActivityAreaResponseMapper.toDto(savedActivityArea);
+  }
+
+  async update(id: number, dto: UpdateActivityAreaDto): Promise<ActivityAreaResponseDto> {
+    // Verificar que el área de actividad existe
+    const existingActivityArea = await this.repo.findById(id);
+    if (!existingActivityArea) {
+      throw new NotFoundException(`Área de actividad con ID ${id} no encontrada`);
+    }
+
+    // Crear entidad actualizada
+    const updatedActivityArea = ActivityAreaDomainEntity.builder()
+      .withId(id)
+      .withName(dto.name ?? existingActivityArea.name)
+      .build();
+
+    // Guardar cambios
+    const savedActivityArea = await this.repo.save(updatedActivityArea);
+
+    // Retornar DTO de respuesta
+    return ActivityAreaResponseMapper.toDto(savedActivityArea);
+  }
+
+  async delete(id: number): Promise<boolean> {
+    // Verificar que el área de actividad existe
+    const existingActivityArea = await this.repo.findById(id);
+    if (!existingActivityArea) {
+      throw new NotFoundException(`Área de actividad con ID ${id} no encontrada`);
+    }
+
+    try {
+      // Intentar eliminar el área de actividad
+      return await this.repo.delete(id);
+    } catch (error) {
+      // Si hay sub-escenarios asociados, manejar el error
+      throw new BadRequestException(
+        'No se puede eliminar el área de actividad porque tiene sub-escenarios asociados. Elimine primero los sub-escenarios.'
+      );
+    }
   }
 }

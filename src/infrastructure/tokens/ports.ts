@@ -3,6 +3,7 @@ export const REPOSITORY_PORTS = {
   SCENARIO: 'IScenarioRepositoryPort',
   ACTIVITY_AREA: 'IActivityAreaRepositoryPort',
   FIELD_SURFACE: 'IFieldSurfaceTypeRepositoryPort',
+  COMMUNE: 'ICommuneRepositoryPort',
   NEIGHBORHOOD: 'INeighborhoodRepositoryPort',
   USER: 'IUserRepositoryPort',
   CITY: 'ICityRepositoryPort',

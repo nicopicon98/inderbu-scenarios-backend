@@ -1,5 +1,5 @@
 import { ReservationDomainEntity } from 'src/core/domain/entities/reservation.domain-entity';
-import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page-options.dto';
+import { ReservationPageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/reservation/reservation-page-options.dto';
 import { ReservationEntity } from 'src/infrastructure/persistence/reservation.entity';
 
 export interface IReservationRepositoryPort {
@@ -15,5 +15,5 @@ export interface IReservationRepositoryPort {
   save(reservation: ReservationDomainEntity): Promise<ReservationDomainEntity>;
   findById(id: number): Promise<ReservationDomainEntity | null>;
   update(reservation: ReservationDomainEntity): Promise<ReservationDomainEntity>;
-  findPaged(opts: PageOptionsDto): Promise<{ data: ReservationEntity[]; total: number }>;
+  findPaged(opts: ReservationPageOptionsDto): Promise<{ data: ReservationEntity[]; total: number }>;
 }

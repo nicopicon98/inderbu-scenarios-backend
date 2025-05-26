@@ -28,8 +28,10 @@ export class ActivityAreaRepositoryAdapter
     return list.map(ActivityAreaEntityMapper.toDomain);
   }
 
-  async save(d: ActivityAreaDomainEntity) {
-    await this.repository.save(ActivityAreaEntityMapper.toEntity(d));
+  async save(d: ActivityAreaDomainEntity): Promise<ActivityAreaDomainEntity> {
+    const entity = ActivityAreaEntityMapper.toEntity(d);
+    const savedEntity = await this.repository.save(entity);
+    return ActivityAreaEntityMapper.toDomain(savedEntity);
   }
 
   async findAll(): Promise<ActivityAreaDomainEntity[]> {
@@ -104,5 +106,11 @@ export class ActivityAreaRepositoryAdapter
 
     const [entities, total] = await qb.getManyAndCount();
     return { data: entities.map(ActivityAreaEntityMapper.toDomain), total };
+  }
+
+  // ⭐ MÉTODO DELETE IMPLEMENTADO
+  async delete(id: number): Promise<boolean> {
+    const result = await this.repository.delete(id);
+    return typeof result.affected === 'number' && result.affected > 0;
   }
 }

@@ -25,18 +25,28 @@ export class NeighborhoodRepositoryAdapter
     return NeighborhoodEntityMapper.toDomain(entity);
   }
 
-  protected toEntity(): NeighborhoodEntity {
-    throw new Error('Only read operations supported');
+  protected toEntity(domain: NeighborhoodDomainEntity): NeighborhoodEntity {
+    return NeighborhoodEntityMapper.toEntity(domain);
+  }
+
+  async deleteById(id: number): Promise<void> {
+    await this.repository.delete(id);
   }
 
   async findAll(): Promise<NeighborhoodDomainEntity[]> {
-    const list = await this.repository.find({ order: { name: 'ASC' } });
+    const list = await this.repository.find({ 
+      relations: ['commune', 'commune.city'], // Cargar relaciones
+      order: { name: 'ASC' } 
+    });
     return list.map(NeighborhoodEntityMapper.toDomain);
   }
 
-  async findByIds(ids: number[]) {
+  async findByIds(ids: number[]): Promise<NeighborhoodDomainEntity[]> {
     if (!ids.length) return [];
-    const list = await this.repository.findBy({ id: In(ids) });
+    const list = await this.repository.find({
+      where: { id: In(ids) },
+      relations: ['commune', 'commune.city'] // Cargar relaciones
+    });
     return list.map(NeighborhoodEntityMapper.toDomain);
   }
 
@@ -48,7 +58,9 @@ export class NeighborhoodRepositoryAdapter
     } = opts;
 
     const qb: SelectQueryBuilder<NeighborhoodEntity> = this.repository
-      .createQueryBuilder('n');
+      .createQueryBuilder('n')
+      .leftJoinAndSelect('n.commune', 'commune') // JOIN con commune
+      .leftJoinAndSelect('commune.city', 'city'); // JOIN con city
 
     /* ───── búsqueda ───── */
     if (search?.trim()) {

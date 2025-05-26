@@ -1,6 +1,8 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 
 import { ScenarioResponseDto } from 'src/infrastructure/adapters/inbound/http/dtos/scenario/scenario-response.dto';
+import { CreateScenarioDto } from 'src/infrastructure/adapters/inbound/http/dtos/scenario/create-scenario.dto';
+import { UpdateScenarioDto } from 'src/infrastructure/adapters/inbound/http/dtos/scenario/update-scenario.dto';
 import { INeighborhoodRepositoryPort } from 'src/core/domain/ports/outbound/neighborhood-repository.port';
 import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page-options.dto';
 import { ScenarioResponseMapper } from 'src/infrastructure/mappers/scenario/scenario-response.mapper';
@@ -58,5 +60,88 @@ export class ScenarioApplicationService implements IScenarioApplicationPort {
         totalItems: total,
       }),
     );
+  }
+
+  // ⭐ NUEVOS MÉTODOS CRUD
+  async create(dto: CreateScenarioDto): Promise<ScenarioResponseDto> {
+    // Verificar que el barrio existe
+    const neighborhood = await this.neighborhoodRepository.findById(dto.neighborhoodId);
+    if (!neighborhood) {
+      throw new NotFoundException(`Barrio con ID ${dto.neighborhoodId} no encontrado`);
+    }
+
+    // Crear la entidad de dominio
+    const scenarioDomain = ScenarioDomainEntity.builder()
+      .withName(dto.name)
+      .withAddress(dto.address)
+      .withNeighborhoodId(dto.neighborhoodId)
+      .build();
+
+    // Guardar en el repositorio
+    const savedScenario = await this.scenarioRepository.save(scenarioDomain);
+
+    // Crear mapa de barrios para el mapper
+    const neighborhoodMap = new Map<number, NeighborhoodDomainEntity>();
+    neighborhoodMap.set(neighborhood.id!, neighborhood);
+
+    // Retornar DTO de respuesta
+    return ScenarioResponseMapper.toDto(savedScenario, neighborhoodMap);
+  }
+
+  async update(id: number, dto: UpdateScenarioDto): Promise<ScenarioResponseDto> {
+    // Verificar que el escenario existe
+    const existingScenario = await this.scenarioRepository.findById(id);
+    if (!existingScenario) {
+      throw new NotFoundException(`Escenario con ID ${id} no encontrado`);
+    }
+
+    // Si se proporciona neighborhoodId, verificar que el barrio existe
+    let neighborhood: NeighborhoodDomainEntity | null = null;
+    const targetNeighborhoodId = dto.neighborhoodId ?? existingScenario.neighborhoodId;
+    
+    if (targetNeighborhoodId != null) {
+      neighborhood = await this.neighborhoodRepository.findById(targetNeighborhoodId);
+      if (!neighborhood) {
+        throw new NotFoundException(`Barrio con ID ${targetNeighborhoodId} no encontrado`);
+      }
+    }
+
+    // Crear entidad actualizada
+    const updatedScenario = ScenarioDomainEntity.builder()
+      .withId(id)
+      .withName(dto.name ?? existingScenario.name)
+      .withAddress(dto.address ?? existingScenario.address)
+      .withNeighborhoodId(targetNeighborhoodId)
+      .build();
+
+    // Guardar cambios
+    const savedScenario = await this.scenarioRepository.save(updatedScenario);
+
+    // Crear mapa de barrios para el mapper
+    const neighborhoodMap = new Map<number, NeighborhoodDomainEntity>();
+    if (neighborhood && neighborhood.id) {
+      neighborhoodMap.set(neighborhood.id, neighborhood);
+    }
+
+    // Retornar DTO de respuesta
+    return ScenarioResponseMapper.toDto(savedScenario, neighborhoodMap);
+  }
+
+  async delete(id: number): Promise<boolean> {
+    // Verificar que el escenario existe
+    const existingScenario = await this.scenarioRepository.findById(id);
+    if (!existingScenario) {
+      throw new NotFoundException(`Escenario con ID ${id} no encontrado`);
+    }
+
+    try {
+      // Intentar eliminar el escenario
+      return await this.scenarioRepository.delete(id);
+    } catch (error) {
+      // Si hay sub-escenarios asociados, manejar el error
+      throw new BadRequestException(
+        'No se puede eliminar el escenario porque tiene sub-escenarios asociados. Elimine primero los sub-escenarios.'
+      );
+    }
   }
 }

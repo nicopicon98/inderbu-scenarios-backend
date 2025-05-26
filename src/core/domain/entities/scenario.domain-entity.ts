@@ -37,7 +37,7 @@ export class ScenarioDomainBuilder {
     return this;
   }
 
-  withNeighborhoodId(neighborhoodId: number) {
+  withNeighborhoodId(neighborhoodId?: number) {
     this.neighborhoodId = neighborhoodId;
     return this;
   }

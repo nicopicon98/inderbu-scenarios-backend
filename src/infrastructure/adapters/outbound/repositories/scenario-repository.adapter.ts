@@ -115,4 +115,10 @@ export class ScenarioRepositoryAdapter
     const [entities, total] = await qb.getManyAndCount();
     return { data: entities.map(this.toDomain), total };
   }
+
+  // ⭐ MÉTODO DELETE IMPLEMENTADO
+  async delete(id: number): Promise<boolean> {
+    const result = await this.repository.delete(id);
+    return typeof result.affected === 'number' && result.affected > 0;
+  }
 }

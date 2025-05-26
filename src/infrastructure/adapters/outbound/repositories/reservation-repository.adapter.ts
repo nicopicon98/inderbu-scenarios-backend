@@ -4,7 +4,7 @@ import { In, Repository } from 'typeorm';
 import { IReservationRepositoryPort } from 'src/core/domain/ports/outbound/reservation-repository.port';
 import { ReservationDomainEntity } from 'src/core/domain/entities/reservation.domain-entity';
 import { ReservationEntity } from 'src/infrastructure/persistence/reservation.entity';
-import { PageOptionsDto } from '../../inbound/http/dtos/common/page-options.dto';
+import { ReservationPageOptionsDto } from '../../inbound/http/dtos/reservation/reservation-page-options.dto';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { BaseRepositoryAdapter } from './common/base-repository.adapter';
 
@@ -97,7 +97,7 @@ export class ReservationRepositoryAdapter
     return entity ? this.toDomain(entity) : null;
   }
 
-  async findPaged(opts: PageOptionsDto): Promise<{ data: ReservationEntity[]; total: number }> {
+  async findPaged(opts: ReservationPageOptionsDto): Promise<{ data: ReservationEntity[]; total: number }> {
     const {
       page = 1,
       limit = 20,
@@ -106,6 +106,8 @@ export class ReservationRepositoryAdapter
       activityAreaId,
       neighborhoodId,
       userId,
+      dateFrom,
+      dateTo,
     } = opts;
 
     try {
@@ -125,6 +127,10 @@ export class ReservationRepositoryAdapter
       if (activityAreaId) qb.andWhere('ss.fk_activity_area_id = :activityAreaId', { activityAreaId });
       if (neighborhoodId) qb.andWhere('n.id = :neighborhoodId', { neighborhoodId });
       if (userId) qb.andWhere('u.id = :userId', { userId });
+      
+      // ⭐ FILTROS POR RANGO DE FECHAS
+      if (dateFrom) qb.andWhere('r.reservationDate >= :dateFrom', { dateFrom });
+      if (dateTo) qb.andWhere('r.reservationDate <= :dateTo', { dateTo });
 
       // Búsqueda por texto si está presente
       if (search?.trim()) {

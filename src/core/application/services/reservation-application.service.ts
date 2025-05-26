@@ -17,7 +17,7 @@ import { TimeslotResponseDto } from 'src/infrastructure/adapters/inbound/http/dt
 import { IReservationStateRepositoryPort } from 'src/core/domain/ports/outbound/reservation-state-repository.port';
 import { IReservationRepositoryPort } from 'src/core/domain/ports/outbound/reservation-repository.port';
 import { ReservationStateDomainEntity } from 'src/core/domain/entities/reservation-state.domain-entity';
-import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page-options.dto';
+import { ReservationPageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/reservation/reservation-page-options.dto';
 import { ITimeSlotRepositoryPort } from 'src/core/domain/ports/outbound/time-slot-repository.port';
 import { ReservationMapper } from 'src/infrastructure/mappers/reservation/reservation.mapper';
 import { ReservationDomainEntity } from 'src/core/domain/entities/reservation.domain-entity';
@@ -89,7 +89,7 @@ export class ReservationApplicationService
   }
 
   async listReservations(
-    opts: PageOptionsDto,
+    opts: ReservationPageOptionsDto,
   ): Promise<PageDto<ReservationWithRelationsResponseDto>> {
     const { data: reservations, total } =
       await this.reservationRepo.findPaged(opts);

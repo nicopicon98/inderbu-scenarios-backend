@@ -13,8 +13,8 @@ export class CommuneResponseDto {
   @Expose()
   name: string;
 
-  @ApiProperty({ type: () => CityResponseDto })
+  @ApiProperty({ type: () => CityResponseDto, required: false })
   @Expose()
   @Type(() => CityResponseDto)
-  city: CityResponseDto;
+  city?: CityResponseDto;
 }

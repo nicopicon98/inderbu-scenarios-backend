@@ -3,8 +3,12 @@ import { ActivityAreaEntity } from 'src/infrastructure/persistence/activity-area
 
 export class ActivityAreaEntityMapper {
   static toDomain(e: ActivityAreaEntity): ActivityAreaDomainEntity {
-    return new ActivityAreaDomainEntity(e.id, e.name);
+    return ActivityAreaDomainEntity.builder()
+      .withId(e.id)
+      .withName(e.name)
+      .build();
   }
+  
   static toEntity(d: ActivityAreaDomainEntity): ActivityAreaEntity {
     const e = new ActivityAreaEntity();
     if (d.id) e.id = d.id;

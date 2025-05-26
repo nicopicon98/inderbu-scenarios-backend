@@ -4,6 +4,7 @@ export const APPLICATION_PORTS = {
   ACTIVITY_AREA: 'IActivityAreaApplicationPort',
   USER: 'IUserApplicationPort',
   CITY: 'ICityApplicationPort',
+  COMMUNE: 'ICommuneApplicationPort',
   NEIGHBORHOOD: 'INeighborhoodApplicationPort',
   RESERVATION: 'IReservationApplicationPort',
   NOTIFICATION_SERVICE: 'INotificationService',

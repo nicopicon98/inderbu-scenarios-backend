@@ -25,16 +25,17 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { ISubScenarioApplicationPort } from 'src/core/application/ports/inbound/sub-scenario-application.port';
 import { SubScenarioWithRelationsDto } from '../dtos/sub-scenarios/sub-scenario-response-with-relations.dto';
-import { PageOptionsDto } from '../dtos/common/page-options.dto';
+import { SubScenarioPageOptionsDto } from '../dtos/sub-scenarios/sub-scenario-page-options.dto';
 import { PageDto } from '../dtos/common/page.dto';
 import { CreateSubScenarioDto } from '../dtos/sub-scenarios/create-sub-scenario.dto';
 import { UpdateSubScenarioDto } from '../dtos/sub-scenarios/update-sub-scenario.dto';
+import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
 
 @ApiTags('Sub-escenarios')
 @Controller('sub-scenarios')
 export class SubScenarioController {
   constructor(
-    @Inject('ISubScenarioApplicationPort')
+    @Inject(APPLICATION_PORTS.SUB_SCENARIO)
     private readonly subScenarioApplicationService: ISubScenarioApplicationPort,
   ) {}
 
@@ -46,9 +47,10 @@ export class SubScenarioController {
   @ApiQuery({ name: 'scenarioId', required: false, type: Number, description: 'Filtra por escenario' })
   @ApiQuery({ name: 'activityAreaId', required: false, type: Number, description: 'Filtra por área de actividad' })
   @ApiQuery({ name: 'neighborhoodId', required: false, type: Number, description: 'Filtra por barrio (id)' })
+  @ApiQuery({ name: 'hasCost', required: false, type: Boolean, description: '⭐ Filtrar por costo: true=pagos, false=gratuitos' })
   @ApiResponse({ status: 200, type: PageDto })
   async getSubScenarios(
-    @Query() opts: PageOptionsDto,
+    @Query() opts: SubScenarioPageOptionsDto,
   ): Promise<PageDto<SubScenarioWithRelationsDto>> {
     return this.subScenarioApplicationService.listWithRelations(opts);
   }

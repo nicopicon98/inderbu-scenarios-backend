@@ -25,7 +25,7 @@ import { UpdateReservationStatusDto } from '../dtos/reservation/update-reservati
 import { TimeslotResponseDto } from '../dtos/time-slot/timeslot-response.dto';
 import { IUserRequest } from 'src/infrastructure/types/user-request.type';
 import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
-import { PageOptionsDto } from '../dtos/common/page-options.dto';
+import { ReservationPageOptionsDto } from '../dtos/reservation/reservation-page-options.dto';
 import { Request as ExpressRequest } from 'express';
 import { PageDto } from '../dtos/common/page.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -77,11 +77,13 @@ export class ReservationController {
   @ApiQuery({ name: 'scenarioId', required: false, type: Number, description: 'Filtra por escenario específico' })
   @ApiQuery({ name: 'activityAreaId', required: false, type: Number, description: 'Filtra por área de actividad' })
   @ApiQuery({ name: 'neighborhoodId', required: false, type: Number, description: 'Filtra por barrio (id)' })
-  @ApiQuery({ name: 'userId', required: false, type: Number, description: '🆕 Filtra por usuario específico - muestra solo las reservas de ese usuario' })
+  @ApiQuery({ name: 'userId', required: false, type: Number, description: 'Filtra por usuario específico - muestra solo las reservas de ese usuario' })
+  @ApiQuery({ name: 'dateFrom', required: false, type: String, description: '⭐ Fecha inicial del rango (YYYY-MM-DD)' })
+  @ApiQuery({ name: 'dateTo', required: false, type: String, description: '⭐ Fecha final del rango (YYYY-MM-DD)' })
   @ApiResponse({ status: 200, type: PageDto, description: 'Lista paginada de reservas con relaciones completas' })
   @UsePipes(new ValidationPipe({ transform: true }))
   async getReservations(
-    @Query() opts: PageOptionsDto,
+    @Query() opts: ReservationPageOptionsDto,
   ): Promise<PageDto<ReservationWithRelationsResponseDto>> {
     return this.reservationService.listReservations(opts);
   }

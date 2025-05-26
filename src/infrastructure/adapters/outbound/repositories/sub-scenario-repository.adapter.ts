@@ -5,7 +5,7 @@ import { SubScenarioEntityMapper } from 'src/infrastructure/mappers/sub-scenario
 import { ISubScenarioRepositoryPort } from 'src/core/domain/ports/outbound/sub-scenario-repository.port';
 import { SubScenarioDomainEntity } from 'src/core/domain/entities/sub-scenario.domain-entity';
 import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.entity';
-import { PageOptionsDto } from '../../inbound/http/dtos/common/page-options.dto';
+import { SubScenarioPageOptionsDto } from '../../inbound/http/dtos/sub-scenarios/sub-scenario-page-options.dto';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { BaseRepositoryAdapter } from './common/base-repository.adapter';
 
@@ -63,7 +63,7 @@ export class SubScenarioRepositoryAdapter
   }
 
   /** Lista paginada + búsqueda ponderada */
-  async findPaged(opts: PageOptionsDto) {
+  async findPaged(opts: SubScenarioPageOptionsDto) {
     const {
       page = 1,
       limit = 20,
@@ -71,6 +71,7 @@ export class SubScenarioRepositoryAdapter
       scenarioId,
       activityAreaId,
       neighborhoodId,
+      hasCost,
     } = opts;
 
     const qb: SelectQueryBuilder<SubScenarioEntity> = this.repository
@@ -86,6 +87,8 @@ export class SubScenarioRepositoryAdapter
       qb.andWhere('aa.id = :activityAreaId', { activityAreaId });
     if (neighborhoodId)
       qb.andWhere('n.id  = :neighborhoodId', { neighborhoodId });
+    if (typeof hasCost === 'boolean')
+      qb.andWhere('s.hasCost = :hasCost', { hasCost });
 
     /* ───── búsqueda ───── */
     if (search?.trim()) {

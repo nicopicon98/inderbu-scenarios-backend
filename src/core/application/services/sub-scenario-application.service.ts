@@ -14,7 +14,7 @@ import { IFieldSurfaceTypeRepositoryPort } from 'src/core/domain/ports/outbound/
 import { IActivityAreaRepositoryPort } from 'src/core/domain/ports/outbound/activity-area-repository.port';
 import { INeighborhoodRepositoryPort } from 'src/core/domain/ports/outbound/neighborhood-repository.port';
 import { ISubScenarioRepositoryPort } from 'src/core/domain/ports/outbound/sub-scenario-repository.port';
-import { PageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/common/page-options.dto';
+import { SubScenarioPageOptionsDto } from 'src/infrastructure/adapters/inbound/http/dtos/sub-scenarios/sub-scenario-page-options.dto';
 import { IScenarioRepositoryPort } from 'src/core/domain/ports/outbound/scenario-repository.port';
 import { SubScenarioDomainEntity } from 'src/core/domain/entities/sub-scenario.domain-entity';
 import { ISubScenarioApplicationPort } from '../ports/inbound/sub-scenario-application.port';
@@ -44,7 +44,7 @@ export class SubScenarioApplicationService
   ) {}
 
   async listWithRelations(
-    opts: PageOptionsDto,
+    opts: SubScenarioPageOptionsDto,
   ): Promise<PageDto<SubScenarioWithRelationsDto>> {
     const { data: subs, total } =
       await this.subScenarioRepository.findPaged(opts); // 1. dominio
