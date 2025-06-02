@@ -7,6 +7,7 @@ import { UserWithRelationsDto } from "src/infrastructure/adapters/inbound/http/d
 export interface IUserApplicationPort {
   createUser(createUserDto: CreateUserDto): Promise<UserDomainEntity>;
   findByEmail(email: string): Promise<UserDomainEntity | null>;
+  findById(id: number): Promise<UserDomainEntity | null>; // Añadido para auth service
   confirmUser(token: string): Promise<{ message: string }>;
   resendConfirmation(email: string): Promise<{ message: string }>;
 

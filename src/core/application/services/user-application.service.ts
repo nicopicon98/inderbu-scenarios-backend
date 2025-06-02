@@ -102,6 +102,10 @@ export class UserApplicationService implements IUserApplicationPort {
     return this.userRepository.findByEmail(email);
   }
 
+  async findById(id: number): Promise<UserDomainEntity | null> {
+    return this.userRepository.findById(id);
+  }
+
   // Nuevos métodos para listado de usuarios
   async getAllUsers(
     pageOptionsDto: PageOptionsDto,
