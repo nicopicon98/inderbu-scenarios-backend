@@ -5,6 +5,7 @@ import {
   IsPositive,
   IsDateString
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AvailableTimeslotsQueryDto {
@@ -12,6 +13,7 @@ export class AvailableTimeslotsQueryDto {
     example: 16, 
     description: 'ID del sub-escenario' 
   })
+  @Type(() => Number) // 🎯 FIXED: Transformar explícitamente string a number
   @IsDefined()
   @IsNumber()
   @IsPositive()

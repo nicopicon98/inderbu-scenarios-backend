@@ -29,12 +29,12 @@ export class ReservationRangeDto {
 
   @ApiProperty({ 
     example: '2025-06-17', 
-    description: 'Fecha final del rango (YYYY-MM-DD)' 
+    description: 'Fecha final del rango (YYYY-MM-DD). Opcional para reservas de un solo día.',
+    required: false
   })
-  @IsDefined()
+  @IsOptional() // 🛡️ FIXED: Hacer finalDate opcional para reservas de un solo día
   @IsDateString()
-  @IsNotEmpty()
-  readonly finalDate: string;
+  readonly finalDate?: string; // 🛡️ FIXED: Cambiar a opcional con ?
 }
 
 export class CreateReservationRequestDto {

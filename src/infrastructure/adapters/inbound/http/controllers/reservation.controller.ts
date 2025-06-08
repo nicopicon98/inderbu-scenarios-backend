@@ -71,7 +71,7 @@ export class ReservationController {
     @Body() createReservationDto: CreateReservationRequestDto,
     @Request() req: any,
   ): Promise<CreateReservationResponseDto> {
-    const userId = req.user?.id;
+    const userId = req.user?.userId; // ✅ FIXED: usar userId en lugar de id
     if (!userId)
       throw new NotFoundException('Usuario no encontrado en la sesión');
 
