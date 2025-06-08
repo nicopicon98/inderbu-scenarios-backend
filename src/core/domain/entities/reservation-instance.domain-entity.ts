@@ -109,16 +109,20 @@ export class ReservationInstanceDomainEntity {
    * Crea una copia con estado actualizado
    */
   withUpdatedState(newStateId: number): ReservationInstanceDomainEntity {
-    return ReservationInstanceDomainEntity.builder()
-      .withId(this.id)
+    const builder = ReservationInstanceDomainEntity.builder()
       .withReservationId(this.reservationId)
       .withTimeslotId(this.timeslotId)
       .withReservationDate(this.reservationDate)
       .withSubScenarioId(this.subScenarioId)
       .withUserId(this.userId)
       .withReservationStateId(newStateId)
-      .withCreatedAt(this.createdAt)
-      .build();
+      .withCreatedAt(this.createdAt);
+      
+    if (this.id !== null) {
+      builder.withId(this.id);
+    }
+    
+    return builder.build();
   }
 }
 

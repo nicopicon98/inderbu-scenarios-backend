@@ -154,4 +154,8 @@ export class ReservationTimeslotRepositoryAdapter
     
     return savedEntities.map(entity => this.toDomain(entity));
   }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
+  }
 }

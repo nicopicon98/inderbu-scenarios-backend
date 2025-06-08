@@ -1,5 +1,5 @@
 import { ReservationEntity } from 'src/infrastructure/persistence/reservation.entity';
-import { ReservationDomainEntity } from 'src/core/domain/entities/reservation.domain-entity';
+import { ReservationDomainEntity, ReservationType } from 'src/core/domain/entities/reservation.domain-entity';
 import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.entity';
 import { UserEntity } from 'src/infrastructure/persistence/user.entity';
 import { ReservationStateEntity } from 'src/infrastructure/persistence/reservation-state.entity';
@@ -10,11 +10,11 @@ export class ReservationEntityMapper {
       .withId(entity.id)
       .withSubScenarioId(entity.subScenarioId)
       .withUserId(entity.userId)
-      .withType(entity.type as 'SINGLE' | 'RANGE')
+      .withType(entity.type === 'SINGLE' ? ReservationType.SINGLE : ReservationType.RANGE)
       .withInitialDate(entity.initialDate)
-      .withFinalDate(entity.finalDate)
-      .withWeekDays(entity.weekDays)
-      .withComments(entity.comments)
+      .withFinalDate(entity.finalDate || undefined)
+      .withWeekDays(entity.weekDays || undefined)
+      .withComments(entity.comments || undefined)
       .withReservationStateId(entity.reservationStateId)
       .withCreatedAt(entity.createdAt)
       .withUpdatedAt(entity.updatedAt)
@@ -46,11 +46,11 @@ export class ReservationEntityMapper {
     if (domain.id !== null) entity.id = domain.id;
     entity.subScenarioId = domain.subScenarioId;
     entity.userId = domain.userId;
-    entity.type = domain.type;
+    entity.type = domain.type.toString() as 'SINGLE' | 'RANGE';
     entity.initialDate = domain.initialDate;
-    entity.finalDate = domain.finalDate;
-    entity.weekDays = domain.weekDays;
-    entity.comments = domain.comments;
+    entity.finalDate = domain.finalDate || null;
+    entity.weekDays = domain.weekDays || null;
+    entity.comments = domain.comments || null;
     entity.reservationStateId = domain.reservationStateId;
     
     if (domain.createdAt) entity.createdAt = domain.createdAt;

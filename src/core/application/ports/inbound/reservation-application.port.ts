@@ -1,9 +1,9 @@
-import { CreateReservationRequestDto } from '../../../infrastructure/adapters/inbound/http/dtos/reservation/create-reservation-request.dto';
-import { CreateReservationResponseDto, ReservationWithDetailsResponseDto } from '../../../infrastructure/adapters/inbound/http/dtos/reservation/reservation.dto';
-import { AvailableTimeslotsQueryDto } from '../../../infrastructure/adapters/inbound/http/dtos/reservation/available-timeslots-query.dto';
-import { AvailabilityResponseDto } from '../../../infrastructure/adapters/inbound/http/dtos/reservation/availability.dto';
-import { ReservationPageOptionsDto } from '../../../infrastructure/adapters/inbound/http/dtos/reservation/reservation-page-options.dto';
-import { PageDto } from '../../../infrastructure/adapters/inbound/http/dtos/common/page.dto';
+import { PageDto } from "src/infrastructure/adapters/inbound/http/dtos/common/page.dto";
+import { AvailabilityResponseDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/availability.dto";
+import { AvailableTimeslotsQueryDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/available-timeslots-query.dto";
+import { CreateReservationRequestDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/create-reservation-request.dto";
+import { ReservationPageOptionsDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/reservation-page-options.dto";
+import { CreateReservationResponseDto, ReservationWithDetailsResponseDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/reservation.dto";
 
 export interface UpdateReservationStateDto {
   stateId: number;

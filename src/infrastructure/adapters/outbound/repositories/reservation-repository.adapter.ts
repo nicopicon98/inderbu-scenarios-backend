@@ -311,4 +311,8 @@ export class ReservationRepositoryAdapter
     const savedEntity = await this.repository.save(entity);
     return this.toDomain(savedEntity);
   }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
+  }
 }

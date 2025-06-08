@@ -12,7 +12,7 @@ import { CreateReservationResponseDto, ReservationWithDetailsResponseDto } from 
 import { AvailableTimeslotsQueryDto } from '../../../infrastructure/adapters/inbound/http/dtos/reservation/available-timeslots-query.dto';
 import { AvailabilityResponseDto } from '../../../infrastructure/adapters/inbound/http/dtos/reservation/availability.dto';
 import { ReservationPageOptionsDto } from '../../../infrastructure/adapters/inbound/http/dtos/reservation/reservation-page-options.dto';
-import { PageDto } from '../../../infrastructure/adapters/inbound/http/dtos/common/page.dto';
+import { PageDto, PageMetaDto } from '../../../infrastructure/adapters/inbound/http/dtos/common/page.dto';
 
 import { ReservationDomainEntity, ReservationType } from '../../domain/entities/reservation.domain-entity';
 import { ReservationTimeslotDomainEntity } from '../../domain/entities/reservation-timeslot.domain-entity';
@@ -116,7 +116,13 @@ export class ReservationApplicationService implements IReservationApplicationPor
     const savedReservation = await this.reservationRepo.save(reservation);
 
     // 5. Crear relaciones con timeslots
-    await this.timeslotRepo.createMany(savedReservation.id!, dto.timeSlotIds);
+    const timeslotEntities = dto.timeSlotIds.map(timeSlotId => 
+      ReservationTimeslotDomainEntity.builder()
+        .withReservationId(savedReservation.id!)
+        .withTimeslotId(timeSlotId)
+        .build()
+    );
+    await this.timeslotRepo.saveMany(timeslotEntities);
 
     // 6. Generar instancias usando domain service
     const instancesData = this.instanceGenerator.generateInstances(
@@ -129,17 +135,17 @@ export class ReservationApplicationService implements IReservationApplicationPor
     );
 
     // 7. Guardar instancias
-    await this.instanceRepo.createMany(instancesData);
+    await this.instanceRepo.saveMany(instancesData as ReservationInstanceDomainEntity[]);
 
     // 8. Preparar respuesta
     return {
       id: savedReservation.id!,
       subScenarioId: dto.subScenarioId,
       userId,
-      type,
+      type: type.toString(),
       initialDate: initialDate.toISOString().split('T')[0],
       finalDate: finalDate?.toISOString().split('T')[0] || null,
-      weekDays,
+      weekDays: weekDays || null,
       comments: dto.comments || null,
       reservationStateId: 1,
       timeslots: [], // Se llenará con datos reales
@@ -183,13 +189,13 @@ export class ReservationApplicationService implements IReservationApplicationPor
 
     const dtos: ReservationWithDetailsResponseDto[] = data.map(reservation => ({
       id: reservation.id!,
-      type: reservation.type,
+      type: reservation.type.toString(),
       subScenarioId: reservation.subScenarioId,
       userId: reservation.userId,
       initialDate: reservation.initialDate.toISOString().split('T')[0],
       finalDate: reservation.finalDate?.toISOString().split('T')[0] || null,
-      weekDays: reservation.weekDays,
-      comments: reservation.comments,
+      weekDays: reservation.weekDays || null,
+      comments: reservation.comments || null,
       reservationStateId: reservation.reservationStateId,
       subScenario: { id: reservation.subScenarioId, name: 'Unknown' },
       user: { id: reservation.userId, firstName: 'Unknown', lastName: 'User', email: 'unknown@email.com' },
@@ -200,21 +206,17 @@ export class ReservationApplicationService implements IReservationApplicationPor
       updatedAt: reservation.updatedAt?.toISOString() || new Date().toISOString(),
     }));
 
-    return {
-      data: dtos,
-      meta: {
-        page: options.page || 1,
-        limit: options.limit || 20,
-        totalItems: total,
-        totalPages: Math.ceil(total / (options.limit || 20)),
-        hasNextPage: ((options.page || 1) * (options.limit || 20)) < total,
-        hasPreviousPage: (options.page || 1) > 1,
-      },
-    };
+    const meta = new PageMetaDto({
+      page: options.page || 1,
+      limit: options.limit || 20,
+      totalItems: total,
+    });
+
+    return new PageDto(dtos, meta);
   }
 
   async getReservationById(id: number): Promise<ReservationWithDetailsResponseDto> {
-    const reservation = await this.reservationRepo.findWithTimeslots(id);
+    const reservation = await this.reservationRepo.findById(id);
     
     if (!reservation) {
       throw new NotFoundException(`Reservation with ID ${id} not found`);
@@ -222,13 +224,13 @@ export class ReservationApplicationService implements IReservationApplicationPor
 
     return {
       id: reservation.id!,
-      type: reservation.type,
+      type: reservation.type.toString(),
       subScenarioId: reservation.subScenarioId,
       userId: reservation.userId,
       initialDate: reservation.initialDate.toISOString().split('T')[0],
       finalDate: reservation.finalDate?.toISOString().split('T')[0] || null,
-      weekDays: reservation.weekDays,
-      comments: reservation.comments,
+      weekDays: reservation.weekDays || null,
+      comments: reservation.comments || null,
       reservationStateId: reservation.reservationStateId,
       subScenario: { id: reservation.subScenarioId, name: 'Unknown' },
       user: { id: reservation.userId, firstName: 'Unknown', lastName: 'User', email: 'unknown@email.com' },

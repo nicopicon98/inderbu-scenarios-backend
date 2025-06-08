@@ -15,16 +15,6 @@ export class ReservationPageOptionsDto extends PageOptionsDto {
   subScenarioId?: number;
 
   @ApiPropertyOptional({ 
-    example: 123,
-    description: 'Filtrar por ID del usuario'
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @IsPositive()
-  userId?: number;
-
-  @ApiPropertyOptional({ 
     example: [1, 2],
     description: 'Filtrar por IDs de estados de reserva (1=PENDIENTE, 2=CONFIRMADA, 3=CANCELADA)',
     type: [Number]

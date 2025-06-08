@@ -125,13 +125,57 @@ export class ReservationDto {
 }
 
 // ========================================
-// CLASES ESPECIFICAS EN LUGAR DE TYPE ALIASES
+// CLASES ESPECIFICAS SIN HERENCIA PROBLEMÁTICA
 // ========================================
 
 /**
  * Para respuesta de CREATE (incluye timeslots e instances)
  */
-export class CreateReservationResponseDto extends ReservationDto {
+export class CreateReservationResponseDto {
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly id: number;
+
+  @ApiProperty({ example: 16 })
+  @Expose()
+  readonly subScenarioId: number;
+
+  @ApiProperty({ example: 123 })
+  @Expose()
+  readonly userId: number;
+
+  @ApiProperty({ example: 'RANGE', enum: ['SINGLE', 'RANGE'] })
+  @Expose()
+  readonly type: string;
+
+  @ApiProperty({ example: '2025-06-09' })
+  @Expose()
+  readonly initialDate: string;
+
+  @ApiPropertyOptional({ example: '2025-06-17' })
+  @Expose()
+  readonly finalDate: string | null;
+
+  @ApiPropertyOptional({ example: [1, 3, 5] })
+  @Expose()
+  readonly weekDays: number[] | null;
+
+  @ApiPropertyOptional({ example: 'Reserva para evento especial' })
+  @Expose()
+  readonly comments: string | null;
+
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly reservationStateId: number;
+
+  @ApiProperty({ example: '2025-06-08T10:30:00Z' })
+  @Expose()
+  readonly createdAt: string;
+
+  @ApiProperty({ example: '2025-06-08T10:30:00Z' })
+  @Expose()
+  readonly updatedAt: string;
+
   @ApiProperty({ type: [TimeslotDto] })
   @Expose()
   @Type(() => TimeslotDto)
@@ -150,7 +194,51 @@ export class CreateReservationResponseDto extends ReservationDto {
 /**
  * Para respuesta de GET detallada (incluye relaciones)
  */
-export class ReservationWithDetailsResponseDto extends ReservationDto {
+export class ReservationWithDetailsResponseDto {
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly id: number;
+
+  @ApiProperty({ example: 16 })
+  @Expose()
+  readonly subScenarioId: number;
+
+  @ApiProperty({ example: 123 })
+  @Expose()
+  readonly userId: number;
+
+  @ApiProperty({ example: 'RANGE', enum: ['SINGLE', 'RANGE'] })
+  @Expose()
+  readonly type: string;
+
+  @ApiProperty({ example: '2025-06-09' })
+  @Expose()
+  readonly initialDate: string;
+
+  @ApiPropertyOptional({ example: '2025-06-17' })
+  @Expose()
+  readonly finalDate: string | null;
+
+  @ApiPropertyOptional({ example: [1, 3, 5] })
+  @Expose()
+  readonly weekDays: number[] | null;
+
+  @ApiPropertyOptional({ example: 'Reserva para evento especial' })
+  @Expose()
+  readonly comments: string | null;
+
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly reservationStateId: number;
+
+  @ApiProperty({ example: '2025-06-08T10:30:00Z' })
+  @Expose()
+  readonly createdAt: string;
+
+  @ApiProperty({ example: '2025-06-08T10:30:00Z' })
+  @Expose()
+  readonly updatedAt: string;
+
   @ApiProperty({ type: SubScenarioDto })
   @Expose()
   @Type(() => SubScenarioDto)
@@ -179,6 +267,46 @@ export class ReservationWithDetailsResponseDto extends ReservationDto {
 /**
  * Para listas paginadas (solo campos básicos)
  */
-export class ReservationListItemDto extends ReservationDto {
-  // Solo los campos básicos de ReservationDto, sin relaciones
+export class ReservationListItemDto {
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly id: number;
+
+  @ApiProperty({ example: 16 })
+  @Expose()
+  readonly subScenarioId: number;
+
+  @ApiProperty({ example: 123 })
+  @Expose()
+  readonly userId: number;
+
+  @ApiProperty({ example: 'RANGE', enum: ['SINGLE', 'RANGE'] })
+  @Expose()
+  readonly type: string;
+
+  @ApiProperty({ example: '2025-06-09' })
+  @Expose()
+  readonly initialDate: string;
+
+  @ApiPropertyOptional({ example: '2025-06-17' })
+  @Expose()
+  readonly finalDate: string | null;
+
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly reservationStateId: number;
+
+  @ApiProperty({ example: '2025-06-08T10:30:00Z' })
+  @Expose()
+  readonly createdAt: string;
+
+  @ApiPropertyOptional({ example: 'PENDIENTE' })
+  @Expose()
+  readonly reservationStateName?: string;
 }
+
+// Type aliases para backward compatibility
+export type TimeSlotInfoDto = TimeslotDto;
+export type SubScenarioInfoDto = SubScenarioDto;
+export type UserInfoDto = UserDto;
+export type ReservationStateInfoDto = ReservationStateDto;
