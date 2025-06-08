@@ -1,13 +1,17 @@
+import { 
+  IsDefined,
+  IsNumber, 
+  IsPositive
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class UpdateReservationStateDto {
-  @ApiProperty({
-    description: 'ID del estado de reserva',
-    example: 2,
+  @ApiProperty({ 
+    example: 2, 
+    description: 'ID del nuevo estado de la reserva (1=PENDIENTE, 2=CONFIRMADA, 3=CANCELADA)' 
   })
-  @IsNotEmpty()
+  @IsDefined()
   @IsNumber()
-  @IsInt()
-  stateId: number;
+  @IsPositive()
+  readonly reservationStateId: number;
 }

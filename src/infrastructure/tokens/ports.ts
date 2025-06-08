@@ -8,6 +8,8 @@ export const REPOSITORY_PORTS = {
   USER: 'IUserRepositoryPort',
   CITY: 'ICityRepositoryPort',
   RESERVATION: 'IReservationRepositoryPort',
+  RESERVATION_TIMESLOT: 'IReservationTimeslotRepositoryPort',
+  RESERVATION_INSTANCE: 'IReservationInstanceRepositoryPort',
   TIME_SLOT: 'ITimeSlotRepositoryPort',
   RESERVATION_STATE: 'IReservationStateRepositoryPort',
   ROLE: 'IRoleRepositoryPort',

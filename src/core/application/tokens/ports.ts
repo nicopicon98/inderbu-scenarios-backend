@@ -10,3 +10,10 @@ export const APPLICATION_PORTS = {
   NOTIFICATION_SERVICE: 'INotificationService',
   ROLE: 'IRoleApplicationPort',
 } as const;
+
+export const DOMAIN_SERVICES = {
+  RESERVATION_DATE_CALCULATOR: 'ReservationDateCalculatorDomainService',
+  RESERVATION_CONFLICT_DETECTOR: 'ReservationConflictDetectorDomainService',
+  RESERVATION_INSTANCE_GENERATOR: 'ReservationInstanceGeneratorDomainService',
+  RESERVATION_AVAILABILITY_CHECKER: 'ReservationAvailabilityCheckerDomainService',
+} as const;

@@ -1,32 +1,28 @@
 import { DataSource } from 'typeorm';
 
-import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.entity';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
-import { DATA_SOURCE } from 'src/infrastructure/tokens/data_sources';
 import { ReservationEntity } from 'src/infrastructure/persistence/reservation.entity';
-import { TimeSlotEntity } from 'src/infrastructure/persistence/time-slot.entity';
-import { ReservationStateEntity } from 'src/infrastructure/persistence/reservation-state.entity';
+import { ReservationTimeslotEntity } from 'src/infrastructure/persistence/reservation-timeslot.entity';
+import { ReservationInstanceEntity } from 'src/infrastructure/persistence/reservation-instance.entity';
+import { DATA_SOURCE } from 'src/infrastructure/tokens/data_sources';
 
 export const repositoryEntityProviders = [
   {
     provide: MYSQL_REPOSITORY.RESERVATION,
-    useFactory: (datasource: DataSource) => {
-      return datasource.getRepository(ReservationEntity);
-    },
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ReservationEntity),
     inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: MYSQL_REPOSITORY.TIME_SLOT,
-    useFactory: (datasource: DataSource) => {
-      return datasource.getRepository(TimeSlotEntity);
-    },
+    provide: MYSQL_REPOSITORY.RESERVATION_TIMESLOT,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ReservationTimeslotEntity),
     inject: [DATA_SOURCE.MYSQL],
   },
   {
-    provide: MYSQL_REPOSITORY.RESERVATION_STATE,
-    useFactory: (datasource: DataSource) => {
-      return datasource.getRepository(ReservationStateEntity);
-    },
+    provide: MYSQL_REPOSITORY.RESERVATION_INSTANCE,
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(ReservationInstanceEntity),
     inject: [DATA_SOURCE.MYSQL],
   },
 ];

@@ -5,6 +5,8 @@ import { ActivityAreaEntity } from 'src/infrastructure/persistence/activity-area
 import { NeighborhoodEntity } from 'src/infrastructure/persistence/neighborhood.entity';
 import { SubScenarioEntity } from 'src/infrastructure/persistence/sub-scenario.entity';
 import { ReservationEntity } from 'src/infrastructure/persistence/reservation.entity';
+import { ReservationTimeslotEntity } from 'src/infrastructure/persistence/reservation-timeslot.entity';
+import { ReservationInstanceEntity } from 'src/infrastructure/persistence/reservation-instance.entity';
 import { PermissionEntity } from 'src/infrastructure/persistence/permission.entity';
 import { MenuItemEntity } from 'src/infrastructure/persistence/menu-item.entity';
 import { TimeSlotEntity } from 'src/infrastructure/persistence/time-slot.entity';
@@ -33,5 +35,7 @@ export const persistenceEntities = [
   TimeSlotEntity,
   ReservationStateEntity,
   ReservationEntity,
+  ReservationTimeslotEntity,
+  ReservationInstanceEntity,
   SubScenarioImageEntity
 ];

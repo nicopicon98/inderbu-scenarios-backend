@@ -1,9 +1,11 @@
-import { applicationProviders } from "./application.providers";
-import { repositoryEntityProviders } from "./entity.providers";
-import { repositoryProviders } from "./repository.providers";
+import { applicationProviders } from './application.providers';
+import { repositoryProviders } from './repository.providers';
+import { repositoryEntityProviders } from './entity.providers';
+import { domainServiceProviders } from './domain-services.providers';
 
 export const reservationProviders = [
-    ...repositoryProviders,
-    ...applicationProviders,
-    ...repositoryEntityProviders
+  ...repositoryEntityProviders,
+  ...repositoryProviders,
+  ...domainServiceProviders,
+  ...applicationProviders,
 ];

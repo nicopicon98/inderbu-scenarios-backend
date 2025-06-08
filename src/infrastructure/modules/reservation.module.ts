@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database/database.module';
+
 import { ReservationController } from '../adapters/inbound/http/controllers/reservation.controller';
-import { ReservationApplicationService } from 'src/core/application/services/reservation-application.service';
-import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
-import { REPOSITORY_PORTS } from '../tokens/ports';
-import { ReservationRepositoryAdapter } from '../adapters/outbound/repositories/reservation-repository.adapter';
+import { DatabaseModule } from './database/database.module';
 import { reservationProviders } from '../providers/reservation/reservation.providers';
 
 @Module({
   imports: [
     DatabaseModule
   ],
-  controllers: [ReservationController],
+  controllers: [
+    ReservationController, 
+  ],
   providers: [...reservationProviders],
-  exports: [],
+  exports: [...reservationProviders],
 })
 export class ReservationModule {}

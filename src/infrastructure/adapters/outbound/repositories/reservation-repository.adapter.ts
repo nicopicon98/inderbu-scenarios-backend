@@ -1,13 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Repository, FindOptionsWhere, Between, In, Like } from 'typeorm';
 
+import { ReservationPageOptionsDto } from 'src/core/domain/ports/outbound/reservation-repository.port';
 import { IReservationRepositoryPort } from 'src/core/domain/ports/outbound/reservation-repository.port';
+import { ReservationEntityMapper } from 'src/infrastructure/mappers/reservation/reservation-entity.mapper';
 import { ReservationDomainEntity } from 'src/core/domain/entities/reservation.domain-entity';
-import { ReservationEntity } from 'src/infrastructure/persistence/reservation.entity';
-import { ReservationPageOptionsDto } from '../../inbound/http/dtos/reservation/reservation-page-options.dto';
 import { MYSQL_REPOSITORY } from 'src/infrastructure/tokens/repositories';
 import { BaseRepositoryAdapter } from './common/base-repository.adapter';
+import { ReservationEntity } from '../../../persistence/reservation.entity';
 
+const DEFAULT_RELATIONS = [
+  'subScenario',
+  'user',
+  'reservationState',
+  'timeslots',
+  'timeslots.timeslot',
+  'instances',
+  'instances.timeslot',
+] as const;
 
 @Injectable()
 export class ReservationRepositoryAdapter
@@ -18,187 +28,287 @@ export class ReservationRepositoryAdapter
     @Inject(MYSQL_REPOSITORY.RESERVATION)
     repository: Repository<ReservationEntity>,
   ) {
-    super(repository);
+    super(repository, [...DEFAULT_RELATIONS]);
   }
 
   protected toEntity(domain: ReservationDomainEntity): ReservationEntity {
-    return this.repository.create({
-      reservationDate: domain.reservationDate,
-      subScenario: { id: domain.subScenarioId },
-      user: { id: domain.userId },
-      timeSlot: { id: domain.timeSlotId },
-      reservationState: { id: domain.reservationStateId },
-      comments: domain.comments || null,
-    });
+    return ReservationEntityMapper.toEntity(domain);
   }
 
   protected toDomain(entity: ReservationEntity): ReservationDomainEntity {
-    return ReservationDomainEntity.builder()
-      .withId(entity.id)
-      .withReservationDate(entity.reservationDate)
-      .withSubScenarioId(entity.subScenario.id)
-      .withUserId(entity.user.id)
-      .withTimeSlotId(entity.timeSlot.id)
-      .withReservationStateId(entity.reservationState.id)
-      .withComments(entity.comments || undefined)
-      .build();
+    return ReservationEntityMapper.toDomain(entity);
   }
 
-  async findBySubscenarioIdAndDateAndTimeSlotId(
-    subscenarioId: number,
-    date: Date,
-    timeSlotId: number,
-  ): Promise<ReservationDomainEntity | null> {
-    console.log({ subscenarioId, date, timeSlotId });
-    const reservation = await this.repository.findOne({
-      where: {
-        subScenario: { id: subscenarioId },
-        reservationDate: date,
-        timeSlot: { id: timeSlotId },
-      },
-      relations: ['timeSlot', 'reservationState'],
+  async findPaged(pageOptionsDto: ReservationPageOptionsDto): Promise<{ data: ReservationDomainEntity[]; total: number }> {
+    const { page = 1, limit = 10, search, subScenarioId, userId, reservationStateId, type, dateFrom, dateTo } = pageOptionsDto;
+    const skip = (page - 1) * limit;
+
+    let whereCondition: FindOptionsWhere<ReservationEntity> = {};
+
+    if (search) {
+      // Buscar por comentarios
+      whereCondition.comments = Like(`%${search}%`);
+    }
+
+    if (subScenarioId) {
+      whereCondition.subScenarioId = subScenarioId;
+    }
+
+    if (userId) {
+      whereCondition.userId = userId;
+    }
+
+    if (reservationStateId) {
+      whereCondition.reservationStateId = reservationStateId;
+    }
+
+    if (type) {
+      whereCondition.type = type as any;
+    }
+
+    if (dateFrom && dateTo) {
+      const startDate = new Date(dateFrom);
+      const endDate = new Date(dateTo);
+      whereCondition.initialDate = Between(startDate, endDate);
+    }
+
+    const [entities, total] = await this.repository.findAndCount({
+      where: whereCondition,
+      relations: [...DEFAULT_RELATIONS],
+      skip,
+      take: limit,
+      order: { createdAt: 'DESC' },
     });
 
-    return reservation ? this.toDomain(reservation) : null;
+    return {
+      data: entities.map(entity => this.toDomain(entity)),
+      total,
+    };
   }
 
-  async findReservedSlotsBySubScenarioIdAndDate(
-    subScenarioId: number,
-    date: Date,
-  ): Promise<ReservationDomainEntity[]> {
-    console.log({date});
-    const reservations = await this.repository.find({
-      where: {
-        subScenario: { id: subScenarioId },
-        reservationDate: date,
-        reservationState: { state: In(['PENDIENTE', 'CONFIRMADA']) },
-      },
-      relations: ['timeSlot', 'reservationState'],
-    });
-
-    return reservations.map(this.toDomain);
-  }
-
-  async findById(id: number): Promise<ReservationDomainEntity | null> {
+  async findWithTimeslots(id: number): Promise<ReservationDomainEntity | null> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: [
-        'subScenario',
-        'subScenario.scenario',
-        'subScenario.scenario.neighborhood',
-        'subScenario.scenario.neighborhood.commune',
-        'subScenario.scenario.neighborhood.commune.city',
-        'user',
-        'timeSlot',
-        'reservationState',
-      ],
+      relations: [...DEFAULT_RELATIONS],
     });
 
     return entity ? this.toDomain(entity) : null;
   }
 
-  async findPaged(opts: ReservationPageOptionsDto): Promise<{ data: ReservationEntity[]; total: number }> {
-    const {
-      page = 1,
-      limit = 20,
-      search,
-      scenarioId,
-      activityAreaId,
-      neighborhoodId,
-      userId,
-      dateFrom,
-      dateTo,
-    } = opts;
+  async updateState(id: number, stateId: number): Promise<ReservationDomainEntity> {
+    await this.repository.update(id, { 
+      reservationStateId: stateId,
+      updatedAt: new Date()
+    });
 
-    try {
-      // Crear un QueryBuilder para obtener todos los datos con sus relaciones
-      const qb = this.repository.createQueryBuilder('r')
-        .leftJoinAndSelect('r.subScenario', 'ss')
-        .leftJoinAndSelect('ss.scenario', 'sc')
-        .leftJoinAndSelect('sc.neighborhood', 'n')
-        .leftJoinAndSelect('n.commune', 'com')
-        .leftJoinAndSelect('com.city', 'city')
-        .leftJoinAndSelect('r.user', 'u')
-        .leftJoinAndSelect('r.timeSlot', 'ts')
-        .leftJoinAndSelect('r.reservationState', 'rs');
-
-      // Aplicar filtros si están presentes
-      if (scenarioId) qb.andWhere('sc.id = :scenarioId', { scenarioId });
-      if (activityAreaId) qb.andWhere('ss.fk_activity_area_id = :activityAreaId', { activityAreaId });
-      if (neighborhoodId) qb.andWhere('n.id = :neighborhoodId', { neighborhoodId });
-      if (userId) qb.andWhere('u.id = :userId', { userId });
-      
-      // ⭐ FILTROS POR RANGO DE FECHAS
-      if (dateFrom) qb.andWhere('r.reservationDate >= :dateFrom', { dateFrom });
-      if (dateTo) qb.andWhere('r.reservationDate <= :dateTo', { dateTo });
-
-      // Búsqueda por texto si está presente
-      if (search?.trim()) {
-        const term = search.trim();
-        qb.andWhere(
-          '(u.first_name LIKE :search OR u.last_name LIKE :search OR sc.name LIKE :search OR ss.name LIKE :search OR n.name LIKE :search OR com.name LIKE :search OR city.name LIKE :search)',
-          { search: `%${term}%` }
-        );
-      }
-
-      // Ordenación y paginación
-      qb.orderBy('r.reservationDate', 'DESC')
-        .addOrderBy('ts.startTime', 'ASC')
-        .skip((page - 1) * limit)
-        .take(limit);
-
-      // Obtener datos y total
-      const [entities, total] = await qb.getManyAndCount();
-
-      return { data: entities, total };
-    } catch (error) {
-      console.error('Error en findPaged:', error);
-      throw error;
+    const updated = await this.findWithTimeslots(id);
+    if (!updated) {
+      throw new Error(`Reservation with id ${id} not found after update`);
     }
+    
+    return updated;
+  }
+
+  async findByUserAndDateRange(
+    userId: number, 
+    startDate: Date, 
+    endDate: Date
+  ): Promise<ReservationDomainEntity[]> {
+    const entities = await this.repository.find({
+      where: [
+        {
+          userId,
+          type: 'SINGLE',
+          initialDate: Between(startDate, endDate)
+        },
+        {
+          userId,
+          type: 'RANGE',
+          initialDate: Between(startDate, endDate)
+        },
+        {
+          userId,
+          type: 'RANGE',
+          finalDate: Between(startDate, endDate)
+        }
+      ],
+      relations: [...DEFAULT_RELATIONS],
+      order: { createdAt: 'DESC' }
+    });
+
+    return entities.map(entity => this.toDomain(entity));
+  }
+
+  async findBySubScenarioAndStates(
+    subScenarioId: number, 
+    stateIds: number[]
+  ): Promise<ReservationDomainEntity[]> {
+    const entities = await this.repository.find({
+      where: {
+        subScenarioId,
+        reservationStateId: In(stateIds)
+      },
+      relations: [...DEFAULT_RELATIONS],
+      order: { createdAt: 'DESC' }
+    });
+
+    return entities.map(entity => this.toDomain(entity));
+  }
+
+  async findByUserId(userId: number): Promise<ReservationDomainEntity[]> {
+    const entities = await this.repository.find({
+      where: { userId },
+      relations: [...DEFAULT_RELATIONS],
+      order: { createdAt: 'DESC' }
+    });
+
+    return entities.map(entity => this.toDomain(entity));
+  }
+
+  async findBySubScenarioId(subScenarioId: number): Promise<ReservationDomainEntity[]> {
+    const entities = await this.repository.find({
+      where: { subScenarioId },
+      relations: [...DEFAULT_RELATIONS],
+      order: { createdAt: 'DESC' }
+    });
+
+    return entities.map(entity => this.toDomain(entity));
+  }
+
+  async findBySubScenarioAndDateRange(
+    subScenarioId: number,
+    startDate: Date,
+    endDate: Date
+  ): Promise<ReservationDomainEntity[]> {
+    const entities = await this.repository.find({
+      where: [
+        {
+          subScenarioId,
+          type: 'SINGLE',
+          initialDate: Between(startDate, endDate)
+        },
+        {
+          subScenarioId,
+          type: 'RANGE',
+          initialDate: Between(startDate, endDate)
+        },
+        {
+          subScenarioId,
+          type: 'RANGE',
+          finalDate: Between(startDate, endDate)
+        }
+      ],
+      relations: [...DEFAULT_RELATIONS],
+      order: { initialDate: 'ASC' }
+    });
+
+    return entities.map(entity => this.toDomain(entity));
+  }
+
+  async findActiveBySubScenarioAndDateRange(
+    subScenarioId: number,
+    startDate: Date,
+    endDate: Date
+  ): Promise<ReservationDomainEntity[]> {
+    const entities = await this.repository.find({
+      where: [
+        {
+          subScenarioId,
+          type: 'SINGLE',
+          initialDate: Between(startDate, endDate),
+          reservationStateId: In([1, 2]) // PENDIENTE, CONFIRMADA
+        },
+        {
+          subScenarioId,
+          type: 'RANGE',
+          initialDate: Between(startDate, endDate),
+          reservationStateId: In([1, 2])
+        },
+        {
+          subScenarioId,
+          type: 'RANGE',
+          finalDate: Between(startDate, endDate),
+          reservationStateId: In([1, 2])
+        }
+      ],
+      relations: [...DEFAULT_RELATIONS],
+      order: { initialDate: 'ASC' }
+    });
+
+    return entities.map(entity => this.toDomain(entity));
+  }
+
+  async updateStateByIds(ids: number[], stateId: number): Promise<void> {
+    if (ids.length === 0) return;
+    
+    await this.repository.update(
+      { id: In(ids) },
+      { 
+        reservationStateId: stateId,
+        updatedAt: new Date()
+      }
+    );
+  }
+
+  async countByUserId(userId: number): Promise<number> {
+    return await this.repository.count({ where: { userId } });
+  }
+
+  async countBySubScenarioId(subScenarioId: number): Promise<number> {
+    return await this.repository.count({ where: { subScenarioId } });
+  }
+
+  async findOverlappingReservations(
+    subScenarioId: number,
+    initialDate: Date,
+    finalDate?: Date,
+    weekDays?: number[],
+    excludeReservationId?: number
+  ): Promise<ReservationDomainEntity[]> {
+    const queryBuilder = this.repository.createQueryBuilder('reservation')
+      .leftJoinAndSelect('reservation.subScenario', 'subScenario')
+      .leftJoinAndSelect('reservation.user', 'user')
+      .leftJoinAndSelect('reservation.reservationState', 'reservationState')
+      .leftJoinAndSelect('reservation.timeslots', 'timeslots')
+      .leftJoinAndSelect('timeslots.timeslot', 'timeslot')
+      .leftJoinAndSelect('reservation.instances', 'instances')
+      .leftJoinAndSelect('instances.timeslot', 'instanceTimeslot')
+      .where('reservation.subScenarioId = :subScenarioId', { subScenarioId })
+      .andWhere('reservation.reservationStateId IN (1, 2)'); // PENDIENTE, CONFIRMADA
+
+    if (excludeReservationId) {
+      queryBuilder.andWhere('reservation.id != :excludeReservationId', { excludeReservationId });
+    }
+
+    // Para reservas de tipo SINGLE
+    if (!finalDate) {
+      queryBuilder.andWhere(
+        '(reservation.type = :singleType AND reservation.initialDate = :initialDate)',
+        { singleType: 'SINGLE', initialDate }
+      );
+    } else {
+      // Para reservas de tipo RANGE
+      queryBuilder.andWhere(
+        '((reservation.type = :singleType AND reservation.initialDate BETWEEN :initialDate AND :finalDate) OR ' +
+        '(reservation.type = :rangeType AND (' +
+        '  (reservation.initialDate <= :finalDate AND reservation.finalDate >= :initialDate)' +
+        ')))',
+        { 
+          singleType: 'SINGLE', 
+          rangeType: 'RANGE',
+          initialDate, 
+          finalDate 
+        }
+      );
+    }
+
+    const entities = await queryBuilder.getMany();
+    return entities.map(entity => this.toDomain(entity));
   }
 
   async update(reservation: ReservationDomainEntity): Promise<ReservationDomainEntity> {
-    // Obtenemos la entidad existente para asegurarnos de actualizar solo los campos que nos interesan
-    const existingEntity = await this.repository.findOne({
-      where: { id: reservation.id as number },
-      relations: [
-        'subScenario',
-        'user',
-        'timeSlot',
-        'reservationState',
-      ],
-    });
-
-    if (!existingEntity) {
-      throw new Error(`Reserva con ID ${reservation.id} no encontrada`);
-    }
-
-    // Actualizamos solo los campos que nos interesan (el estado en este caso)
-    existingEntity.reservationState = { id: reservation.reservationStateId } as any;
-    
-    // Si hay comentarios, los actualizamos
-    if (reservation.comments !== undefined) {
-      existingEntity.comments = reservation.comments;
-    }
-
-    // Guardamos la entidad actualizada
-    const updated = await this.repository.save(existingEntity);
-
-    // Recargamos la entidad con todas sus relaciones para devolverla completa
-    const reloaded = await this.repository.findOne({
-      where: { id: updated.id },
-      relations: [
-        'subScenario',
-        'subScenario.scenario',
-        'subScenario.scenario.neighborhood',
-        'subScenario.scenario.neighborhood.commune',
-        'subScenario.scenario.neighborhood.commune.city',
-        'user',
-        'timeSlot',
-        'reservationState',
-      ],
-    });
-
-    return this.toDomain(reloaded!);
+    const entity = this.toEntity(reservation);
+    const savedEntity = await this.repository.save(entity);
+    return this.toDomain(savedEntity);
   }
 }
