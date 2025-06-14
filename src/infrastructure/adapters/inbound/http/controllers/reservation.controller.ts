@@ -291,7 +291,7 @@ export class ReservationController {
   }
 
   @Get('user/:userId')
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: 'Obtener reservas de un usuario específico',
     description: 'Lista todas las reservas de un usuario con paginación',

@@ -46,7 +46,7 @@ export class ReservationAvailabilityCheckerDomainService {
     }
 
     // 1. Generar disponibilidad para cada fecha
-    const allTimeslotIds = Array.from({ length: 24 }, (_, i) => i);
+    const allTimeslotIds = Array.from({ length: 24 }, (_, i) => i + 1); // Cambiar de 0-23 a 1-24
     const dateAvailabilities = this.getAvailabilityForDateRange(
       calculatedDates,
       allTimeslotIds,
@@ -62,8 +62,8 @@ export class ReservationAvailabilityCheckerDomainService {
     // 3. Generar timeSlots con información básica
     const timeSlots: TimeSlotBasicDto[] = allTimeslotIds.map((id) => ({
       id,
-      startTime: `${String(id).padStart(2, '0')}:00:00`,
-      endTime: `${String(id).padStart(2, '0')}:59:59`,
+      startTime: `${String(id - 1).padStart(2, '0')}:00:00`, // Usar id-1 para el tiempo
+      endTime: `${String(id - 1).padStart(2, '0')}:59:59`,   // Usar id-1 para el tiempo
       isAvailableInAllDates: availableInAllDates.includes(id),
     }));
 
@@ -134,7 +134,7 @@ export class ReservationAvailabilityCheckerDomainService {
     }
 
     // 1. Generar disponibilidad para cada fecha (método existente)
-    const allTimeslotIds = Array.from({ length: 24 }, (_, i) => i);
+    const allTimeslotIds = Array.from({ length: 24 }, (_, i) => i + 1); // Cambiar de 0-23 a 1-24
     const dateAvailabilities = this.getAvailabilityForDateRange(
       calculatedDates,
       allTimeslotIds,
@@ -258,8 +258,8 @@ export class ReservationAvailabilityCheckerDomainService {
 
       return {
         id: timeslotId,
-        startTime: `${String(timeslotId).padStart(2, '0')}:00:00`,
-        endTime: `${String(timeslotId).padStart(2, '0')}:59:59`,
+        startTime: `${String(timeslotId - 1).padStart(2, '0')}:00:00`, // Usar timeslotId-1 para el tiempo
+        endTime: `${String(timeslotId - 1).padStart(2, '0')}:59:59`,   // Usar timeslotId-1 para el tiempo
         isAvailableInAllDates: availableCount === dateAvailabilities.length,
         availableInDatesCount: availableCount,
         occupiedInDatesCount: occupiedCount,

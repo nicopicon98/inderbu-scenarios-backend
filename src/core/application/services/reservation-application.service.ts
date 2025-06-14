@@ -259,23 +259,24 @@ export class ReservationApplicationService
       throw new BadRequestException('Debe seleccionar al menos un timeslot');
     }
 
-    if (dto.timeSlotIds.length > 24) {
-      throw new BadRequestException(
-        'No se pueden seleccionar más de 24 timeslots',
-      );
-    }
-
     // Validar timeslots únicos
     const uniqueSlots = new Set(dto.timeSlotIds);
     if (uniqueSlots.size !== dto.timeSlotIds.length) {
       throw new BadRequestException('Los timeslots deben ser únicos');
     }
 
-    // Validar rango de timeslots (0-23)
-    const invalidSlots = dto.timeSlotIds.filter((id) => id < 0 || id > 23);
+    // Validar que no se seleccionen más de 24 timeslots
+    if (dto.timeSlotIds.length > 24) {
+      throw new BadRequestException(
+        'No se pueden seleccionar más de 24 timeslots',
+      );
+    }
+
+    // Validar rango de timeslots (1-24)
+    const invalidSlots = dto.timeSlotIds.filter((id) => id < 1 || id > 24);
     if (invalidSlots.length > 0) {
       throw new BadRequestException(
-        `Timeslots inválidos: ${invalidSlots.join(', ')}. Deben estar entre 0 y 23.`,
+        `Timeslots inválidos: ${invalidSlots.join(', ')}. Deben estar entre 1 y 24.`,
       );
     }
 
@@ -446,8 +447,8 @@ export class ReservationApplicationService
       reservationStateId: 1,
       timeslots: dto.timeSlotIds.map((id) => ({
         id,
-        startTime: `${String(id).padStart(2, '0')}:00:00`,
-        endTime: `${String(id).padStart(2, '0')}:59:59`,
+        startTime: `${String(id - 1).padStart(2, '0')}:00:00`, // Usar id-1 para el tiempo
+        endTime: `${String(id - 1).padStart(2, '0')}:59:59`,   // Usar id-1 para el tiempo
         isAvailable: true,
       })),
       instances: [], // Se podría llenar con datos reales si es necesario
