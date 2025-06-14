@@ -109,52 +109,6 @@ export class ReservationRepositoryAdapter
     return updated;
   }
 
-  async findByUserAndDateRange(
-    userId: number, 
-    startDate: Date, 
-    endDate: Date
-  ): Promise<ReservationDomainEntity[]> {
-    const entities = await this.repository.find({
-      where: [
-        {
-          userId,
-          type: 'SINGLE',
-          initialDate: Between(startDate, endDate)
-        },
-        {
-          userId,
-          type: 'RANGE',
-          initialDate: Between(startDate, endDate)
-        },
-        {
-          userId,
-          type: 'RANGE',
-          finalDate: Between(startDate, endDate)
-        }
-      ],
-      relations: [...DEFAULT_RELATIONS],
-      order: { createdAt: 'DESC' }
-    });
-
-    return entities.map(entity => this.toDomain(entity));
-  }
-
-  async findBySubScenarioAndStates(
-    subScenarioId: number, 
-    stateIds: number[]
-  ): Promise<ReservationDomainEntity[]> {
-    const entities = await this.repository.find({
-      where: {
-        subScenarioId,
-        reservationStateId: In(stateIds)
-      },
-      relations: [...DEFAULT_RELATIONS],
-      order: { createdAt: 'DESC' }
-    });
-
-    return entities.map(entity => this.toDomain(entity));
-  }
-
   async findByUserId(userId: number): Promise<ReservationDomainEntity[]> {
     const entities = await this.repository.find({
       where: { userId },

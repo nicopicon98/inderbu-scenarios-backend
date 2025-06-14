@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { AggregatedAvailabilityResponseDto, TimeslotAvailabilityDetailDto } from 'src/infrastructure/adapters/inbound/http/dtos/reservation/aggregated-availability.dto';
+import { SimplifiedAvailabilityResponseDto, TimeSlotBasicDto, RequestedConfigurationDto, AvailabilityStatsDto } from 'src/infrastructure/adapters/inbound/http/dtos/reservation/simplified-availability-response.dto';
 
 export interface TimeslotAvailability {
   timeslotId: number;
@@ -21,15 +23,249 @@ export interface DateAvailability {
 @Injectable()
 export class ReservationAvailabilityCheckerDomainService {
   /**
-   * Método simplificado para obtener timeslots disponibles en una fecha
+   * Calcula disponibilidad simplificada con datos YA obtenidos por Application Service
    */
-  async getAvailableTimeSlotsForDate(
+  calculateSimplifiedAvailability(
     subScenarioId: number,
-    date: Date
-  ): Promise<number[]> {
-    // Por ahora retornamos un array con algunos IDs de timeslots
-    // En una implementación completa, aquí consultaríamos el repositorio
-    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    calculatedDates: Date[],
+    occupiedInstancesByDate: Map<
+      string,
+      Array<{
+        timeslotId: number;
+        reservationStateId: number;
+        reservationId: number;
+        userId: number;
+      }>
+    >,
+    initialDate: string,
+    finalDate?: string,
+    weekdays?: number[],
+  ): SimplifiedAvailabilityResponseDto {
+    if (calculatedDates.length === 0) {
+      throw new Error('calculatedDates cannot be empty');
+    }
+
+    // 1. Generar disponibilidad para cada fecha
+    const allTimeslotIds = Array.from({ length: 24 }, (_, i) => i);
+    const dateAvailabilities = this.getAvailabilityForDateRange(
+      calculatedDates,
+      allTimeslotIds,
+      occupiedInstancesByDate,
+    );
+
+    // 2. Calcular qué timeslots están disponibles en TODAS las fechas
+    const availableInAllDates = this.calculateAvailableInAllDates(
+      allTimeslotIds,
+      dateAvailabilities,
+    );
+
+    // 3. Generar timeSlots con información básica
+    const timeSlots: TimeSlotBasicDto[] = allTimeslotIds.map((id) => ({
+      id,
+      startTime: `${String(id).padStart(2, '0')}:00:00`,
+      endTime: `${String(id).padStart(2, '0')}:59:59`,
+      isAvailableInAllDates: availableInAllDates.includes(id),
+    }));
+
+    // 4. Generar estadísticas
+    const stats = this.calculateAvailabilityStats(dateAvailabilities);
+
+    // 5. Construir respuesta simplificada
+    return {
+      subScenarioId,
+      requestedConfiguration: {
+        initialDate,
+        finalDate,
+        weekdays,
+      },
+      calculatedDates: calculatedDates.map(
+        (d) => d.toISOString().split('T')[0],
+      ),
+      timeSlots,
+      stats: {
+        totalDates: stats.totalDates,
+        totalTimeslots: stats.totalTimeslots,
+        totalSlots: stats.totalSlots,
+        availableSlots: stats.availableSlots,
+        occupiedSlots: stats.occupiedSlots,
+        globalAvailabilityPercentage: stats.availabilityPercentage,
+        datesWithFullAvailability: stats.datesWithFullAvailability,
+        datesWithNoAvailability: stats.datesWithNoAvailability,
+      },
+      queriedAt: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Calcula qué timeslots están disponibles en TODAS las fechas
+   */
+  private calculateAvailableInAllDates(
+    allTimeslotIds: number[],
+    dateAvailabilities: DateAvailability[],
+  ): number[] {
+    return allTimeslotIds.filter((timeslotId) => {
+      const availabilityCount = dateAvailabilities.filter((da) =>
+        da.availableTimeslotIds.includes(timeslotId),
+      ).length;
+      return availabilityCount === dateAvailabilities.length;
+    });
+  }
+  /**
+   * Calcula disponibilidad agregada con datos YA obtenidos por Application Service
+   */
+  calculateAggregatedAvailability(
+    subScenarioId: number,
+    calculatedDates: Date[],
+    occupiedInstancesByDate: Map<
+      string,
+      Array<{
+        timeslotId: number;
+        reservationStateId: number;
+        reservationId: number;
+        userId: number;
+      }>
+    >,
+    initialDate: string,
+    finalDate?: string,
+    weekdays?: number[],
+  ): AggregatedAvailabilityResponseDto {
+    if (calculatedDates.length === 0) {
+      throw new Error('calculatedDates cannot be empty');
+    }
+
+    // 1. Generar disponibilidad para cada fecha (método existente)
+    const allTimeslotIds = Array.from({ length: 24 }, (_, i) => i);
+    const dateAvailabilities = this.getAvailabilityForDateRange(
+      calculatedDates,
+      allTimeslotIds,
+      occupiedInstancesByDate,
+    );
+
+    // 2. Calcular intersecciones y uniones
+    const availability = this.calculateAggregatedTimeslotAvailability(
+      allTimeslotIds,
+      dateAvailabilities,
+    );
+
+    // 3. Generar estadísticas
+    const stats = this.calculateAvailabilityStats(dateAvailabilities);
+
+    // 4. Generar detalles por timeslot
+    const timeslotDetails = this.generateTimeslotDetails(
+      allTimeslotIds,
+      dateAvailabilities,
+    );
+
+    // 5. Construir respuesta (lógica pura)
+    return {
+      subScenarioId,
+      requestedConfiguration: {
+        initialDate,
+        finalDate,
+        weekdays,
+      },
+      calculatedDates: calculatedDates.map(
+        (d) => d.toISOString().split('T')[0],
+      ),
+      availableInAllDates: availability.availableInAllDates,
+      availableInAnyDate: availability.availableInAnyDate,
+      occupiedInAllDates: availability.occupiedInAllDates,
+      timeslotDetails,
+      dateAvailabilities: dateAvailabilities.map((da) => ({
+        date: da.date,
+        dayOfWeek: da.dayOfWeek,
+        availableTimeslotIds: da.availableTimeslotIds,
+        occupiedTimeslotIds: da.occupiedTimeslotIds,
+        totalAvailable: da.availableTimeslotIds.length,
+        totalOccupied: da.occupiedTimeslotIds.length,
+        availabilityPercentage:
+          Math.round(
+            (da.availableTimeslotIds.length / allTimeslotIds.length) *
+              100 *
+              100,
+          ) / 100,
+      })),
+      stats: {
+        totalDates: stats.totalDates,
+        totalTimeslots: stats.totalTimeslots,
+        totalSlots: stats.totalSlots,
+        availableSlots: stats.availableSlots,
+        occupiedSlots: stats.occupiedSlots,
+        globalAvailabilityPercentage: stats.availabilityPercentage,
+        datesWithFullAvailability: stats.datesWithFullAvailability,
+        datesWithNoAvailability: stats.datesWithNoAvailability,
+      },
+      queriedAt: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Calcula disponibilidad agregada para timeslots (LÓGICA PURA)
+   */
+  private calculateAggregatedTimeslotAvailability(
+    allTimeslotIds: number[],
+    dateAvailabilities: DateAvailability[],
+  ): {
+    availableInAllDates: number[];
+    availableInAnyDate: number[];
+    occupiedInAllDates: number[];
+  } {
+    const availableInAllDates: number[] = [];
+    const availableInAnyDate: number[] = [];
+    const occupiedInAllDates: number[] = [];
+
+    allTimeslotIds.forEach((timeslotId) => {
+      const availabilityCount = dateAvailabilities.filter((da) =>
+        da.availableTimeslotIds.includes(timeslotId),
+      ).length;
+
+      if (availabilityCount === dateAvailabilities.length) {
+        availableInAllDates.push(timeslotId);
+      }
+
+      if (availabilityCount > 0) {
+        availableInAnyDate.push(timeslotId);
+      }
+
+      if (availabilityCount === 0) {
+        occupiedInAllDates.push(timeslotId);
+      }
+    });
+
+    return {
+      availableInAllDates,
+      availableInAnyDate,
+      occupiedInAllDates,
+    };
+  }
+
+  /**
+   * Genera detalles por timeslot (LÓGICA PURA)
+   */
+  private generateTimeslotDetails(
+    allTimeslotIds: number[],
+    dateAvailabilities: DateAvailability[],
+  ): TimeslotAvailabilityDetailDto[] {
+    return allTimeslotIds.map((timeslotId) => {
+      const availableCount = dateAvailabilities.filter((da) =>
+        da.availableTimeslotIds.includes(timeslotId),
+      ).length;
+
+      const occupiedCount = dateAvailabilities.length - availableCount;
+      const availabilityPercentage =
+        Math.round((availableCount / dateAvailabilities.length) * 100 * 100) /
+        100;
+
+      return {
+        id: timeslotId,
+        startTime: `${String(timeslotId).padStart(2, '0')}:00:00`,
+        endTime: `${String(timeslotId).padStart(2, '0')}:59:59`,
+        isAvailableInAllDates: availableCount === dateAvailabilities.length,
+        availableInDatesCount: availableCount,
+        occupiedInDatesCount: occupiedCount,
+        availabilityPercentage,
+      };
+    });
   }
 
   /**
@@ -43,37 +279,46 @@ export class ReservationAvailabilityCheckerDomainService {
       reservationId: number;
       userId: number;
       reservationStateId: number;
-    }>
+    }>,
   ): DateAvailability {
     const dateStr = date.toISOString().split('T')[0];
     const dayOfWeek = date.getDay();
 
     // Filtrar solo instancias activas (PENDIENTE o CONFIRMADA)
     const activeOccupiedInstances = occupiedInstances.filter(
-      instance => instance.reservationStateId === 1 || instance.reservationStateId === 2
+      (instance) =>
+        instance.reservationStateId === 1 || instance.reservationStateId === 2,
     );
 
-    const occupiedTimeslotIds = activeOccupiedInstances.map(instance => instance.timeslotId);
-    const availableTimeslotIds = allTimeslotIds.filter(id => !occupiedTimeslotIds.includes(id));
+    const occupiedTimeslotIds = activeOccupiedInstances.map(
+      (instance) => instance.timeslotId,
+    );
+    const availableTimeslotIds = allTimeslotIds.filter(
+      (id) => !occupiedTimeslotIds.includes(id),
+    );
 
     // Crear detalle de disponibilidad por timeslot
-    const timeslotAvailability: TimeslotAvailability[] = allTimeslotIds.map(timeslotId => {
-      const occupiedInstance = activeOccupiedInstances.find(instance => instance.timeslotId === timeslotId);
-      
-      return {
-        timeslotId,
-        isAvailable: !occupiedInstance,
-        conflictingReservationId: occupiedInstance?.reservationId,
-        conflictingUserId: occupiedInstance?.userId
-      };
-    });
+    const timeslotAvailability: TimeslotAvailability[] = allTimeslotIds.map(
+      (timeslotId) => {
+        const occupiedInstance = activeOccupiedInstances.find(
+          (instance) => instance.timeslotId === timeslotId,
+        );
+
+        return {
+          timeslotId,
+          isAvailable: !occupiedInstance,
+          conflictingReservationId: occupiedInstance?.reservationId,
+          conflictingUserId: occupiedInstance?.userId,
+        };
+      },
+    );
 
     return {
       date: dateStr,
       dayOfWeek,
       availableTimeslotIds,
       occupiedTimeslotIds,
-      timeslotAvailability
+      timeslotAvailability,
     };
   }
 
@@ -83,18 +328,25 @@ export class ReservationAvailabilityCheckerDomainService {
   getAvailabilityForDateRange(
     dates: Date[],
     allTimeslotIds: number[],
-    occupiedInstancesByDate: Map<string, Array<{
-      timeslotId: number;
-      reservationId: number;
-      userId: number;
-      reservationStateId: number;
-    }>>
+    occupiedInstancesByDate: Map<
+      string,
+      Array<{
+        timeslotId: number;
+        reservationId: number;
+        userId: number;
+        reservationStateId: number;
+      }>
+    >,
   ): DateAvailability[] {
-    return dates.map(date => {
+    return dates.map((date) => {
       const dateStr = date.toISOString().split('T')[0];
       const occupiedInstances = occupiedInstancesByDate.get(dateStr) || [];
-      
-      return this.getAvailabilityForDate(date, allTimeslotIds, occupiedInstances);
+
+      return this.getAvailabilityForDate(
+        date,
+        allTimeslotIds,
+        occupiedInstances,
+      );
     });
   }
 
@@ -104,23 +356,30 @@ export class ReservationAvailabilityCheckerDomainService {
   areAllTimeslotsAvailable(
     dates: Date[],
     timeslotIds: number[],
-    occupiedInstancesByDate: Map<string, Array<{
-      timeslotId: number;
-      reservationStateId: number;
-    }>>
+    occupiedInstancesByDate: Map<
+      string,
+      Array<{
+        timeslotId: number;
+        reservationStateId: number;
+      }>
+    >,
   ): boolean {
     for (const date of dates) {
       const dateStr = date.toISOString().split('T')[0];
       const occupiedInstances = occupiedInstancesByDate.get(dateStr) || [];
-      
+
       // Filtrar solo instancias activas
       const activeOccupiedTimeslots = occupiedInstances
-        .filter(instance => instance.reservationStateId === 1 || instance.reservationStateId === 2)
-        .map(instance => instance.timeslotId);
+        .filter(
+          (instance) =>
+            instance.reservationStateId === 1 ||
+            instance.reservationStateId === 2,
+        )
+        .map((instance) => instance.timeslotId);
 
       // Verificar si algún timeslot requerido está ocupado
-      const hasConflict = timeslotIds.some(timeslotId => 
-        activeOccupiedTimeslots.includes(timeslotId)
+      const hasConflict = timeslotIds.some((timeslotId) =>
+        activeOccupiedTimeslots.includes(timeslotId),
       );
 
       if (hasConflict) {
@@ -137,18 +396,25 @@ export class ReservationAvailabilityCheckerDomainService {
   findFirstAvailableSlot(
     dates: Date[],
     timeslotIds: number[],
-    occupiedInstancesByDate: Map<string, Array<{
-      timeslotId: number;
-      reservationStateId: number;
-    }>>
+    occupiedInstancesByDate: Map<
+      string,
+      Array<{
+        timeslotId: number;
+        reservationStateId: number;
+      }>
+    >,
   ): { date: Date; timeslotId: number } | null {
     for (const date of dates) {
       const dateStr = date.toISOString().split('T')[0];
       const occupiedInstances = occupiedInstancesByDate.get(dateStr) || [];
-      
+
       const activeOccupiedTimeslots = occupiedInstances
-        .filter(instance => instance.reservationStateId === 1 || instance.reservationStateId === 2)
-        .map(instance => instance.timeslotId);
+        .filter(
+          (instance) =>
+            instance.reservationStateId === 1 ||
+            instance.reservationStateId === 2,
+        )
+        .map((instance) => instance.timeslotId);
 
       for (const timeslotId of timeslotIds) {
         if (!activeOccupiedTimeslots.includes(timeslotId)) {
@@ -163,9 +429,7 @@ export class ReservationAvailabilityCheckerDomainService {
   /**
    * Calcula estadísticas de disponibilidad
    */
-  calculateAvailabilityStats(
-    dateAvailabilities: DateAvailability[]
-  ): {
+  calculateAvailabilityStats(dateAvailabilities: DateAvailability[]): {
     totalDates: number;
     totalTimeslots: number;
     totalSlots: number;
@@ -184,7 +448,7 @@ export class ReservationAvailabilityCheckerDomainService {
         occupiedSlots: 0,
         availabilityPercentage: 0,
         datesWithFullAvailability: 0,
-        datesWithNoAvailability: 0
+        datesWithNoAvailability: 0,
       };
     }
 
@@ -208,7 +472,8 @@ export class ReservationAvailabilityCheckerDomainService {
     }
 
     const occupiedSlots = totalSlots - availableSlots;
-    const availabilityPercentage = totalSlots > 0 ? (availableSlots / totalSlots) * 100 : 0;
+    const availabilityPercentage =
+      totalSlots > 0 ? (availableSlots / totalSlots) * 100 : 0;
 
     return {
       totalDates,
@@ -218,7 +483,7 @@ export class ReservationAvailabilityCheckerDomainService {
       occupiedSlots,
       availabilityPercentage: Math.round(availabilityPercentage * 100) / 100,
       datesWithFullAvailability,
-      datesWithNoAvailability
+      datesWithNoAvailability,
     };
   }
 }

@@ -1,6 +1,6 @@
 import { PageDto } from "src/infrastructure/adapters/inbound/http/dtos/common/page.dto";
-import { AvailabilityResponseDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/availability.dto";
-import { AvailableTimeslotsQueryDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/available-timeslots-query.dto";
+import { SimplifiedAvailabilityResponseDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/simplified-availability-response.dto";
+import { AvailabilityQueryDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/availability-query.dto";
 import { CreateReservationRequestDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/create-reservation-request.dto";
 import { ReservationPageOptionsDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/reservation-page-options.dto";
 import { CreateReservationResponseDto, ReservationWithDetailsResponseDto } from "src/infrastructure/adapters/inbound/http/dtos/reservation/reservation.dto";
@@ -20,11 +20,11 @@ export interface IReservationApplicationPort {
   ): Promise<CreateReservationResponseDto>;
 
   /**
-   * Obtiene disponibilidad de timeslots
+   * Obtiene disponibilidad simplificada para configuración de reserva
    */
-  getAvailableTimeSlots(
-    query: AvailableTimeslotsQueryDto,
-  ): Promise<AvailabilityResponseDto>;
+  getAvailabilityForConfiguration(
+    query: AvailabilityQueryDto,
+  ): Promise<SimplifiedAvailabilityResponseDto>;
 
   /**
    * Lista reservas con filtros y paginación
@@ -55,11 +55,6 @@ export interface IReservationApplicationPort {
    * Confirma una reserva
    */
   confirmReservation(reservationId: number): Promise<ReservationWithDetailsResponseDto>;
-
-  /**
-   * Obtiene todos los estados de reserva disponibles
-   */
-  getAllReservationStates(): Promise<{ id: number; state: string }[]>;
 
   /**
    * Obtiene estadísticas de reservas

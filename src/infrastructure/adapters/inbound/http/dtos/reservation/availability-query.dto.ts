@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type, Transform } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsNumber, IsPositive, IsDateString, IsOptional, IsString, Matches } from 'class-validator';
 
-export class AvailableTimeslotsQueryDto {
+export class AvailabilityQueryDto {
   @ApiProperty({
     description: 'ID del sub-escenario',
     example: 16,

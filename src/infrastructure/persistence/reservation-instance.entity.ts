@@ -35,9 +35,14 @@ export class ReservationInstanceEntity {
     name: 'reservation_date',
     transformer: {
       to: (value: Date) => {
+        // ✅ MANTENER original - funciona bien para escribir
         return value.toISOString().split('T')[0];
       },
-      from: (value: string) => new Date(value + 'T00:00:00Z'),
+      from: (value: string) => {
+        // ✅ Crear fecha local sin zona horaria UTC
+        const [year, month, day] = value.split('-').map(Number);
+        return new Date(year, month - 1, day);
+      },
     },
   })
   reservationDate: Date;

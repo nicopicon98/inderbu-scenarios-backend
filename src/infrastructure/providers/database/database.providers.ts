@@ -13,21 +13,25 @@ export const databaseProviders = [
 
       const dataSource = new DataSource({
         type: 'mysql',
-        timezone: 'Z',
+        // fuerza UTC−5 (Bogotá) en lugar de UTC puro
+        timezone: '-05:00',
+        // devuelve los campos DATE/DATETIME como strings en lugar de JS Dates
+        dateStrings: true,
         host: configService.get(ENV_CONFIG.DATABASE.HOST),
         port: configService.get<number>(ENV_CONFIG.DATABASE.PORT),
         username: configService.get(ENV_CONFIG.DATABASE.USER),
         password: configService.get(ENV_CONFIG.DATABASE.PASSWORD),
         database: configService.get(ENV_CONFIG.DATABASE.NAME),
         entities: [...persistenceEntities],
-        synchronize: configService.get(ENV_CONFIG.DATABASE.SYNCHRONIZE) === 'true',
+        synchronize:
+          configService.get(ENV_CONFIG.DATABASE.SYNCHRONIZE) === 'true',
       });
 
       try {
         await dataSource.initialize();
-        logger.log('✅ MySQL Data Source has been initialized!');
+        logger.log('MySQL Data Source has been initialized!');
       } catch (error) {
-        logger.error('❌ Error initializing MySQL Data Source:', error);
+        logger.error('Error initializing MySQL Data Source:', error);
         throw new Error(`Database connection failed: ${error.message}`);
       }
 

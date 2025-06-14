@@ -22,18 +22,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { IReservationApplicationPort } from 'src/core/application/ports/inbound/reservation-application.port';
-import { 
+import {
   CreateReservationResponseDto,
-  ReservationWithDetailsResponseDto 
+  ReservationWithDetailsResponseDto,
 } from '../dtos/reservation/reservation.dto';
 import { AvailabilityResponseDto } from '../dtos/reservation/availability.dto';
 import { CreateReservationRequestDto } from '../dtos/reservation/create-reservation-request.dto';
-import { AvailableTimeslotsQueryDto } from '../dtos/reservation/available-timeslots-query.dto';
+import { AvailabilityQueryDto } from '../dtos/reservation/availability-query.dto';
 import { ReservationPageOptionsDto } from '../dtos/reservation/reservation-page-options.dto';
 import { UpdateReservationStateDto } from '../dtos/reservation/update-reservation-state.dto';
 import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
 import { PageDto } from '../dtos/common/page.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { SimplifiedAvailabilityResponseDto } from '../dtos/reservation/simplified-availability-response.dto';
 
 @ApiTags('Reservations')
 @Controller('reservations')
@@ -71,7 +72,7 @@ export class ReservationController {
     @Body() createReservationDto: CreateReservationRequestDto,
     @Request() req: any,
   ): Promise<CreateReservationResponseDto> {
-    const userId = req.user?.userId; // ✅ FIXED: usar userId en lugar de id
+    const userId = req.user?.userId; // FIXED: usar userId en lugar de id
     if (!userId)
       throw new NotFoundException('Usuario no encontrado en la sesión');
 
@@ -83,31 +84,73 @@ export class ReservationController {
 
   @Get('availability')
   @ApiOperation({
-    summary: 'Consultar disponibilidad de time slots para una fecha específica',
+    summary: 'Consultar disponibilidad para configuración de reserva completa',
     description:
-      'Devuelve todos los time slots con su estado de disponibilidad para un sub-escenario y fecha dados',
+      'Devuelve disponibilidad agregada para una configuración específica de reserva. ' +
+      'Soporta desde consultas de un día hasta rangos complejos con días de semana específicos. ' +
+      'Utiliza la misma lógica de cálculo de fechas que la creación de reservas para garantizar consistencia.',
   })
   @ApiQuery({
     name: 'subScenarioId',
     type: Number,
     description: 'ID del sub-escenario',
     example: 16,
+    required: true,
   })
   @ApiQuery({
-    name: 'date',
+    name: 'initialDate',
     type: String,
-    description: 'Fecha para consultar (YYYY-MM-DD)',
-    example: '2025-06-09',
+    description: 'Fecha inicial para consultar (YYYY-MM-DD)',
+    example: '2025-06-10',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'finalDate',
+    type: String,
+    description:
+      'Fecha final para consultar (YYYY-MM-DD). Si no se especifica, consulta solo initialDate',
+    example: '2025-06-20',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'weekdays',
+    type: String,
+    description:
+      'Días de semana específicos separados por comas (0=Domingo, 1=Lunes, ..., 6=Sábado). Solo aplica si se especifica finalDate',
+    example: '1,3,5',
+    required: false,
   })
   @ApiResponse({
     status: 200,
-    description: 'Disponibilidad de time slots obtenida exitosamente',
-    type: AvailabilityResponseDto,
+    description: 'Disponibilidad simplificada calculada exitosamente',
+    type: SimplifiedAvailabilityResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Parámetros de consulta inválidos',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: 'finalDate must be after initialDate',
+        error: 'Bad Request',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Sub-escenario no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'SubScenario with id 16 not found',
+        error: 'Not Found',
+      },
+    },
   })
   async getAvailability(
-    @Query() query: AvailableTimeslotsQueryDto,
-  ): Promise<AvailabilityResponseDto> {
-    return await this.reservationApplicationService.getAvailableTimeSlots(
+    @Query() query: AvailabilityQueryDto,
+  ): Promise<SimplifiedAvailabilityResponseDto> {
+    return await this.reservationApplicationService.getAvailabilityForConfiguration(
       query,
     );
   }

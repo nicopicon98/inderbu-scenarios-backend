@@ -302,7 +302,7 @@ export class ReservationInstanceRepositoryAdapter
     startDate: Date,
     endDate: Date
   ): Promise<Map<string, number[]>> {
-    const instances = await this.repository.find({
+    const instances: ReservationInstanceEntity[] = await this.repository.find({
       where: {
         subScenarioId,
         reservationDate: Between(startDate, endDate),
@@ -312,13 +312,20 @@ export class ReservationInstanceRepositoryAdapter
     });
 
     const occupiedMap = new Map<string, number[]>();
+
+    //Mostrar la consulta hecha con instances
+    console.log('Instances:', instances);
     
     instances.forEach(instance => {
+      // ✅ Ahora que las fechas se crean correctamente, esto funcionará bien
       const dateKey = instance.reservationDate.toISOString().split('T')[0];
       const existing = occupiedMap.get(dateKey) || [];
       existing.push(instance.timeslotId);
       occupiedMap.set(dateKey, existing);
     });
+
+    // log occupiedMap for debugging
+    console.log('Occupied Timeslots Map:', Array.from(occupiedMap.entries()));
 
     return occupiedMap;
   }
