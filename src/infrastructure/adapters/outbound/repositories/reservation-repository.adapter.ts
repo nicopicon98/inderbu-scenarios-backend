@@ -11,6 +11,10 @@ import { ReservationEntity } from '../../../persistence/reservation.entity';
 
 const DEFAULT_RELATIONS = [
   'subScenario',
+  'subScenario.scenario',
+  'subScenario.scenario.neighborhood',
+  'subScenario.scenario.neighborhood.commune',
+  'subScenario.scenario.neighborhood.commune.city',
   'user',
   'reservationState',
   'timeslots',

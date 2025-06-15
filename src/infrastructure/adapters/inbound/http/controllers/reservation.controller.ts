@@ -32,9 +32,13 @@ import { AvailabilityQueryDto } from '../dtos/reservation/availability-query.dto
 import { ReservationPageOptionsDto } from '../dtos/reservation/reservation-page-options.dto';
 import { UpdateReservationStateDto } from '../dtos/reservation/update-reservation-state.dto';
 import { APPLICATION_PORTS } from 'src/core/application/tokens/ports';
+import { REPOSITORY_PORTS } from 'src/infrastructure/tokens/ports';
 import { PageDto } from '../dtos/common/page.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { SimplifiedAvailabilityResponseDto } from '../dtos/reservation/simplified-availability-response.dto';
+import { ReservationStateDto } from '../dtos/reservation/base-reservation.dto';
+import { IReservationStateRepositoryPort } from 'src/core/domain/ports/outbound/reservation-state-repository.port';
+import { ReservationStateResponseMapper } from 'src/infrastructure/mappers/reservation-state/reservation-state-response.mapper';
 
 @ApiTags('Reservations')
 @Controller('reservations')
@@ -42,6 +46,9 @@ export class ReservationController {
   constructor(
     @Inject(APPLICATION_PORTS.RESERVATION)
     private readonly reservationApplicationService: IReservationApplicationPort,
+    
+    @Inject(REPOSITORY_PORTS.RESERVATION_STATE)
+    private readonly reservationStateRepository: IReservationStateRepositoryPort,
   ) {}
 
   @Post()
@@ -213,6 +220,22 @@ export class ReservationController {
     );
   }
 
+  
+  @Get('states')
+  @ApiOperation({
+    summary: 'Obtener todos los estados de reserva disponibles',
+    description: 'Devuelve la lista de todos los estados posibles para las reservas (PENDIENTE, CONFIRMADA, CANCELADA, etc.)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estados de reserva obtenidos exitosamente',
+    type: [ReservationStateDto],
+  })
+  async getAllReservationStates(): Promise<ReservationStateDto[] | null> {
+    const states = await this.reservationStateRepository.findAll();
+    return states.map(state => ReservationStateResponseMapper.toDto(state));
+  }
+
   @Get(':id')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
@@ -325,7 +348,6 @@ export class ReservationController {
     @Param('userId', ParseIntPipe) userId: number,
     @Query() pageOptionsDto: ReservationPageOptionsDto,
   ): Promise<PageDto<ReservationWithDetailsResponseDto>> {
-    // Forzar el filtro por usuario
     const options = { ...pageOptionsDto, userId };
     return await this.reservationApplicationService.listReservations(options);
   }

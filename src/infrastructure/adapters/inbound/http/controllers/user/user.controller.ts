@@ -122,6 +122,7 @@ export class UserController {
   ): Promise<PageDto<UserWithRelationsDto>> {
     return this.userApplicationService.getUsersByRole(roleId, pageOptionsDto);
   }
+  
   @Post()
   @ApiOperation({
     summary:

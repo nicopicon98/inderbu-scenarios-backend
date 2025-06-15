@@ -10,10 +10,10 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
+import { AuthTokensDto, UserDto, RefreshTokenDto } from '../dtos/auth/auth-response.dto';
 import { AuthApplicationService } from 'src/core/application/services/auth.service';
 import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
 import { LoginDto } from '../dtos/auth/login.dto';
-import { AuthTokensDto, UserDto, RefreshTokenDto } from '../dtos/auth/auth-response.dto';
 
 @Controller('auth')
 export class AuthController {

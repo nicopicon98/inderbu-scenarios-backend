@@ -3,7 +3,7 @@ import { Expose, Transform, Type } from 'class-transformer';
 
 /**
  * DTO base para información de Timeslot
- * Usado en múltiples respuestas 
+ * Usado en múltiples respuestas
  */
 export class TimeslotDto {
   @ApiProperty({ example: 9 })
@@ -24,6 +24,77 @@ export class TimeslotDto {
 }
 
 /**
+ * DTO para información de City
+ */
+export class CityDto {
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly id: number;
+
+  @ApiProperty({ example: 'Medellín' })
+  @Expose()
+  readonly name: string;
+}
+
+/**
+ * DTO para información de Commune
+ */
+export class CommuneDto {
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly id: number;
+
+  @ApiProperty({ example: 'Comuna 14' })
+  @Expose()
+  readonly name: string;
+
+  @ApiPropertyOptional({ type: CityDto })
+  @Expose()
+  @Type(() => CityDto)
+  readonly city?: CityDto;
+}
+
+/**
+ * DTO para información de Neighborhood
+ */
+export class NeighborhoodDto {
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly id: number;
+
+  @ApiProperty({ example: 'El Poblado' })
+  @Expose()
+  readonly name: string;
+
+  @ApiPropertyOptional({ type: CommuneDto })
+  @Expose()
+  @Type(() => CommuneDto)
+  readonly commune?: CommuneDto;
+}
+
+/**
+ * DTO para información completa de Scenario
+ */
+export class ScenarioDto {
+  @ApiProperty({ example: 1 })
+  @Expose()
+  readonly id: number;
+
+  @ApiProperty({ example: 'Polideportivo Central' })
+  @Expose()
+  readonly name: string;
+
+  @ApiProperty({ example: 'Calle 123 #45-67' })
+  @Expose()
+  readonly address: string;
+
+  @ApiPropertyOptional({ type: NeighborhoodDto })
+  @Expose()
+  @Type(() => NeighborhoodDto)
+  readonly neighborhood?: NeighborhoodDto;
+}
+
+/**
  * DTO para información de SubScenario
  */
 export class SubScenarioDto {
@@ -38,6 +109,36 @@ export class SubScenarioDto {
   @ApiPropertyOptional({ example: 'Descripción del sub-escenario' })
   @Expose()
   readonly description?: string;
+
+  // Propiedades adicionales que espera el frontend
+  @ApiPropertyOptional({ example: true })
+  @Expose()
+  readonly hasCost?: boolean;
+
+  @ApiPropertyOptional({ example: 22 })
+  @Expose()
+  readonly numberOfSpectators?: number | null;
+
+  @ApiPropertyOptional({ example: 11 })
+  @Expose()
+  readonly numberOfPlayers?: number | null;
+
+  @ApiPropertyOptional({ example: 'Recomendaciones especiales' })
+  @Expose()
+  readonly recommendations?: string | null;
+
+  @ApiPropertyOptional({ example: 1 })
+  @Expose()
+  readonly scenarioId?: number;
+
+  @ApiPropertyOptional({ example: 'Polideportivo Central' })
+  @Expose()
+  readonly scenarioName?: string;
+
+  @ApiPropertyOptional({ type: ScenarioDto })
+  @Expose()
+  @Type(() => ScenarioDto)
+  readonly scenario?: ScenarioDto;
 }
 
 /**
@@ -59,6 +160,10 @@ export class UserDto {
   @ApiProperty({ example: 'john@example.com' })
   @Expose()
   readonly email: string;
+
+  @ApiPropertyOptional({ example: '+573001234567' })
+  @Expose()
+  readonly phone?: string | null;
 }
 
 /**
@@ -73,9 +178,9 @@ export class ReservationStateDto {
   @Expose()
   readonly name: string;
 
-  @ApiProperty({ example: 'La reserva está pendiente de confirmación' })
+  @ApiPropertyOptional({ example: 'La reserva está pendiente de confirmación' })
   @Expose()
-  readonly description: string;
+  readonly description?: string;
 }
 
 /**

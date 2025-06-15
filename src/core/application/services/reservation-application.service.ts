@@ -44,6 +44,7 @@ import { ReservationAvailabilityCheckerDomainService } from '../../domain/servic
 import { REPOSITORY_PORTS } from '../../../infrastructure/tokens/ports';
 import { DOMAIN_SERVICES } from '../tokens/ports';
 import { DATA_SOURCE } from '../../../infrastructure/tokens/data_sources';
+import { ReservationResponseMapper } from '../../../infrastructure/mappers/reservation/reservation-response.mapper';
 
 
 @Injectable()
@@ -581,36 +582,9 @@ export class ReservationApplicationService
   ): Promise<PageDto<ReservationWithDetailsResponseDto>> {
     const { data, total } = await this.reservationRepo.findPaged(options);
 
+    // Usar el mapper para convertir domain entities a DTOs
     const dtos: ReservationWithDetailsResponseDto[] = data.map(
-      (reservation) => ({
-        id: reservation.id!,
-        type: reservation.type.toString(),
-        subScenarioId: reservation.subScenarioId,
-        userId: reservation.userId,
-        initialDate: reservation.initialDate.toISOString().split('T')[0],
-        finalDate: reservation.finalDate?.toISOString().split('T')[0] || null,
-        weekDays: reservation.weekDays || null,
-        comments: reservation.comments || null,
-        reservationStateId: reservation.reservationStateId,
-        subScenario: { id: reservation.subScenarioId, name: 'Unknown' },
-        user: {
-          id: reservation.userId,
-          firstName: 'Unknown',
-          lastName: 'User',
-          email: 'unknown@email.com',
-        },
-        reservationState: {
-          id: reservation.reservationStateId,
-          name: 'PENDIENTE',
-          description: 'Pending state',
-        },
-        timeslots: [],
-        totalInstances: 0,
-        createdAt:
-          reservation.createdAt?.toISOString() || new Date().toISOString(),
-        updatedAt:
-          reservation.updatedAt?.toISOString() || new Date().toISOString(),
-      }),
+      (reservation) => ReservationResponseMapper.toDetailsDto(reservation)
     );
 
     const meta = new PageMetaDto({
@@ -631,35 +605,8 @@ export class ReservationApplicationService
       throw new NotFoundException(`Reservation with ID ${id} not found`);
     }
 
-    return {
-      id: reservation.id!,
-      type: reservation.type.toString(),
-      subScenarioId: reservation.subScenarioId,
-      userId: reservation.userId,
-      initialDate: reservation.initialDate.toISOString().split('T')[0],
-      finalDate: reservation.finalDate?.toISOString().split('T')[0] || null,
-      weekDays: reservation.weekDays || null,
-      comments: reservation.comments || null,
-      reservationStateId: reservation.reservationStateId,
-      subScenario: { id: reservation.subScenarioId, name: 'Unknown' },
-      user: {
-        id: reservation.userId,
-        firstName: 'Unknown',
-        lastName: 'User',
-        email: 'unknown@email.com',
-      },
-      reservationState: {
-        id: reservation.reservationStateId,
-        name: 'PENDIENTE',
-        description: 'Pending state',
-      },
-      timeslots: [],
-      totalInstances: 0,
-      createdAt:
-        reservation.createdAt?.toISOString() || new Date().toISOString(),
-      updatedAt:
-        reservation.updatedAt?.toISOString() || new Date().toISOString(),
-    };
+    // Usar el mapper para convertir domain entity a DTO
+    return ReservationResponseMapper.toDetailsDto(reservation);
   }
 
   async updateReservationState(
