@@ -8,9 +8,18 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBody, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
-import { AuthTokensDto, UserDto, RefreshTokenDto } from '../dtos/auth/auth-response.dto';
+import {
+  AuthTokensDto,
+  UserDto,
+  RefreshTokenDto,
+} from '../dtos/auth/auth-response.dto';
 import { AuthApplicationService } from 'src/core/application/services/auth.service';
 import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
 import { LoginDto } from '../dtos/auth/login.dto';
@@ -20,7 +29,9 @@ export class AuthController {
   constructor(private readonly authService: AuthApplicationService) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'Inicia sesión con correo electrónico y contraseña' })
+  @ApiOperation({
+    summary: 'Inicia sesión con correo electrónico y contraseña',
+  })
   @ApiResponse({
     status: 200,
     description: 'Inicio de sesión exitoso',
@@ -31,7 +42,10 @@ export class AuthController {
     type: LoginDto,
   })
   async login(@Body() body: LoginDto): Promise<AuthTokensDto> {
-    const user: UserDomainEntity | null = await this.authService.validateUser(body.email, body.password);
+    const user: UserDomainEntity | null = await this.authService.validateUser(
+      body.email,
+      body.password,
+    );
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
@@ -39,7 +53,9 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @ApiOperation({ summary: 'Renueva el token de acceso usando el refresh token' })
+  @ApiOperation({
+    summary: 'Renueva el token de acceso usando el refresh token',
+  })
   @ApiResponse({
     status: 200,
     description: 'Token renovado exitosamente',
@@ -50,11 +66,8 @@ export class AuthController {
     type: RefreshTokenDto,
   })
   async refresh(@Body() body: RefreshTokenDto): Promise<AuthTokensDto> {
-    try {
-      return await this.authService.refreshToken(body.refresh_token);
-    } catch (error) {
-      throw new UnauthorizedException('Refresh token inválido');
-    }
+    console.log("Refreshing token with body:", body);
+    return await this.authService.refreshToken(body.refresh_token);
   }
 
   @Get('me')
@@ -78,7 +91,9 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Post('profile')
   @ApiBearerAuth('jwt-auth')
-  @ApiOperation({ summary: 'Obtiene el perfil del usuario (deprecated - usar /me)' })
+  @ApiOperation({
+    summary: 'Obtiene el perfil del usuario (deprecated - usar /me)',
+  })
   getProfile(@Request() req: any) {
     return req.user;
   }

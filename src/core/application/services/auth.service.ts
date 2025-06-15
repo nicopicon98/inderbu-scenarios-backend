@@ -30,7 +30,7 @@ export class AuthApplicationService {
     const refreshPayload = { sub: user.id, type: 'refresh' };
     
     return {
-      access_token: this.jwtService.sign(payload, { expiresIn: '1h' }), // Token de acceso con duración corta
+      access_token: this.jwtService.sign(payload, { expiresIn: '150d' }), // Token de acceso con duración maxima
       refresh_token: this.jwtService.sign(refreshPayload, { expiresIn: '7d' }), // Refresh token con duración larga
     };
   }
@@ -49,7 +49,7 @@ export class AuthApplicationService {
       if (!user) {
         throw new Error('User not found');
       }
-
+      console.log("it got here");
       // Generar nuevos tokens
       return this.login(user);
     } catch (error) {

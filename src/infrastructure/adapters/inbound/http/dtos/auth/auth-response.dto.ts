@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsJWT, IsNotEmpty } from 'class-validator';
 import { UserDomainEntity } from 'src/core/domain/entities/user.domain-entity';
 
 export class AuthTokensDto {
@@ -97,5 +98,7 @@ export class RefreshTokenDto {
     description: 'Token de renovación',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   })
+  @IsJWT()       // verifica formato JWT
+  @IsNotEmpty()  // no permite vacío
   refresh_token: string;
 }
