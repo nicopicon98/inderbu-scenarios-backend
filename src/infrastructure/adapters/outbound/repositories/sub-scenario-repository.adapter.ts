@@ -153,12 +153,22 @@ export class SubScenarioRepositoryAdapter
     }
 
     /* ───── orden secundario + paginación ───── */
-    qb.addOrderBy('s.name', 'ASC')
-      .skip((page - 1) * limit)
+    // Ordenar por fecha de creación DESC (más recientes primero) y luego por nombre
+    if (!search?.trim()) {
+      // Si no hay búsqueda, ordenar solo por fecha
+      qb.orderBy('s.createdAt', 'DESC')
+        .addOrderBy('s.name', 'ASC');
+    } else {
+      // Si hay búsqueda, mantener score primero, luego fecha
+      qb.addOrderBy('s.createdAt', 'DESC')
+        .addOrderBy('s.name', 'ASC');
+    }
+    
+    qb.skip((page - 1) * limit)
       .take(limit);
 
     const [entities, total] = await qb.getManyAndCount();
-    console.log({entities});
+    
     return { data: entities.map(SubScenarioEntityMapper.toDomain), total };
   }
 }

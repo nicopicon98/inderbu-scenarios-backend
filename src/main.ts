@@ -1,6 +1,8 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 
@@ -13,7 +15,13 @@ function loadEnv() {
 }
 async function bootstrap() {
   loadEnv();
-  const app: INestApplication<any> = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
+  // Configurar archivos estáticos para servir imágenes
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/', // Los archivos serán accesibles en /uploads/images/*
+  });
+  
   // Registro de interceptores globales
   app.useGlobalInterceptors(new ResponseInterceptor());
   // Registro de filters globales

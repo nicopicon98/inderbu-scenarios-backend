@@ -23,6 +23,7 @@ import { ISubScenarioImageRepositoryPort } from 'src/core/domain/ports/outbound/
 import { CreateSubScenarioDto } from 'src/infrastructure/adapters/inbound/http/dtos/sub-scenarios/create-sub-scenario.dto';
 import { UpdateSubScenarioDto } from 'src/infrastructure/adapters/inbound/http/dtos/sub-scenarios/update-sub-scenario.dto';
 import { SubScenarioImageDomainEntity } from 'src/core/domain/entities/sub-scenario-image.domain-entity';
+import { FileStorageService } from 'src/infrastructure/adapters/outbound/file-storage/file-storage.service';
 
 @Injectable()
 export class SubScenarioApplicationService
@@ -41,6 +42,7 @@ export class SubScenarioApplicationService
     private readonly neighborhoodRepository: INeighborhoodRepositoryPort,
     @Inject(REPOSITORY_PORTS.SUB_SCENARIO_IMAGE)
     private readonly imageRepository: ISubScenarioImageRepositoryPort,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   async listWithRelations(
@@ -48,7 +50,6 @@ export class SubScenarioApplicationService
   ): Promise<PageDto<SubScenarioWithRelationsDto>> {
     const { data: subs, total } =
       await this.subScenarioRepository.findPaged(opts); // 1. dominio
-    console.log('subscenarios response', subs)
     const [scen, area, surf, neigh] = await this.loadReferenceMaps(subs); // 2. catálogos
     
     // Obtener IDs de todos los sub-escenarios
@@ -79,7 +80,6 @@ export class SubScenarioApplicationService
       return SubScenarioMapper.toDto(sub, scen, area, surf, neigh, subImages);
     });
     
-    console.log('DTO', dto);
     return new PageDto(
       dto,
       new PageMetaDto({
@@ -128,22 +128,37 @@ export class SubScenarioApplicationService
       
     const savedSubScenario = await this.subScenarioRepository.save(subScenarioDomain);
     
-    // Si hay imágenes, subirlas
-    if (images && images.length > 0 && savedSubScenario.id) {
+    // Si hay imágenes, subirlas usando FileStorageService
+    if (images && images.length > 0) {
+      if (!savedSubScenario.id) {
+        throw new BadRequestException('Error: Sub-escenario creado sin ID válido');
+      }
+      
       await Promise.all(images.map(async (image, index) => {
-        await this.imageRepository.save(
-          SubScenarioImageDomainEntity.builder()
-            .withPath(`/images/${image.originalname}`)
-            .withIsFeature(index === 0) // La primera imagen es la principal
-            .withDisplayOrder(index)
-            .withSubScenarioId(savedSubScenario.id!)
-            .build()
-        );
+        try {
+          // Guardar el archivo físicamente usando FileStorageService
+          const relativePath = await this.fileStorageService.saveFile(image);
+          
+          // Guardar la información en la base de datos
+          await this.imageRepository.save(
+            SubScenarioImageDomainEntity.builder()
+              .withPath(relativePath)
+              .withIsFeature(index === 0) // La primera imagen es la principal
+              .withDisplayOrder(index)
+              .withSubScenarioId(savedSubScenario.id!)
+              .build()
+          );
+        } catch (error) {
+          console.error('Error al procesar imagen:', error);
+          throw new BadRequestException(`Error al procesar imagen: ${error.message}`);
+        }
       }));
     }
     
-    // Obtener el sub-escenario con sus relaciones
-    return this.getByIdWithRelations(savedSubScenario.id!);
+    // Obtener el sub-escenario con sus relaciones e imágenes
+    const result = await this.getByIdWithRelations(savedSubScenario.id!);
+    
+    return result;
   }
   
   async update(

@@ -6,11 +6,15 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class FileStorageService {
   private readonly uploadDir = join(process.cwd(), 'uploads/images');
+  private readonly tempDir = join(process.cwd(), 'uploads/temp');
 
   constructor() {
-    // Asegurar que el directorio de subida exista
+    // Asegurar que los directorios existan
     if (!existsSync(this.uploadDir)) {
       mkdirSync(this.uploadDir, { recursive: true });
+    }
+    if (!existsSync(this.tempDir)) {
+      mkdirSync(this.tempDir, { recursive: true });
     }
   }
 
@@ -20,19 +24,66 @@ export class FileStorageService {
    * @returns Ruta relativa del archivo guardado
    */
   async saveFile(file: Express.Multer.File): Promise<string> {
-    // Validar que el archivo exista y tenga contenido
-    if (!file || !file.buffer) {
-      throw new Error('Archivo inválido o vacío');
+    // Validar que el archivo exista
+    if (!file) {
+      throw new Error('Archivo inválido: no se proporcionó archivo');
     }
 
-    const fileExtension = file.originalname.split('.').pop();
+    // Obtener la extensión del archivo
+    let fileExtension = '';
+    if (file.originalname && file.originalname.includes('.')) {
+      fileExtension = file.originalname.split('.').pop() || '';
+    } else if (file.mimetype) {
+      // Fallback: usar mimetype para determinar la extensión
+      const mimeToExt = {
+        'image/jpeg': 'jpg',
+        'image/jpg': 'jpg', 
+        'image/png': 'png',
+        'image/gif': 'gif',
+        'image/webp': 'webp'
+      };
+      fileExtension = mimeToExt[file.mimetype] || 'jpg';
+    } else {
+      fileExtension = 'jpg'; // Default fallback
+    }
+
     const fileName = `${uuidv4()}.${fileExtension}`;
     const relativePath = `/uploads/images/${fileName}`;
     const fullPath = join(this.uploadDir, fileName);
 
-    // Guardar el archivo usando writeFileSync (más directo que pipeline para buffers)
+    // Guardar el archivo usando writeFileSync
     try {
-      writeFileSync(fullPath, file.buffer);
+      let fileData: Buffer;
+      let tempFilePath: string | null = null;
+      
+      if (file.buffer) {
+        // Si tiene buffer, usarlo directamente
+        fileData = file.buffer;
+      } else if (file.path) {
+        // Si tiene path, leer el archivo temporal
+        const fs = require('fs');
+        tempFilePath = file.path; // Guardar referencia para limpiar después
+        fileData = fs.readFileSync(file.path);
+      } else {
+        throw new Error('Archivo inválido: no tiene buffer ni path');
+      }
+      
+      if (!fileData || fileData.length === 0) {
+        throw new Error('Archivo inválido: datos vacíos');
+      }
+      
+      // Guardar el archivo en la ubicación final
+      writeFileSync(fullPath, fileData);
+      
+      // Limpiar archivo temporal si existe
+      if (tempFilePath && existsSync(tempFilePath)) {
+        try {
+          unlinkSync(tempFilePath);
+        } catch (cleanupError) {
+          console.warn('No se pudo limpiar archivo temporal:', cleanupError.message);
+        }
+      }
+      
       return relativePath;
     } catch (error) {
       console.error(`Error al guardar archivo: ${error.message}`);
