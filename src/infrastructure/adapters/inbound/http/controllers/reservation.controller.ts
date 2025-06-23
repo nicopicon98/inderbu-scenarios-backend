@@ -207,6 +207,13 @@ export class ReservationController {
     enum: ['SINGLE', 'RANGE'],
     description: 'Filtrar por tipo de reserva',
   })
+  @ApiQuery({
+    name: 'cityId',
+    required: false,
+    type: Number,
+    description: 'Filtrar por ciudad',
+    example: 5,
+  })
   @ApiResponse({
     status: 200,
     type: PageDto,

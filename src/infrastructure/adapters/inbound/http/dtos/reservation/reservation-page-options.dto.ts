@@ -48,4 +48,14 @@ export class ReservationPageOptionsDto extends PageOptionsDto {
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  @ApiPropertyOptional({ 
+    example: 5,
+    description: 'Filtrar por ID de la ciudad'
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @IsPositive()
+  cityId?: number;
 }

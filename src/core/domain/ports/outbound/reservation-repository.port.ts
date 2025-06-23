@@ -10,6 +10,9 @@ export interface ReservationPageOptionsDto {
   type?: string;
   dateFrom?: string;
   dateTo?: string;
+  neighborhoodId?: number; // Heredado de PageOptionsDto
+  cityId?: number;
+  scenarioId?: number; // Heredado de PageOptionsDto
 }
 
 export interface IReservationRepositoryPort {
