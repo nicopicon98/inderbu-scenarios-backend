@@ -89,17 +89,27 @@ export class ScenarioApplicationService implements IScenarioApplicationPort {
   }
 
   async update(id: number, dto: UpdateScenarioDto): Promise<ScenarioResponseDto> {
+    console.log('🔍 ScenarioService.update called with:', { id, dto });
+    console.log('🔍 dto.neighborhoodId:', dto.neighborhoodId, typeof dto.neighborhoodId);
+    
     // Verificar que el escenario existe
     const existingScenario = await this.scenarioRepository.findById(id);
     if (!existingScenario) {
       throw new NotFoundException(`Escenario con ID ${id} no encontrado`);
     }
 
+    console.log('🔍 existingScenario.neighborhoodId:', existingScenario.neighborhoodId);
+
     // Si se proporciona neighborhoodId, verificar que el barrio existe
     let neighborhood: NeighborhoodDomainEntity | null = null;
-    const targetNeighborhoodId = dto.neighborhoodId ?? existingScenario.neighborhoodId;
+    // Usar el neighborhoodId del DTO si está presente, sino usar el existente
+    // Tratar 0 como valor inválido (sin barrio asignado)
+    const targetNeighborhoodId = dto.neighborhoodId ?? 
+      (existingScenario.neighborhoodId && existingScenario.neighborhoodId > 0 ? existingScenario.neighborhoodId : undefined);
     
-    if (targetNeighborhoodId != null) {
+    console.log('🔍 targetNeighborhoodId:', targetNeighborhoodId, typeof targetNeighborhoodId);
+    
+    if (targetNeighborhoodId != null && targetNeighborhoodId > 0) {
       neighborhood = await this.neighborhoodRepository.findById(targetNeighborhoodId);
       if (!neighborhood) {
         throw new NotFoundException(`Barrio con ID ${targetNeighborhoodId} no encontrado`);
@@ -111,7 +121,7 @@ export class ScenarioApplicationService implements IScenarioApplicationPort {
       .withId(id)
       .withName(dto.name ?? existingScenario.name)
       .withAddress(dto.address ?? existingScenario.address)
-      .withNeighborhoodId(targetNeighborhoodId)
+      .withNeighborhoodId(targetNeighborhoodId || null)
       .build();
 
     // Guardar cambios

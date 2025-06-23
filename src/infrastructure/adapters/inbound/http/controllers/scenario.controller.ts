@@ -61,6 +61,8 @@ export class ScenarioController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDto: UpdateScenarioDto,
   ): Promise<ScenarioResponseDto> {
+    console.log('🎯 Controller received updateDto:', updateDto);
+    console.log('🎯 updateDto.neighborhoodId:', updateDto.neighborhoodId, typeof updateDto.neighborhoodId);
     return this.scenarioApplicationService.update(id, updateDto);
   }
 

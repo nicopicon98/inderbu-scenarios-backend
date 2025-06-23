@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsInt, IsOptional, MinLength, MaxLength } from 'class-validator';
+import { IsString, IsInt, IsOptional, MinLength, MaxLength, IsPositive } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 
 export class UpdateScenarioDto {
   @ApiProperty({ description: 'Nombre del escenario', example: 'Polideportivo Norte', required: false })
@@ -17,7 +18,16 @@ export class UpdateScenarioDto {
   address?: string;
 
   @ApiProperty({ description: 'ID del barrio donde se encuentra el escenario', example: 1, required: false })
-  @IsInt()
   @IsOptional()
+  @Type(() => Number)
+  @Transform(({ value }) => {
+    // Si el valor es 0, null, undefined o string vacío, retorna undefined
+    if (value === 0 || value === null || value === undefined || value === '') {
+      return undefined;
+    }
+    return value;
+  })
+  @IsInt({ message: 'El ID del barrio debe ser un número entero' })
+  @IsPositive({ message: 'El ID del barrio debe ser un número positivo' })
   neighborhoodId?: number;
 }
