@@ -10,7 +10,7 @@ export interface IScenarioApplicationPort {
   getById(id: number): Promise<ScenarioDomainEntity | null>;
   listPaged(opts: PageOptionsDto): Promise<PageDto<ScenarioResponseDto>>;
   
-  // ⭐ NUEVOS MÉTODOS CRUD
+  // NUEVOS MÉTODOS CRUD
   create(dto: CreateScenarioDto): Promise<ScenarioResponseDto>;
   update(id: number, dto: UpdateScenarioDto): Promise<ScenarioResponseDto>;
   delete(id: number): Promise<boolean>;

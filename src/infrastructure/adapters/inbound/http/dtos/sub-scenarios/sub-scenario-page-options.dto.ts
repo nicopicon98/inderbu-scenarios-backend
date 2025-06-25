@@ -26,7 +26,7 @@ export class SubScenarioPageOptionsDto {
   @ApiPropertyOptional() @IsOptional() @Type(() => Number) activityAreaId?: number;
   @ApiPropertyOptional() @IsOptional() @Type(() => Number) neighborhoodId?: number;
 
-  // ⭐ FILTRO ESPECÍFICO PARA SUB-SCENARIOS
+  // FILTRO ESPECÍFICO PARA SUB-SCENARIOS
   @ApiPropertyOptional({ description: 'Filtrar por costo: true=pagos, false=gratuitos' })
   @IsOptional()
   @Transform(({ value }) => {

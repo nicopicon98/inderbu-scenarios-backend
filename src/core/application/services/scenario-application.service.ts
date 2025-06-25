@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 
 import { ScenarioResponseDto } from 'src/infrastructure/adapters/inbound/http/dtos/scenario/scenario-response.dto';
 import { CreateScenarioDto } from 'src/infrastructure/adapters/inbound/http/dtos/scenario/create-scenario.dto';
@@ -62,7 +62,7 @@ export class ScenarioApplicationService implements IScenarioApplicationPort {
     );
   }
 
-  // ⭐ NUEVOS MÉTODOS CRUD
+  // NUEVOS MÉTODOS CRUD
   async create(dto: CreateScenarioDto): Promise<ScenarioResponseDto> {
     // Verificar que el barrio existe
     const neighborhood = await this.neighborhoodRepository.findById(dto.neighborhoodId);
@@ -89,8 +89,8 @@ export class ScenarioApplicationService implements IScenarioApplicationPort {
   }
 
   async update(id: number, dto: UpdateScenarioDto): Promise<ScenarioResponseDto> {
-    console.log('🔍 ScenarioService.update called with:', { id, dto });
-    console.log('🔍 dto.neighborhoodId:', dto.neighborhoodId, typeof dto.neighborhoodId);
+    console.log('ScenarioService.update called with:', { id, dto });
+    console.log('dto.neighborhoodId:', dto.neighborhoodId, typeof dto.neighborhoodId);
     
     // Verificar que el escenario existe
     const existingScenario = await this.scenarioRepository.findById(id);
@@ -98,7 +98,7 @@ export class ScenarioApplicationService implements IScenarioApplicationPort {
       throw new NotFoundException(`Escenario con ID ${id} no encontrado`);
     }
 
-    console.log('🔍 existingScenario.neighborhoodId:', existingScenario.neighborhoodId);
+    console.log('existingScenario.neighborhoodId:', existingScenario.neighborhoodId);
 
     // Si se proporciona neighborhoodId, verificar que el barrio existe
     let neighborhood: NeighborhoodDomainEntity | null = null;
@@ -107,7 +107,7 @@ export class ScenarioApplicationService implements IScenarioApplicationPort {
     const targetNeighborhoodId = dto.neighborhoodId ?? 
       (existingScenario.neighborhoodId && existingScenario.neighborhoodId > 0 ? existingScenario.neighborhoodId : undefined);
     
-    console.log('🔍 targetNeighborhoodId:', targetNeighborhoodId, typeof targetNeighborhoodId);
+    console.log('targetNeighborhoodId:', targetNeighborhoodId, typeof targetNeighborhoodId);
     
     if (targetNeighborhoodId != null && targetNeighborhoodId > 0) {
       neighborhood = await this.neighborhoodRepository.findById(targetNeighborhoodId);
@@ -121,7 +121,7 @@ export class ScenarioApplicationService implements IScenarioApplicationPort {
       .withId(id)
       .withName(dto.name ?? existingScenario.name)
       .withAddress(dto.address ?? existingScenario.address)
-      .withNeighborhoodId(targetNeighborhoodId || null)
+      .withNeighborhoodId(targetNeighborhoodId)
       .build();
 
     // Guardar cambios

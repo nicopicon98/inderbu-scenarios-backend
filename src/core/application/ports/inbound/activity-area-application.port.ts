@@ -9,7 +9,7 @@ export interface IActivityAreaApplicationPort {
   listAll(): Promise<ActivityAreaDomainEntity[]>;
   listPaged(opts: PageOptionsDto): Promise<PageDto<ActivityAreaResponseDto>>;
   
-  // ⭐ NUEVOS MÉTODOS CRUD
+  // NUEVOS MÉTODOS CRUD
   getById(id: number): Promise<ActivityAreaDomainEntity | null>;
   create(dto: CreateActivityAreaDto): Promise<ActivityAreaResponseDto>;
   update(id: number, dto: UpdateActivityAreaDto): Promise<ActivityAreaResponseDto>;

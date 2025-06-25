@@ -38,7 +38,7 @@ export class ActivityAreaApplicationService
     );
   }
 
-  // ⭐ NUEVOS MÉTODOS CRUD
+  // NUEVOS MÉTODOS CRUD
   async getById(id: number): Promise<ActivityAreaDomainEntity | null> {
     return this.repo.findById(id);
   }

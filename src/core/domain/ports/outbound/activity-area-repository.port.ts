@@ -8,6 +8,6 @@ export interface IActivityAreaRepositoryPort {
   save(entity: ActivityAreaDomainEntity): Promise<ActivityAreaDomainEntity>;
   findPaged(opts: PageOptionsDto): Promise<{ data: ActivityAreaDomainEntity[]; total: number }>;
   
-  // ⭐ NUEVO MÉTODO DELETE
+  // NUEVO MÉTODO DELETE
   delete(id: number): Promise<boolean>;
 }

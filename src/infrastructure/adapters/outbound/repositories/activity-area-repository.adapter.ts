@@ -108,7 +108,7 @@ export class ActivityAreaRepositoryAdapter
     return { data: entities.map(ActivityAreaEntityMapper.toDomain), total };
   }
 
-  // ⭐ MÉTODO DELETE IMPLEMENTADO
+  // MÉTODO DELETE IMPLEMENTADO
   async delete(id: number): Promise<boolean> {
     const result = await this.repository.delete(id);
     return typeof result.affected === 'number' && result.affected > 0;
